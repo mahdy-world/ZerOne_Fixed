@@ -1,0 +1,69 @@
+{% load mathfilters %}
+{% load humanize %}
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>{{date|date:'Y-m-d'}} {{treasury.name}}</title>
+    <meta name="description" content="Invoice demo sample">
+      <style>
+          body {
+              font-weight: bold;
+          }
+          table tr th {
+              font-size: larger;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+
+  <body>
+    <h1 style="margin-top: -50px">
+      {% if system_info.logo %}
+       <img src="{{ system_info.logo_base64 }}" height="100px" width="100px">
+       {% else %}
+{#       <img src="/static/assets/images/new.png" height="100px" width="100px">#}
+       <img src="file://{{ default_icon }}" height="100px" width="100px">
+      {% endif %}
+    </h1>
+
+    <dl id="informations" style="margin-top: -50px">
+        <h2 class="text-center">{{system_info.name}}</h2>
+        <h5 style="margin-top: -15px"><span> {{date|date:'Y-m-d'}} </span>تاريخ التقرير: </h5>
+        <h5 style="margin-top: -15px"><span> {{treasury.name}} </span>تقرير تفصيلي للخزنة: </h5>
+    </dl><hr>
+
+    <table>
+        <tr>
+            <th>
+                {% if treasury_operations_in %}
+                {{ treasury_operations_in|floatformat:2|intcomma }}
+                {% else %}
+                0.00
+                {% endif %}
+                جنيه</th>
+            <th>اجمالي الإيداع</th>
+        </tr>
+        <tr>
+            <th>
+                {% if treasury_operations_out %}
+                {{ treasury_operations_out|floatformat:2|intcomma }}
+                {% else %}
+                0.00
+                {% endif %}
+                جنيه</th>
+            <th>اجمالي المسحوبات</th>
+        </tr>
+        <tr>
+            <th>
+                {% if treasury.balance %}
+                {{ treasury.balance|floatformat:2|intcomma }}
+                {% else %}
+                0.00
+                {% endif %}
+                جنيه</th>
+            <th>الرصيد الحالي</th>
+        </tr>
+    </table>
+  </body>
+</html>

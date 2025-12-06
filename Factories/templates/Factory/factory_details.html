@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title> مصنع: {{object.name}} </title>
+
+{% endblock title %}
+
+{% block main %}
+    {% load crispy_forms_tags %}
+    <div class="main-content">
+      <div class="page-content">
+          <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-12"> {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+                            <i class="mdi mdi-check-all mr-2"></i>
+                            {{ message|safe }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+
+
+                      {% endif %}
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+
+
+                                <h4 class="mb-0">
+                                     مصنع {{object.name}}
+                                     <a class="badge badge-success" style="font-size:small;" href="{% url 'Factories:FactoryCreate' %}" data-toggle="modal" data-target="#action_modal">
+                                            <i class="fas fa-plus-square fx-2"></i>
+                                    </a>
+
+                                    <a class="badge badge-info" style="font-size:small;" href="{% url 'Factories:FactoryList' %}">
+                                       <i class="fas fa-list-ul"></i>
+                                    </a>
+
+                                    <a  class="badge badge-danger" style="font-size:small;" href="{% url 'Factories:FactoryTrachList' %}">
+                                            <i class="fas fa-trash"></i>
+                                    </a>
+                                 </h4>
+
+
+
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
+
+                                    <li class="breadcrumb-item">
+                                        {% if object.deleted %}
+                                        <a href="{% url 'Factories:FactoryTrachList' %}">قائمة المصانع المحذوفة</a>
+                                        {% else %}
+                                        <a href="{% url 'Factories:FactoryList' %}">قائمة المصانع</a>
+                                        {% endif %}
+                                    </li>
+
+                                    <li class="breadcrumb-item active"> مصنع {{object.name}}</li>
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                        <div class="card-body">
+
+                            <!-- بيانات المصنع -->
+                            <div class="row alert alert-primary">
+                                <div class="col-lg-3">
+                                    <span class="font-weight-bold  font-size-14" >
+                                        <i class="fas fa-paragraph"></i>
+                                        أسم المصنع:
+                                    </span>
+                                    {{object.name}}
+                                </div>
+                                <div class="col-lg-3">
+                                    <span class="font-weight-bold  font-size-14" >
+                                        <i class="fas fa-database"></i>
+                                            نوع المكينة:
+                                    </span>
+                                    {{object.machine_type}}
+                                </div>
+                                <div class="col-lg-3">
+                                    <span class="font-weight-bold  font-size-14" >
+                                        <i class="fas fa-sort-numeric-up-alt"></i>
+                                            عدد المكينات:
+                                        </span>
+                                        {{object.machine_count}}
+                                </div>
+                                <div class="col-lg-3">
+                                    <span class="font-weight-bold  font-size-14" >
+                                        <i class="fas fa-calendar-alt"></i>
+                                            تاريخ البداية:
+                                    </span>
+                                    {{object.start_date| date:'Y-m-d'}}
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <span class="font-weight-bold  font-size-14" >
+                                        <i class="fas fa-dollar-sign"></i>
+                                        سعر الساعه:
+                                    </span>
+                                    {{object.hour_price|floatformat:2}} جنية
+                                </div>
+
+                                <div class="col-lg-3">
+                                    
+                                        <span class="font-weight-bold font-size-14" >
+                                            <i class="fas fa-mobile"></i>
+                                                رقم الهاتف:
+                                        </span>
+                                            {{object.phone}}
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <span class="font-weight-bold  font-size-14" >
+                                        <i class="fas fa-wrench"></i>
+                                            يعمل:
+                                        </span>
+                                        {% if object.active == 1 %}
+                                        <span class="badge badge-success"> نعم</span>
+                                        {% else %}
+                                        <span class="badge badge-danger">لا</span>
+                                        {% endif %}
+                                </div>
+
+                                <div class="col-lg-3">
+                                    {% if request.user.is_superuser %}
+                                    <div>
+                                    {% if object.deleted %}
+                                    <a href="{% url 'Factories:FactoryRestore' object.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                        <span class="badge badge-dark"><i class='bx bx-redo '></i> استرجاع</span>
+                                    </a>
+                                    <a href="{% url 'Factories:FactorySuperDelete' object.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Profile">
+                                        <span class="badge badge-danger"><i class='bx bxs-trash '   ></i> حذف نهائي </span>
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'Factories:FactoryUpdate' object.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                        <span class="badge  badge-info"><i class='bx bx-edit' ></i>تعديل</span>
+                                    </a>
+                                    <a href="{% url 'Factories:FactoryDelete' object.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Profile">
+                                        <span class="badge  badge-danger"><i class='bx bxs-trash'  ></i>حذف</span>
+                                    </a>
+                                    {% endif %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                            </div>
+                            <!-- نهاية بيانات المصنع -->
+
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" href="#FactoryPayment" role="tab" aria-selected="true">
+                                            <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                            <span class="d-none d-sm-block"> <i class="fas fa-hand-holding-usd"></i>المسحوبات </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+
+                                        <a class="nav-link" data-toggle="tab" id="Outside_tab" href="#Outside_factory" role="tab" aria-selected="true">
+                                            <span class="d-block d-sm-none"><i class="far fa-user"></i></span>
+                                            <span class="d-none d-sm-block"><i class="fas fa-angle-double-right"></i> الخارج</span>
+                                        </a>
+
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#Inside_factory" role="tab" aria-selected="true">
+                                            <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                            <span class="d-none d-sm-block"><i class="fas fa-dolly"></i> الداخل</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#reports_factory" role="tab" aria-selected="true">
+                                            <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                            <span class="d-none d-sm-block"><i class="fas fa-print"></i> تقارير</span>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab panes -->
+                                <div class="tab-content text-muted">
+                                    <!--المسحوبات-->
+                                    <div class="tab-pane active" id="FactoryPayment" role="tabpanel">
+                                        {% include 'Factory/factory_payment.html' %}
+                                    </div>
+                                    <!--الخارج-->
+                                    <div class="tab-pane " id="Outside_factory" role="tabpanel">
+                                        {% include 'Factory/factory_outside.html' %}
+                                    </div>
+                                    <!--الداخل-->
+                                    <div class="tab-pane" id="Inside_factory" role="tabpanel">
+                                        {% include 'Factory/factory_inside.html' %}
+                                    </div>
+                                    <!--تقارير-->
+                                    <div class="tab-pane" id="reports_factory" role="tabpanel">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="card" >
+                                                    <div class="card-body">
+                                                        <form method="get" action="#" id="my_form">
+                                                        <input name="type" type="hidden" value="{{ request.GET.type }}">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                {{form.from_date|as_crispy_field}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                {{form.to_date|as_crispy_field}}
+                                                                </div>
+                                                            </div>
+{#                                                            <div class="col-md-4">#}
+{#                                                                <button type="submit" name="submit" value="1" class="btn btn-block btn-success"#}
+{#                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintPayment' object.id  %}'; document.getElementById('my_form').target = '_blank' "#}
+{#                                                                    >#}
+{#                                                                    <i class="fas fa-print"></i>#}
+{#                                                                      تقرير مسحوبات#}
+{#                                                                  </button>#}
+{#                                                            </div>#}
+{#                                                            <div class="col-md-4">#}
+{#                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"#}
+{#                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintOutside' object.id  %}'; document.getElementById('my_form').target = '_blank' "#}
+{#                                                                    >#}
+{#                                                                    <i class="fas fa-print"></i>#}
+{#                                                                      تقرير خارج#}
+{#                                                                  </button>#}
+{#                                                            </div>#}
+{#                                                            <div class="col-md-4">#}
+{#                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"#}
+{#                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintInside' object.id  %}'; document.getElementById('my_form').target = '_blank' "#}
+{#                                                                    >#}
+{#                                                                    <i class="fas fa-print"></i>#}
+{#                                                                      تقرير داخل#}
+{#                                                                  </button>#}
+{#                                                            </div>#}
+
+                                                            <div class="col-md-4">
+                                                                <button type="button" class="btn btn-block btn-success"
+                                                                    onclick="openReportModal('{% url 'Factories:PrintPayment' object.id %}')">
+                                                                    <i class="fas fa-print"></i> تقرير مسحوبات
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="col-md-4">
+                                                                <button type="button" class="btn btn-block btn-success"
+                                                                    onclick="openReportModal('{% url 'Factories:PrintOutside' object.id %}')">
+                                                                    <i class="fas fa-print"></i> تقرير خارج
+                                                                </button>
+                                                            </div>
+
+                                                            <div class="col-md-4">
+                                                                <button type="button" class="btn btn-block btn-success"
+                                                                    onclick="openReportModal('{% url 'Factories:PrintInside' object.id %}')">
+                                                                    <i class="fas fa-print"></i> تقرير داخل
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                    </div>
+                    </div>
+
+                </div>
+
+          </div>
+      </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+          $('.pag').each(function(){
+            var itemsPerPage = 10;
+            var currentPage = 1;
+            var $table = $(this);
+            var $tbody = $table.find('tbody');
+            var $tr = $tbody.find('tr');
+            var $prevButton = $table.parent().next('.pagination').find('.prev');
+            var $nextButton = $table.parent().next('.pagination').find('.next');
+            var $pageSpan = $table.parent().next('.pagination').find('.page');
+
+          function showItems() {
+            var startIndex = (currentPage - 1) * itemsPerPage;
+            var endIndex = startIndex + itemsPerPage;
+
+            $tr.hide();
+            $tr.slice(startIndex, endIndex).show();
+            $pageSpan.empty();
+
+            var totalItems = $tr.length;
+            var totalPages = Math.ceil(totalItems / itemsPerPage);
+            $prevButton.prop('disabled', currentPage === 1);
+            $nextButton.prop('disabled', currentPage === totalPages);
+
+            for (var i = 1; i <= totalPages; i++) {
+              var pageButton = $('<button>').text(i);
+              pageButton.addClass('btn');
+              if (i === currentPage) {
+                pageButton.addClass('active bg-warning');
+              }
+              pageButton.click(function() {
+                currentPage = parseInt($(this).text());
+                showItems();
+              });
+              $pageSpan.append(pageButton);
+            }
+
+          }
+
+          $prevButton.click(function() {
+            if (currentPage > 1) {
+              currentPage--;
+              showItems();
+            }
+          });
+
+          $nextButton.click(function() {
+            var totalItems = $tr.length;
+            var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+            if (currentPage < totalPages) {
+              currentPage++;
+              showItems();
+            }
+          });
+
+          showItems();
+        })
+        });
+    </script>
+    <script>
+        function openReportModal(baseUrl) {
+            // نجمع بيانات الفورم كـ query string
+            var form = document.getElementById('my_form');
+            var params = new URLSearchParams(new FormData(form)).toString();
+
+            // نركّب الرابط النهائي
+            var url = baseUrl + "?" + params;
+
+            // نعرضه في المودال
+            $('#pdfFrame').attr('src', url);
+            $('#pdfModal').modal('show');
+        }
+    </script>
+{% endblock main %}

@@ -1,0 +1,115 @@
+@font-face {
+  font-family: 'Amiri', "Times New Roman", serif;
+  /*font-family: "Times New Roman", Times, serif;*/
+}
+  @page {
+    font-family: 'Amiri', "Times New Roman", serif;
+    /*font-family: "Times New Roman", Times, serif;*/
+    font-size: 16px;
+    margin: 3cm;
+    @bottom-left {
+      color: #050505;
+      content: '♥ شكراً لتعاملكم معنا!';
+    }
+    @bottom-right {
+      color: #403F40;
+      content: 'نظام زيرو وان لإدارة مصانع التريكو';
+      font-size: 12pt;
+    }
+  }
+  
+  html {
+    color: #14213d;
+    font-family: 'Amiri', "Times New Roman", serif;
+    /*font-family: "Times New Roman", Times, serif;*/
+    font-size: 11pt;
+    line-height: 1.6;
+  }
+  body {
+    font-family: 'Amiri', "Times New Roman", serif;
+    /*font-family: "Times New Roman", Times, serif;*/
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  h1 {
+    font-size: 40pt;
+    margin: 0;
+    width: 60%;
+  }
+  
+  aside {
+    display: flex;
+    margin: 0em 0 4em;
+  }
+  aside address {
+    font-style: normal;
+    
+  }
+  aside address#from {
+    color: #a9a;
+    flex: 1;
+  }
+  aside address.to {
+    text-align: right;
+  }
+  
+  dl {
+    position: absolute;
+    right: 0;
+    text-align: right;
+    top: 0;
+    margin-bottom: 10px;
+    width: 40%;
+  }
+  /*dl span{*/
+  /*  color: rgb(99, 99, 99);*/
+  /*}*/
+  dl p {
+    color: #a9a;
+  }
+ 
+  
+  table {
+    /*font-family: arial, sans-serif;*/
+    border-collapse: collapse;
+    width: 100%;
+   
+  }
+  th {
+    border-bottom: .2mm solid #a9a;
+    color: rgb(0, 0, 0);
+    font-size: 10pt;
+    font-weight: 400;
+    padding-bottom: .25cm;
+    text-transform: uppercase;
+  }
+  td {
+    padding-top: 2mm;
+  }
+  td:first-of-type {
+    color: #000000;
+    font-weight: bold;
+    text-align: right;
+  }
+  th, td {
+    text-align: center;
+  }
+  th:first-of-type, td:first-of-type {
+    text-align: left;
+  }
+  th:last-of-type, td:last-of-type {
+    text-align: right;
+  }
+  table#total {
+    background: #f6f6f6;
+    border-color: #f6f6f6;
+    border-style: solid;
+    border-width: 1cm 3cm;
+    bottom: 0;
+    font-size: 20pt;
+    margin: 0 -3cm;
+    position: relative;
+    width: 18cm;
+    height: 2cm;
+  }

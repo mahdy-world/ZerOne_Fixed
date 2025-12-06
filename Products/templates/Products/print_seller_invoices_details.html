@@ -1,0 +1,333 @@
+{% load mathfilters %}
+{% load invoice_tags %}
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>{{date|date:'Y-m-d'}} {{seller.name}}</title>
+    <meta name="description" content="Invoice demo sample">
+      <style>
+          body {
+              font-weight: bold;
+          }
+          table tr th {
+              font-size: larger;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+
+  <body>
+    <h1 style="margin-top: -50px">
+      {% if system_info.logo %}
+       <img src="{{system_info.logo_base64}}" height="100px" width="100px">
+       {% else %}
+{#       <img src="/static/assets/images/new.png" height="100px" width="100px">#}
+          <img src="file://{{ default_icon }}" height="100px" width="100px">
+      {% endif %}
+    </h1>
+
+    <dl id="informations" style="margin-top: -50px">
+        <h2 class="text-center">{{system_info.name}}</h2>
+        <h5 style="margin-top: -15px"><span> {{date|date:'Y-m-d'}} </span>تاريخ التقرير: </h5>
+        <h5 style="margin-top: -15px"><span> {{seller.name}} </span>كشف حساب التاجر: </h5>
+    </dl><hr>
+
+    {% if check0 == 'check0' %}
+    <table>
+        <tr>
+            <th>{{ invoices_items_sum|floatformat:0 }} قطعة</th>
+            <th>عدد قطع المبيعات</th>
+        </tr>
+        <tr>
+            <th>{{ r_invoices_items_sum|floatformat:0 }} قطعة</th>
+            <th>عدد قطع مرتجع المبيعات</th>
+        </tr>
+        <tr>
+            <th>{{ all_invoices_items|floatformat:0 }} قطعة</th>
+            <th>اجمالي عدد القطع</th>
+        </tr>
+        <tr>
+            <th>{{ invoices_sum|floatformat:2 }} جنيه</th>
+            <th>قيمة فواتير المبيعات</th>
+        </tr>
+{#        <tr>#}
+{#            <th>{{ invoices_r_sum|floatformat:2 }} جنيه</th>#}
+{#            <th>قيمة مرتجع فواتير المبيعات</th>#}
+{#        </tr>#}
+        <tr>
+            <th>{{ r_invoices_sum|floatformat:2 }} جنيه</th>
+            <th>قيمة فواتير مرتجع المبيعات</th>
+        </tr>
+        <tr>
+            <th>{{ invoices_overall|floatformat:2 }} جنيه</th>
+            <th>اجمالي القيمة المطلوبة</th>
+        </tr>
+        <tr>
+            <th>{{ initial_debit|floatformat:2 }} جنيه</th>
+            <th>
+            عربون افتتاحي
+            {% if initial_debit > 0 %}
+                {% if seller.initial_balance_type == 1 %}
+                للتاجر
+                {% else %}
+                علي التاجر
+                {% endif %}
+            {% endif %}
+            </th>
+        </tr>
+        <tr>
+            <th>{{ payments_from|floatformat:2 }} جنيه</th>
+            <th>القيمة المستلمة من التاجر</th>
+        </tr>
+        <tr>
+            <th>{{ payments_to|floatformat:2 }} جنيه</th>
+            <th>القيمة المسلمة الي التاجر</th>
+        </tr>
+        <tr>
+            <th>
+                {% if payment_sum < 0 %}
+                {{ payment_sum|mul:-1|floatformat:2 }} جنيه
+                {% else %}
+                {{ payment_sum|floatformat:2 }} جنيه
+                {% endif %}
+            </th>
+            <th>
+            الباقي
+            {% if payment_sum != 0 %}
+                {% if payment_sum < 0 %}
+                للتاجر
+                {% else %}
+                علي التاجر
+                {% endif %}
+            {% endif %}
+            </th>
+        </tr>
+
+{#        <tr>#}
+{#            <th>#}
+{#                {% if invoices_sum|sub:invoices_r_sum|sub:r_invoices_sum > 0 %}#}
+{#                {{ invoices_sum|sub:invoices_r_sum|sub:r_invoices_sum|floatformat:2 }}#}
+{#                {% else %}#}
+{#                0.00#}
+{#                {% endif %}#}
+{#            </th>#}
+{#            <th>اجمالي حساب الفواتير</th>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <th>#}
+{#                {% if payment_s %}#}
+{#                {{ payment_s}}#}
+{#                {% else %}#}
+{#                0.0#}
+{#                {% endif %}#}
+{#                =#}
+{#                {% if payments_to %}#}
+{#                {{ payments_to }}#}
+{#                {% else %}#}
+{#                0.0#}
+{#                {% endif %}#}
+{#                -#}
+{#                {% if payments_from %}#}
+{#                {{ payments_from }}#}
+{#                {% else %}#}
+{#                0.0#}
+{#                {% endif %}#}
+{#            </th>#}
+{#            <th>النقدية المستلمة</th>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <th>#}
+{#                {% if seller.initial_balance_debit %}#}
+{#                {% if seller.initial_balance_type == 1 %}#}
+{#                للتاجر#}
+{#                {% else %}#}
+{#                علي التاجر#}
+{#                {% endif %}#}
+{#                {% endif %}#}
+{#                {% if seller.initial_balance_debit %}#}
+{#                {{ seller.initial_balance_debit }}#}
+{#                {% else %}#}
+{#                0.0#}
+{#                {% endif %}#}
+{#            </th>#}
+{#            <th>قيمة افتتاحية</th>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <th>#}
+{#            {% if invoices_sum|sub:invoices_r_sum|sub:r_invoices_sum|sub:payment_sum > 0 %}#}
+{#                علي التاجر#}
+{#                {{ invoices_sum|sub:invoices_r_sum|sub:r_invoices_sum|sub:payment_sum}}#}
+{#            {% elif invoices_sum|sub:invoices_r_sum|sub:r_invoices_sum|sub:payment_sum < 0  %}#}
+{#                للتاجر#}
+{#                {{ invoices_sum|sub:invoices_r_sum|sub:r_invoices_sum|sub:payment_sum|mul:-1}}#}
+{#            {% else %}#}
+{#                0.0#}
+{#            {% endif %}#}
+{#            </th>#}
+{#            <th>الباقي</th>#}
+{#        </tr>#}
+
+    </table>
+    <div style="break-after:page"></div>
+    {% endif %}
+
+    {% if check1 == 'check1' %}
+    <h4 style="text-align: right; text-decoration: underline">فواتير المبيعات</h4>
+    <table>
+      <thead>
+        <tr>
+{#            <td>مرتجع</td>#}
+          <td>القيمة</td>
+          <td>عدد القطع</td>
+          <td>التاريخ</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for x in invoices %}
+        {% invoice_products_count x.id as products_count %}
+          <tr>
+{#            <th>{{x.return_value|floatformat:2}}</th>#}
+            <th>{{x.total|sub:x.discount|floatformat:2}}</th>
+            <th>{{products_count|floatformat:0}}</th>
+            <th>{{x.date|date:'Y-m-d'}}</th>
+          </tr>
+        {% endfor %}
+        <tr>
+{#            <td>#}
+{#                {% if invoices_r_sum %}#}
+{#                {{ invoices_r_sum|floatformat:2}}#}
+{#                {% else %}#}
+{#                0.00#}
+{#                {% endif %}#}
+{#            </td>#}
+            <td>
+                {% if invoices_sum %}
+                {{ invoices_sum|floatformat:2}}
+                {% else %}
+                0.00
+                {% endif %}
+            </td>
+            <td>
+                {% if invoices_items_sum %}
+                {{ invoices_items_sum|floatformat:0}}
+                {% else %}
+                0
+                {% endif %}
+            </td>
+            <td>الاجمالي</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="break-after:page"></div>
+    {% endif %}
+
+    {% if check2 == 'check2' %}
+    <h4 style="text-align: right; text-decoration: underline">فواتير مرتجع المبيعات</h4>
+    <table>
+      <thead>
+        <tr>
+          <td>القيمة</td>
+            <td>عدد القطع</td>
+          <td>التاريخ</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for x in r_invoices %}
+        {% invoice_products_count x.id as products_count %}
+          <tr>
+            <th>{{x.total|sub:x.discount|floatformat:2}}</th>
+              <th>{{products_count|floatformat:0}}</th>
+            <th>{{x.date|date:'Y-m-d'}}</th>
+          </tr>
+        {% endfor %}
+        <tr>
+            <td>
+                {% if r_invoices_sum %}
+                {{ r_invoices_sum|floatformat:2}}
+                {% else %}
+                0.00
+                {% endif %}
+            </td>
+            <td>
+                {% if r_invoices_items_sum %}
+                {{ r_invoices_items_sum|floatformat:0}}
+                {% else %}
+                0
+                {% endif %}
+            </td>
+            <td>الاجمالي</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="break-after:page"></div>
+    {% endif %}
+
+    {% if check3 == 'check3' %}
+    <h4 style="text-align: right; text-decoration: underline">المبالغ المستلمة من التاجر</h4>
+    <table>
+      <thead>
+        <tr>
+            <td>السبب/الوصف</td>
+          <td>القيمة</td>
+          <td>التاريخ</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for x in seller_payments_from %}
+          <tr>
+            <th>{{x.paid_reason}}</th>
+            <th>{{x.paid_value|floatformat:2}}</th>
+            <th>{{x.date|date:'Y-m-d'}}</th>
+          </tr>
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td>
+                {% if payments_from %}
+                {{ payments_from|floatformat:2 }}
+                {% else %}
+                0.00
+                {% endif %}
+            </td>
+            <td>الاجمالي</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="break-after:page"></div>
+    {% endif %}
+
+    {% if check4 == 'check4' %}
+    <h4 style="text-align: right; text-decoration: underline">المبالغ المسلمة الي التاجر</h4>
+    <table>
+      <thead>
+        <tr>
+            <td>السبب/الوصف</td>
+          <td>القيمة</td>
+          <td>التاريخ</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for x in seller_payments_to %}
+          <tr>
+            <th>{{x.paid_reason}}</th>
+            <th>{{x.paid_value|floatformat:2}}</th>
+            <th>{{x.date|date:'Y-m-d'}}</th>
+          </tr>
+        {% endfor %}
+        <tr>
+            <td></td>
+            <td>
+                {% if payments_to %}
+                {{ payments_to|floatformat:2 }}
+                {% else %}
+                0.00
+                {% endif %}
+            </td>
+            <td>الاجمالي</td>
+        </tr>
+      </tbody>
+    </table>
+    {% endif %}
+  </body>
+</html>

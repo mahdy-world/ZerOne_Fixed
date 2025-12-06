@@ -1,0 +1,702 @@
+{% load crispy_forms_tags %}
+{% load mathfilters %}
+<div class="row">
+        <div class="col-lg-12">
+            <div class="card" >
+                <div class="card-body">
+                    <!-- الداخل المصنع -->
+                    <div class="tab-pane" id="processing_Inside" role="tabpanel">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                     {% if factory.deleted == 0 %}
+                                    <div class="table-responsive" id="order_list">
+                                        <table class="table table-nowrap table-borderless">
+                                            <thead>
+                                                <form >
+
+                                                <tr>
+
+                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form_inside.date|as_crispy_field}}</th>
+                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form_inside.weight|as_crispy_field}}</th>
+                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form_inside.color|as_crispy_field}}</th>
+                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form_inside.wool_type|as_crispy_field}}</th>
+                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form_inside.product|as_crispy_field}}</th>
+                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form_inside.product_weight|as_crispy_field}}</th>
+                                                </tr>
+
+                                                <tr>
+                                                    <th class="col-lg-1 col-xl-1 col-md-1">{{form_inside.product_count|as_crispy_field}}</th>
+                                                    <th class="col-lg-1 col-xl-1 col-md-1">{{form_inside.product_time|as_crispy_field}}</th>
+                                                    <th class="col-lg-1 col-xl-1 col-md-1">{{form_inside.hour_count|as_crispy_field}}</th>
+                                                    <th class="col-lg-1 col-xl-1 col-md-1">{{form_inside.hour_price|as_crispy_field}}</th>
+                                                    <th class="col-lg-1 col-xl-1 col-md-1">{{form_inside.total_account|as_crispy_field}}</th>
+                                                    <th class="col-lg-1 col-xl-1 col-md-1">
+                                                        <a onclick="InSideCreate()" class="btn btn-block btn-success">اضافة</a>
+                                                    </th>
+                                                </tr>
+
+
+                                                </form>
+
+
+                                            </thead>
+
+                                        </table>
+                                    </div>
+                                    {% endif %}
+                                     <style>
+                                         /*.table-responsive{*/
+                                         /*   max-height: 500px;*/
+
+                                         /*}*/
+
+                                         /*.scroll{*/
+                                            /*overflow-y: scroll;*/
+                                            /*overflow-x: scroll;*/
+                                         /*}*/
+                                         /*.table-responsive::-webkit-scrollbar{*/
+                                         /*   display: none;*/
+                                         /*}*/
+                                     </style>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-centered table-dark table-nowrap text-center">
+                                            <thead>
+                                                <tr>
+                                                    <td style="width: 35%" class="in_sel">
+                                                        <select class="form-control" id="in_specific_product" style="width: 100%" onchange="InProductFilter(this)">
+                                                            <option disabled selected value="">عرض كميات منتج معين؟</option>
+                                                            <option value=" ">كل المنتجات</option>
+                                                            {% for product in products %}
+                                                            <option value="{{ product.id }}">{{ product.name }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </td>
+                                                    <td style="width: 35%" class="in_sell">
+                                                        <select class="form-control" id="in_specific_wool" style="width: 100%" onchange="InWoolFilter(this)">
+                                                            <option disabled selected value="">عرض كميات خامة معينة؟</option>
+                                                            <option value=" ">كل الخامات</option>
+                                                            <option value="1">قطن</option>
+                                                            <option value="2">صوف</option>
+                                                            <option value="3">عجينة</option>
+                                                            <option value="4">سبن</option>
+                                                            <option value="5">لكرة</option>
+                                                            <option value="6">رمش</option>
+                                                            <option value="7">عصب</option>
+                                                            <option value="8">بلستر</option>
+                                                            <option value="9">استك</option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width: 30%">
+                                                        <input type="date" class="form-control" id="in_specific_date" style="width: 100%" onchange="InDateFilter(this)">
+                                                    </td>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+
+                                    <div id="inside">
+                                        <div class="table-responsive scroll" >
+                                            <table class="table pag table-centered table-dark table-nowrap text-center">
+                                                <thead >
+                                                    <tr>
+                                                        <th>م</th>
+                                                        <th>التاريخ</th>
+                                                        <th>الوزن المستلم</th>
+                                                        <th>اللون</th>
+                                                        <th>نوع الخامة</th>
+                                                        <th>الموديل</th>
+                                                        <th>وزن الموديل</th>
+                                                        <th>عدد الموديل</th>
+                                                        <th>وقت الموديل</th>
+                                                        <th>عدد الساعات</th>
+                                                        <th>سعر الساعة</th>
+                                                        <th>اجمالي الحساب</th>
+                                                        <th>المسؤول</th>
+                                                        {% if request.user.is_superuser %}
+                                                        <th><i class="fas fa-cogs"></i></th>
+                                                        {% endif %}
+                                                    </tr>
+                                                </thead>
+                                                <tbody >
+                                                {% for w in inSide  %}
+                                                    <tr style="text-align: center;">
+                                                        <td>{{forloop.counter}}</td>
+                                                        <td><span class="font-size-18"><i class="fas fa-calendar-alt"></i> {{w.date|date:'Y-m-d'}}</span></td>
+                                                        <td> {{w.weight|floatformat:3}}</td>
+                                                        <td>{{w.color}}</td>
+                                                        <td>{% if w.wool_type %}{{w.get_wool_type_display}}{% endif %}</td>
+                                                        <td> {{w.product}}</td>
+                                                        <td> {{w.product_weight|floatformat:1}}</td>
+                                                        <td>{{w.product_count}}</td>
+                                                        <td> {{w.product_time|floatformat:0}} </td>
+                                                        <td> {{w.hour_count|floatformat:2}}</td>
+                                                        <td> {{w.hour_price|floatformat:2}} </td>
+                                                        <td><i class="fas fa-dollar-sign"></i> {{w.total_account|floatformat:2}} </td>
+                                                        <td><i class="fas fa-user-tie"></i> {{w.admin}} </td>
+                                                       {% if request.user.is_superuser %}
+                                                       <td>
+{#                                                       {% if w.id == last_inside_id %}#}
+                                                       <!--
+{#                                                        <a href="{% url 'Factories:FactoryInSideUpdate' w.id %}" class="mr-3 text-warning" data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>#}-->
+                                                        <a onclick="
+                                                                /*
+                                                                var result = confirm('هل أنت متأكد من الحذف؟');
+                                                                if (result) {
+                                                                    InsideDelete('{{w.id}}')
+                                                                }
+                                                                */
+                                                                Swal.fire({
+                                                                  title: 'انتبه!',
+                                                                  text: 'هل أنت متأكد من الحذف؟',
+                                                                  icon: 'warning',
+                                                                  showCancelButton: true,
+                                                                  confirmButtonText: 'نعم، احذف',
+                                                                  cancelButtonText: 'الغاء'
+                                                                }).then((result) => {
+                                                                  if (result.isConfirmed) {
+                                                                    InsideDelete('{{w.id}}')
+                                                                  }
+                                                                });
+                                                                " style="cursor: pointer;" class="text-danger" ><i class="mdi mdi-close font-size-18"></i></a>
+{#                                                       {% endif %}#}
+                                                       </td>
+                                                       {% endif %}
+
+
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="row text-center pagination">
+                                            <div class="col-md-12">
+                                                <button class="btn btn-dark prev">السابق</button>
+                                                <span class="page"></span>
+                                                <button class="btn btn-dark next">التالي</button>
+                                            </div>
+                                        </div>
+                                        <br>
+
+                                        <div style="margin-top:10px">
+                                            <div class="row">
+                                                <div class="col-lg-3">
+                                                    <div class="card mini-stats-wid mb-0">
+                                                        <div class="card-body bg-danger">
+
+                                                            <div class="d-flex flex-wrap">
+                                                                <div class="mr-3">
+                                                                    <h5 class=" mb-2 text-light">اجمالي الوزن الخارج</h5>
+                                                                    <h5 class="mb-0 text-dark">
+                                                                        {% if sum_outside %}
+                                                                        {{sum_outside|floatformat:3}}
+                                                                        {% else %}
+                                                                        0.000
+                                                                        {% endif %}
+                                                                        كيلو جرام
+                                                                    </h5>
+                                                                </div>
+
+
+                                                                <div class="avatar-xs ml-auto">
+                                                                    <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                                                        <i class="fas fa-sign-out-alt"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="card mini-stats-wid mb-0">
+                                                        <div class="card-body bg-danger">
+
+                                                            <div class="d-flex flex-wrap">
+                                                                <div class="mr-3">
+                                                                    <h5 class=" mb-2 text-light">اجمالي الوزن الداخل</h5>
+                                                                    <h5 class="mb-0 text-dark">
+                                                                        {% if sum_weightt %}
+                                                                        {{sum_weightt|floatformat:3}}
+                                                                        {% else %}
+                                                                        0.000
+                                                                        {% endif %}
+                                                                        كيلو جرام</h5>
+                                                                </div>
+
+
+                                                                <div class="avatar-xs ml-auto">
+                                                                    <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                                                        <i class="fas fa-dolly"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="card mini-stats-wid mb-0">
+                                                        <div class="card-body bg-danger">
+
+                                                            <div class="d-flex flex-wrap">
+                                                                <div class="mr-3">
+                                                                    <h5 class=" mb-2 text-light">الوزن المتبقي</h5>
+                                                                    <h5 class="mb-0 text-dark">
+                                                                        {% if sum_outside or sum_weightt %}
+                                                                        {{sum_outside|sub:sum_weightt|floatformat:3}}
+                                                                        {% else %}
+                                                                        0.000
+                                                                        {% endif %}
+                                                                        كيلو جرام</h5>
+                                                                </div>
+
+
+                                                                <div class="avatar-xs ml-auto">
+                                                                    <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                                                        <i class="fas fa-balance-scale"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="card">
+                                                        <div class="card-body bg-primary">
+                                                            <h5 class="text-light text-center" style="margin-top: -15px">اعادة احتساب الساعه</h5>
+                                                            <form method="post" id="new_hour_price" action="{% url 'Factories:UpdateFactoryHourPrice' factory.id %}">
+                                                                {% csrf_token %}
+                                                                <div class="row" style="margin-top: 15px; margin-bottom: -10px">
+                                                                    <div class="col-md-8">
+                                                                        <input type="number" class="form-control" name="new_hour_price_input" placeholder="سعر الساعه" required min="0">
+                                                                    </div>
+                                                                    <div class="col-md-4">
+                                                                        <input type="submit" class="btn btn-light" value="تأكيد">
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-lg-3">
+                                                    <div class="card mini-stats-wid mb-0">
+                                                        <div class="card-body bg-danger">
+
+                                                            <div class="d-flex flex-wrap">
+                                                                <div class="mr-3">
+                                                                    <h5 class=" mb-2 text-light">عدد الموديلات</h5>
+                                                                    <h5 class="mb-0 text-dark">
+                                                                        {% if models_count %}
+                                                                        {{models_count|floatformat:0}}
+                                                                        {% else %}
+                                                                        0
+                                                                        {% endif %}
+                                                                        موديل</h5>
+                                                                </div>
+
+
+                                                                <div class="avatar-xs ml-auto">
+                                                                    <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                                                        <i class="fas fa-list-ol"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="card mini-stats-wid mb-0">
+                                                        <div class="card-body bg-danger">
+
+                                                            <div class="d-flex flex-wrap">
+                                                                <div class="mr-3">
+                                                                    <h5 class=" mb-2 text-light">عدد القطع</h5>
+                                                                    <h5 class="mb-0 text-dark">
+                                                                        {% if products_count %}
+                                                                        {{products_count|floatformat:0}}
+                                                                        {% else %}
+                                                                        0
+                                                                        {% endif %}
+                                                                        قطعة</h5>
+                                                                </div>
+
+
+                                                                <div class="avatar-xs ml-auto">
+                                                                    <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                                                        <i class="fas fa-list-ol"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="card mini-stats-wid mb-0">
+                                                        <div class="card-body bg-danger">
+
+                                                            <div class="d-flex flex-wrap">
+                                                                <div class="mr-3">
+                                                                    <h5 class=" mb-2 text-light">عدد الساعات</h5>
+                                                                    <h5 class="mb-0 text-dark">
+                                                                        {% if hours_count %}
+                                                                        {{hours_count|floatformat:0}}
+                                                                        {% else %}
+                                                                        0.00
+                                                                        {% endif %}
+                                                                        ساعة و
+                                                                        {% if minutes_count %}
+                                                                        {{minutes_count|floatformat:0}}
+                                                                        {% else %}
+                                                                        0.00
+                                                                        {% endif %}
+                                                                        دقيقة
+                                                                    </h5>
+                                                                </div>
+
+
+                                                                <div class="avatar-xs ml-auto">
+                                                                    <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                                                        <i class="fas fa-list-ol"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="card mini-stats-wid mb-0">
+                                                        <div class="card-body bg-danger">
+
+                                                            <div class="d-flex flex-wrap">
+                                                                <div class="mr-3">
+                                                                    <h5 class=" mb-2 text-light">اجمالي الحساب</h5>
+                                                                    <h5 class="mb-0 text-dark">
+                                                                        {% if sum_weightt_after %}
+                                                                        {{sum_weightt_after|floatformat:2}}
+                                                                        {% else %}
+                                                                        0.00
+                                                                        {% endif %}
+                                                                        جنية</h5>
+                                                                </div>
+
+
+                                                                <div class="avatar-xs ml-auto">
+                                                                    <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                                                        <i class="fas fa-dollar-sign"></i>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script src="/static/assets/libs/jquery/jquery.min.js"></script>
+                                    <script>
+                                        $(document).ready(function() {
+                                            $('#product').select2({
+                                                width: '100%'
+                                            });
+                                            $('#in_specific_product').select2();
+                                            $('#in_specific_wool').select2();
+                                        });
+
+                                        $(document).ready(function() {
+                                            $( '#product' ).on('change', function () {
+                                                e = this.value;
+                                                $.ajax({
+                                                    url: "{% url 'Factories:get_product_weight_time' %}?e=" + e,
+                                                    success: function (data) {
+                                                        $("#product_weight").val(data.prod_weight);
+                                                        $("#product_time").val(data.prod_time);
+                                                        weight = $('#weight_inside').val() * 1000;
+                                                        product_weight = data.prod_weight;
+                                                        product_count = (weight / product_weight);
+                                                        $('#product_count').val(parseInt(product_count));
+                                                        $('#product_count').change();
+                                                        $('#hour_price').change();
+                                                    }
+                                                });
+                                            });
+
+                                            // حساب عدد القطع
+                                            $('#product_weight').on('keyup change', function (){
+                                                weight = $('#weight_inside').val() * 1000;
+                                                product_weight = $('#product_weight').val();
+                                                product_count = (weight / product_weight);
+                                                $('#product_count').val(parseInt(product_count));
+                                                $('#product_count').change();
+                                                $('#hour_price').change();
+                                            });
+
+                                            $('#weight_inside').on('keyup change', function (){
+                                                weight = $('#weight_inside').val() * 1000;
+                                                product_weight = $('#product_weight').val();
+                                                product_count = (weight / product_weight);
+                                                $('#product_count').val(parseInt(product_count));
+                                                $('#product_count').change();
+                                                $('#hour_price').change();
+                                            });
+
+                                            // حساب عدد الساعات
+                                            $('#product_time').on('keyup change', function (){
+
+                                               product_count = $('#product_count').val();
+                                               product_hour = $('#product_time').val();
+
+                                               if ((product_count * product_hour) / 60 < 1){
+                                                   $('label[for="hour_count"]').text('عدد الدقائق');
+                                                   val_hour = (product_count * product_hour) % 60;
+                                                   $('#hour_count').val(val_hour);
+                                               }
+                                               else {
+                                                   $('label[for="hour_count"]').text('عدد الساعات');
+                                                   if ((product_count * product_hour) % 60 === 0){
+                                                       $('#hour_count').val(parseInt((product_count * product_hour) / 60));
+                                                   }
+                                                   else {
+                                                       val1 = ((product_count * product_hour) % 60) / 100;
+                                                       val2 = parseInt((product_count * product_hour) / 60);
+                                                       $('#hour_count').val((val1 + val2).toFixed(2));
+                                                   }
+                                               }
+                                               $('#hour_price').change();
+                                            });
+
+                                            $('#product_count').on('keyup change', function (){
+
+                                               product_count = $('#product_count').val();
+                                               product_hour = $('#product_time').val();
+
+                                               if ((product_count * product_hour) / 60 < 1){
+                                                   $('label[for="hour_count"]').text('عدد الدقائق');
+                                                   val = (product_count * product_hour) % 60;
+                                                   $('#hour_count').val(val);
+                                               }
+                                               else {
+                                                   $('label[for="hour_count"]').text('عدد الساعات');
+                                                   if ((product_count * product_hour) % 60 === 0){
+                                                       $('#hour_count').val(parseInt((product_count * product_hour) / 60));
+                                                   }
+                                                   else {
+                                                       val1 = ((product_count * product_hour) % 60) / 100;
+                                                       val2 = parseInt((product_count * product_hour) / 60);
+                                                       $('#hour_count').val((val1 + val2).toFixed(2));
+                                                   }
+                                               }
+                                               $('#hour_price').change();
+                                            });
+
+                                            // حساب اجمالي الحساب
+                                            $('#hour_price').on('keyup change', function (){
+                                               hour_count = $('#hour_count').val();
+                                               hour_price = $('#hour_price').val();
+                                               val1 = parseInt(hour_count / 1);
+                                               val = hour_count % 1;
+                                               val2 = (val * 100) / 60;
+                                               total_account_value = parseFloat(val1 * hour_price) + parseFloat(val2 * hour_price);
+                                               $('#total_account').val((total_account_value).toFixed(2));
+                                            });
+
+                                            $('#hour_count').on('keyup change', function (){
+                                               hour_count = $('#hour_count').val();
+                                               hour_price = $('#hour_price').val();
+                                               val1 = parseInt(hour_count / 1);
+                                               val = (hour_count % 1).toFixed(1);
+                                               val2 = (val * 100) / 60;
+                                               total_account_value = parseFloat(val1 * hour_price) + parseFloat(val2 * hour_price);
+                                               $('#total_account').val((total_account_value).toFixed(2));
+                                            });
+
+                                        });
+
+                                        function InSideCreate(){
+                                            if ($('#product_count').val() % 1 !== 0){
+                                                //alert('عدد الموديل يجب أن يكون عدد صحيح')
+                                                Swal.fire({
+                                                  title: 'انتبه!',
+                                                  text: 'عدد الموديل يجب أن يكون عدد صحيح وليس كسور',
+                                                  icon: 'warning',
+                                                  confirmButtonText: 'تم'
+                                                });
+                                            }
+                                            else {
+                                                $.ajax({
+                                                    type : "POST",
+                                                    url : "{% url 'Factories:FactoryInSideCreate'  %}",
+                                                    data : {
+                                                        id : '{{object.id}}' ,
+                                                        date : $('#date_inside').val(),
+                                                        weight :$('#weight_inside').val(),
+                                                        color : $('#color_inside').val(),
+                                                        wool_type : $('#wool_type_inside').val(),
+                                                        product : $('#product').val(),
+                                                        product_weight : $('#product_weight').val(),
+                                                        product_time : $('#product_time').val(),
+                                                        product_count : parseInt($('#product_count').val()),
+                                                        hour_count : $('#hour_count').val(),
+                                                        hour_price : $('#hour_price').val(),
+                                                        total_account : $('#total_account').val(),
+                                                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                                                        dataType: "json",
+                                                    },
+                                                    success: function(response){
+                                                        /* response message */
+                                                        if(response.msg == 1){
+                                                            $('#weight_inside').val('');
+                                                            $('#color_inside').val('');
+                                                            $('#wool_type_inside').val('');
+                                                            $('#product').val('').trigger('change');
+                                                            $('#product_weight').val('');
+                                                            $('#product_time').val('');
+                                                            $('#product_count').val('');
+                                                            $('#hour_count').val('');
+                                                            //$('#hour_price').val('');
+                                                            $('#total_account').val('');
+                                                            $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}");
+                                                            //alert("تم الاضافة بنجاح");
+                                                            Swal.fire({
+                                                              title: 'نجاح!',
+                                                              text: 'تمت الاضافة بنجاح',
+                                                              icon: 'success',
+                                                              confirmButtonText: 'تم'
+                                                            });
+                                                            $('#outside').html('&nbsp;').load("{% url 'Factories:FactoryOutSide_div' object.id %}");
+                                                            $("#paymnet").html("&nbsp;").load("{% url 'Factories:FactoryPayment_div' object.id %}");
+                                                        }else{
+                                                            //alert("حاول مرة اخري / خطأ في البيانات");
+                                                            Swal.fire({
+                                                              title: 'خطأ!',
+                                                              text: 'حاول مرة اخري / خطأ في البيانات',
+                                                              icon: 'error',
+                                                              confirmButtonText: 'تم'
+                                                            });
+                                                        }
+
+                                                     },
+
+                                                     failure: function() {
+
+                                                     }
+                                                });
+                                            }
+
+                                        };
+
+                                        function InsideDelete(inside_id){
+                                            $.ajax({
+                                                type : "POST",
+                                                url : "{% url 'Factories:FactoryInsideDelete' %}",
+                                                data :{
+                                                    inside_id : inside_id ,
+                                                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                                                    dataType: "json",
+                                                },
+                                                success: function(response){
+                                                    /* response message */
+                                                    $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}");
+                                                    //alert("تم الحذف بنجاح");
+                                                    Swal.fire({
+                                                      title: 'نجاح!',
+                                                      text: 'تم الحذف بنجاح',
+                                                      icon: 'success',
+                                                      confirmButtonText: 'تم'
+                                                    });
+                                                    $('#outside').html('&nbsp;').load("{% url 'Factories:FactoryOutSide_div' object.id %}");
+                                                    $("#paymnet").html("&nbsp;").load("{% url 'Factories:FactoryPayment_div' object.id %}");
+                                                 },
+
+                                                failure: function() {
+                                                //alert("خطأ  في الاضافة ");
+                                                    Swal.fire({
+                                                      title: 'خطأ!',
+                                                      text: 'حاول مرة اخري / خطأ اثناء الحذف',
+                                                      icon: 'error',
+                                                      confirmButtonText: 'تم'
+                                                    });
+                                                 }
+                                            });
+                                        }
+
+                                    </script>
+                                    <script>
+                                        function InProductFilter(val) {
+                                            if (val.value && val.value!= ' '){
+                                                $( '.in_sel' ).find('.select2-container').find('.select2-selection--single').css("background-color","lightgreen");
+                                            }
+                                            else {
+                                                $( '.in_sel' ).find('.select2-container').find('.select2-selection--single').css("background-color","");
+                                            }
+
+                                            $( '#in_specific_date' ).css("background-color","");
+                                            $( '#in_specific_date' ).val('');
+                                            $('#in_specific_wool').select2('destroy');
+                                            $('#in_specific_wool').val('').select2();
+
+                                            product_id = val.value;
+                                            $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}?product_id=" + product_id );
+                                        };
+                                        function InWoolFilter(val) {
+                                            if (val.value && val.value!= ' '){
+                                                $( '.in_sell' ).find('.select2-container').find('.select2-selection--single').css("background-color","lightgreen");
+                                            }
+                                            else {
+                                                $( '.in_sell' ).find('.select2-container').find('.select2-selection--single').css("background-color","");
+                                            }
+
+                                            $( '#in_specific_date' ).css("background-color","");
+                                            $( '#in_specific_date' ).val('');
+                                            $('#in_specific_product').select2('destroy');
+                                            $('#in_specific_product').val('').select2();
+
+                                            wool_val = val.value;
+                                            $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}?wool_val=" + wool_val );
+                                        };
+                                        function InDateFilter(val) {
+                                            if (val.value){
+                                                val.style.backgroundColor = 'lightgreen';
+                                            }
+                                            else {
+                                                val.style.backgroundColor = '';
+                                            }
+
+                                            $('#in_specific_product').select2('destroy');
+                                            $('#in_specific_product').val('').select2();
+                                            $('#in_specific_wool').select2('destroy');
+                                            $('#in_specific_wool').val('').select2();
+
+                                            date_val = val.value;
+                                            $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}?date_val=" + date_val );
+                                        };
+                                    </script>
+                                    <script>
+                                      document.getElementById('new_hour_price').addEventListener('submit', function() {
+                                          localStorage['hour_price'] = 'hour_price';
+                                      });
+
+                                      $( document ).ready(function() {
+                                          if (localStorage['hour_price']){
+                                              $('a[href="#Inside_factory"]').tab('show');
+                                              localStorage.removeItem("hour_price");
+                                          }
+                                      });
+                                    </script>
+                            </div>
+                        </div>
+
+                 </div>
+
+                </div>
+            </div>
+        </div>
+    </div>

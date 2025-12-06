@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+{% load invoice_tags %}
+
+{% block title %}
+<title>
+{% if type == 1 %}
+فواتير المبيعات
+{% elif type == 2 %}
+فواتير مرتجع المبيعات
+{% elif type == 3 %}
+ المبيعات القطاعي
+{% endif %}
+</title>
+{% endblock title %}
+
+{% block main %}
+
+    <div class="main-content">
+
+      <div class="page-content">
+          <div class="container-fluid">
+           
+                <div class="row">
+                    <div class="col-12"> {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+                            <i class="mdi mdi-check-all mr-2"></i>
+                            {{ message|safe }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+
+
+                      {% endif %}
+                    </div>
+                   
+                </div>
+              
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+
+                                <h4 class="mb-0">
+                                    {% if message == "active" %}
+                                    {% if type == 1 %}
+                                    فواتير المبيعات
+                                    {% elif type == 2 %}
+                                    فواتير مرتجع المبيعات
+                                    {% elif type == 3 %}
+                                    المبيعات القطاعي
+                                    {% endif %}
+                                    {% else %}
+                                    سلة مهملات
+                                    {% if type == 1 %}
+                                    فواتير المبيعات
+                                    {% elif type == 2 %}
+                                    فواتير مرتجع المبيعات
+                                    {% elif type == 3 %}
+                                    المبيعات القطاعي
+                                    {% endif %}
+                                    {% endif %}
+
+                                    <a class="badge badge-success" style="font-size:small;" href="{% url 'Invoices:InvoiceCreate' type %}" data-toggle="modal" data-target="#sub_modal">
+                                        <i class="fas fa-plus-square fx-2"></i>
+                                    </a>
+
+                                    <a class="badge badge-info" style="font-size:small;" href="{% url 'Invoices:InvoiceList' type %}">
+                                       <i class="fas fa-list-ul"></i>
+                                    </a>
+
+                                    <a  class="badge badge-danger" style="font-size:small;" href="{% url 'Invoices:InvoiceTrashList' type %}">
+                                            <i class="fas fa-trash"></i>
+                                    </a>
+<!--
+{#                                    <a  class="badge badge-warning" style="font-size:small;" href="{% url 'Invoices:InvoiceReturn' %}">#}
+{#                                            <i class="fas fa-backward"></i>#}
+{#                                    </a>#}
+-->
+                                </h4>
+
+                                <span class="badge badge-dark font-size-15"> الاجمالي : {{count}} فاتورة </span>
+
+
+                           
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
+
+                                    {% if message == "active" %}
+                                    <li class="breadcrumb-item active">
+                                    {% if type == 1 %}
+                                    فواتير المبيعات
+                                    {% elif type == 2 %}
+                                    فواتير مرتجع المبيعات
+                                    {% elif type == 3 %}
+                                    المبيعات القطاعي
+                                    {% endif %}
+                                    </li>
+                                    {% else %}
+                                    <li class="breadcrumb-item active">
+                                        {% if type == 1 %}
+                                        فواتير المبيعات
+                                        {% elif type == 2 %}
+                                        فواتير مرتجع المبيعات
+                                        {% elif type == 3 %}
+                                        المبيعات القطاعي
+                                        {% endif %}
+                                        المحذوفة</li>
+                                    {% endif %}
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% if object_list %}
+                <div class="row">
+                    <div class="col-lg-3">
+                        {% if message == "active" %}
+                        {% if type == 1 or type == 2 %}
+                        <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:SellerInvoiceSearch' type %}">
+                            <div class="position-relative" >
+
+                                <input type="text" style="background-color: white" value="{{seller_invoice_search}}" list="sel" autocomplete="off" class="form-control" name="seller_invoice" placeholder="بحث ... بإسم التاجر">
+                                <span >
+                                    <button class="bx bx-search-alt btn btn-warning" type="submit">
+                                    </button>
+                                </span>
+                                <datalist id="sel" >
+                                    {% for pro in allsellers %}
+                                        <option value="{{ pro.name }}">
+                                            {{ pro.name }}
+                                            </option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                        </form>
+                        {% endif %}
+                        {% if type == 3 %}
+                        <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:ClientInvoiceSearch' type %}">
+                            <div class="position-relative" >
+
+                                <input type="text" style="background-color: white" value="{{client_invoice_search}}" autocomplete="off" class="form-control" name="client_invoice" placeholder="بحث ... بإسم العميل">
+                                <span >
+                                    <button class="bx bx-search-alt btn btn-warning" type="submit">
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-6">
+                        {% if request.user.is_superuser %}
+                        {% if type == 3 and object_list.count > 0 and message == "active" %}
+                            <div class="position-relative text-center" >
+                                <a class="bx bx-trash btn btn-danger" data-toggle="modal" data-target="#DeleteAllInv3">
+                                    حذف جميع فواتير القطاعي بشكل نهائي
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-3">
+                        {% if message == "active" %}
+                        <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:SpInvoiceSearch' type %}">
+                            <div class="position-relative" >
+
+                                <input type="number" style="background-color: white" value="{{invoice_serach}}" autocomplete="off" class="form-control" name="invoice" placeholder="بحث ... برقم الفاتورة">
+                                <span >
+                                    <button class="bx bx-search-alt btn btn-warning" type="submit">
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                        {% endif %}
+                    </div>
+
+                </div>
+                <div class="row">
+                {% for x in object_list  %}
+                {% invoice_products x.id as has_products %}
+                {% invoice_products_val x.id as products_val %}
+                {% invoice_saved x.id as inv_saved %}
+                {% invoice_closed x.id as inv_closed %}
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                    <div class="card mini-stats-wid">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6 col-lg-6 col-md-6">
+                                    <div class="text-lg-center">
+                                        <div class="avatar-sm mr-3 mx-lg-auto mb-4 float-left float-lg-none" style="margin-top: 12%;">
+                                            <span class="avatar-title rounded-circle bg-soft-primary text-primary font-size-16">
+                                                <img src="/static/assets/images/vector/printt.png" alt="" width="130px">
+                                            </span>
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div>
+                                        <a href="{% url 'Invoices:InvoiceDetail' x.id %}" class="d-block text-primary mb-2">
+                                            فاتورة
+                                            #{{ x.id }}
+                                            <br>
+                                            #
+                                            {% if x.seller %}
+                                            {{ x.seller.name }}
+                                            {% else %}
+                                            {{ x.customer }}
+                                            {% endif %}
+                                        </a>
+                                        
+                                        <ul class="list-inline mb-0">
+                                            <li class="list-inline-item mr-3">
+                                                <h5 class="font-size-14" data-toggle="tooltip" data-placement="top" title="" data-original-title="Amount"><i class="bx bx-money mr-1 text-primary"></i> $
+                                                    {% if products_val%}
+                                                    {{ products_val|floatformat:2 }}
+                                                    {% else %}
+                                                    0.00
+                                                    {% endif %}
+                                                </h5>
+                                            </li>
+                                            <br>
+                                            <li class="list-inline-item">
+                                                <h5 class="font-size-14" data-toggle="tooltip" data-placement="top" title="" data-original-title="Due Date"><i class="bx bx-calendar mr-1 text-primary"></i>{{x.date|date:'Y-m-d'}}</h5>
+                                            </li>
+                                        </ul>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card-footer bg-transparent ">
+                                            <div class="contact-links d-flex justify-content-center font-size-20">
+                                                {% if x.saved %}
+                                                <div class="mr-3">
+{#                                                    <a href="{% url 'Invoices:PrintInvoice' x.id %}" target="_blank" data-placement="top" title="" data-original-title="Message">#}
+                                                    <a href="javascript:void(0)" data-toggle="modal" data-target="#pdfModal" data-url="{% url 'Invoices:PrintInvoice' x.id %}">
+                                                        <span class="badge badge-success"><i class='bx bx-printer'></i>طباعة</span>
+                                                    </a>
+                                                </div>
+                                                {% endif %}
+
+                                                <div class="mr-3">
+                                                    <a href="{% url 'Invoices:InvoiceDetail' x.id %}"  data-placement="top" title="" data-original-title="Message">
+                                                        <span class="badge badge-dark"><i class='bx bx-area'></i>تفاصيل</span>
+                                                   </a>
+                                                </div>
+                                                    {% if request.user.is_superuser %}
+                                                  {% if message == "active" %}
+
+                                                  <div class="mr-3">
+                                                           <a
+                                                               {% if x.saved %}
+                                                                href="#"
+                                                                {% else %}
+                                                               href="{% url 'Invoices:InvoiceUpdate' x.id %}" data-toggle="modal" data-target="#sub_modal"
+                                                                {% endif %}
+                                                           >
+                                                                {% if x.saved %}
+                                                               <span class="badge badge-info" style="text-decoration: line-through;" data-placement="top" title="لايمكن التعديل .. تم حفظ الفاتورة"><i class='bx bx-edit' ></i>تعديل</span>
+                                                                {% else %}
+                                                               <span class="badge badge-info"><i class='bx bx-edit' ></i>تعديل</span>
+                                                                {% endif %}
+                                                          </a>
+                                                       </div>
+
+                                                  <div class="">
+                                                          <a
+                                                          {% if has_products and type != 3 %}
+                                                          href="#"
+                                                          {% else %}
+                                                          href="{% url 'Invoices:InvoiceDelete' x.id %}" data-toggle="modal" data-target="#action_modal"
+                                                          {% endif %}
+                                                          >
+
+                                                          {% if has_products and type != 3 %}
+                                                            <span class="badge badge-danger" style="text-decoration: line-through;" data-placement="top" title="لايمكن الحذف .. الفانورة تحتوي علي منتجات"><i class='bx bxs-trash'  ></i>حذف</span>
+                                                          {% else %}
+                                                            <span class="badge badge-danger"><i class='bx bxs-trash'  ></i>حذف</span>
+                                                          {% endif %}
+
+                                                          </a>
+                                                      </div>
+                                                  {% else %}
+                                                       <div class="mr-3">
+                                                              <a href="{% url 'Invoices:InvoiceRestore' x.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                                                  <span class="badge badge-info"><i class='bx bx-redo '></i> استرجاع
+                                                                  </span>
+                                                              </a>
+                                                      </div>
+
+                                                      <div class="">
+                                                          <a href="{% url 'Invoices:InvoiceSuperDelete' x.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Profile">
+                                                              <span class="badge badge-danger"><i class='bx bxs-trash '   ></i> حذف نهائي </span>
+
+                                                          </a>
+                                                      </div>
+                                                  {% endif %}
+                                                  {% endif %}
+                                              </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-3 border-top text-center">
+                            <ul class="list-inline mb-0">
+                                {% if inv_closed %}
+                                <div class="mini-stat-icon bg-success align-self-center">
+                                    <span class="badge badge-success font-size-16">مغلقة "تم الحفظ بشكل نهائي"</span>
+                                </div>
+                                {% elif inv_saved %}
+                                <div class="mini-stat-icon bg-info align-self-center">
+                                    <span class="badge badge-info font-size-16">حفظ مؤقت "يمكنك الارجاع"</span>
+                                </div>
+                                {% else %}
+                                <div class="mini-stat-icon bg-warning align-self-center">
+                                    <span class="badge badge-warning font-size-16">مفتوحة "غير محفوظة"</span>
+                                </div>
+                                {% endif %}
+                                <h5 class="badge badge-warning">
+                                    {% if x.comment %}
+                                    {{ x.comment }}
+                                    {% else %}
+                                    -----
+                                    {% endif %}
+                                </h5>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                </div>
+
+                {% if is_paginated %}
+                {% include "components/paginator.html" %}
+                {% endif %}
+
+                {% else %}
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="text-center mb-5 mt-5">
+                            <h1 class="display-2 font-weight-medium">4<i class="bx bx-buoy bx-spin text-primary display-3"></i>4</h1>
+                            <h4 class="text-uppercase">
+                                {% if message == "active" %}
+                                لا توجد بيانات
+                                {% else %}
+                                لا توجد بيانات محذوفة
+                                {% endif %}
+                            </h4>
+                            <div class="mt-3 text-center">
+                                
+                                {% if message == "active" %}
+                                    <a class="btn btn-primary waves-effect waves-light" href="{% url 'Invoices:InvoiceCreate' type %}" data-toggle="modal" data-target="#sub_modal">اضافة بيانات</a>
+                                {% endif %}
+                                    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-12 d-flex justify-content-center ">
+                
+                        <img src="/static/assets/images/error-img.png" width="400px" height="188px" alt="" class="img-fluid" >
+                
+                    </div>
+                </div>
+
+                {% endif %}
+
+                <!-- Modal -->
+                <div class="modal fade" id="DeleteAllInv3" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">حذف فواتير القطاعي نهائيا</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body text-center">
+                        هل أنت متأكد من حذف جميع فواتير القطاعي نهائيا؟
+                          <br><br>
+                          سيتم حذف من في سلة المهملات أيضا
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">لا</button>
+                        <a type="button" class="btn btn-danger" href="{% url 'Invoices:AllInvoiceDelete' %}">نعم</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+          </div>
+      </div>
+  </div>
+{% endblock main %}
+

@@ -1,0 +1,319 @@
+{% load mathfilters %}
+{% load crispy_forms_tags %}
+
+<div class="card">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- مسحوبات المصنع -->
+          <div class="tab-pane" id="processing" role="tabpanel">
+            <div class="row">
+              <div class="col-lg-12">
+                {% if obj.deleted == 0 %}
+                <div class="table-responsive" id="order_list">
+                  <table class="table table-nowrap table-borderless">
+                    <thead>
+                      <form>
+                        <tr>
+                          <th
+                            class="col-lg-3 col-xl-3 col-md-3"
+                          >
+                            {{payment_form.date|as_crispy_field}}
+                          </th>
+                          <th
+                            class="col-lg-3 col-xl-3 col-md-3"
+                          >
+                            {{payment_form.price|as_crispy_field}}
+                          </th>
+                            <th
+                            class="col-lg-5 col-xl-5 col-md-5"
+                          >
+                            {{payment_form.description|as_crispy_field}}
+                          </th>
+                          
+                          <th class="col-lg-1 col-xl-1 col-md-1">
+                            <a
+                              style="width: 100%"
+                              onclick="PaymentCreate()"
+                              class="btn btn-success"
+                            >
+                            <i class="fas fa-plus-circle"></i>
+                              اضافة
+                            </a>
+                          </th>
+                        </tr>
+                      </form>
+                    </thead>
+                  </table>
+                </div>
+                {% endif %}
+                <style>
+                  /*.table-responsive {
+                    max-height: 500px;
+                  }
+                  .table-responsive::-webkit-scrollbar {
+                    display: none;
+                  }*/
+                </style>
+
+                <div class="table-responsive">
+                    <table class="table table-centered table-dark table-nowrap text-center">
+                        <thead>
+                            <tr>
+                                <td style="width: 30%">
+                                    <input type="date" class="form-control" id="pay_specific_date" style="width: 100%" onchange="PayDateFilter(this)">
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <div id="paymnet">
+                  <div class="table-responsive scroll">
+                    <table
+                      class="table pag table-centered table-dark table-nowrap text-center"
+                    >
+                      <thead>
+                        <tr>
+                          <th>م</th>
+                          <th>التاريخ</th>
+                          <th>المبلغ</th>
+                          <th>وصف</th>
+                          <th>المسؤول</th>
+                            {% if request.user.is_superuser %}
+                          <th><i class="fas fa-cogs"></i></th>
+                            {% endif %}
+                        </tr>
+                      </thead>
+                      <tbody>
+                          {% if payment %}
+                            {% for x in payment %}
+                            <tr style="text-align: center">
+                                <td>{{forloop.counter}}</td>
+                                <td>
+                                <span class="badge badge-danger"
+                                    ><i class="fas fa-calendar-alt"></i>
+                                    {{x.date|date:'Y-m-d'}}</span
+                                >
+                                </td>
+                                <td>
+                                <i class="fas fa-dollar-sign"></i> {{x.price|floatformat:2}}
+                                </td>
+                                <td>
+                                {{x.description}}
+                                </td>
+                                <td><i class="fas fa-user-tie"></i> {{x.admin}}</td>
+                                {% if request.user.is_superuser %}
+                                <td>
+{#                                {% if x.id == last_payment_id %}#}
+                                <!--
+{#                                <a#}
+{#                                    href="{% url 'Workers:WorkerPaymentUpdate' x.id %}"#}
+{#                                    class="mr-3 text-warning"#}
+{#                                    data-toggle="modal"#}
+{#                                    data-target="#action_modal"#}
+{#                                    data-original-title="Edit"#}
+{#                                    ><i class="mdi mdi-pencil font-size-18"></i#}
+{#                                ></a>#} -->
+                                <a
+                                    onclick="
+                                            var result = confirm('هل أنت متأكد من الحذف؟');
+                                            if (result) {
+                                                WorkerPaymentDelete('{{x.id}}')
+                                            }
+                                            "
+                                    style="cursor: pointer"
+                                    class="text-danger"
+                                    ><i class="mdi mdi-close font-size-18"></i
+                                ></a>
+{#                                {% endif %}#}
+                                </td>
+                                {% endif %}
+                                
+                            </tr>
+                            {% endfor %}
+                          {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+
+                    <div class="row text-center pagination">
+                        <div class="col-md-12">
+                            <button class="btn btn-dark prev">السابق</button>
+                            <span class="page"></span>
+                            <button class="btn btn-dark next">التالي</button>
+                        </div>
+                    </div>
+                    <br>
+
+                  <div style="margin-top: 10px">
+                    <div class="row">
+                     
+                      <div class="col-lg-4">
+                          <div class="card mini-stats-wid mb-0">
+                            <div class="card-body bg-danger">
+                              <div class="d-flex flex-wrap">
+                                <div class="">
+                                  <h5 class="mb-2 text-light">
+                                    اجمالي الحساب المستحق
+                                  </h5>
+                                  <h3 class="mb-0 text-dark">
+                                      {% if payment_all_cost.sum_price %}
+                                        {{payment_all_cost.sum_price|floatformat:2}} جنية
+                                        {% else %}
+                                        0.00
+                                        {% endif %}
+                                  </h3>
+                                </div>
+
+                                <div class="avatar-sm ml-auto">
+                                  <div
+                                    class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                                  >
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-4">
+                          <div class="card mini-stats-wid mb-0">
+                            <div class="card-body bg-danger">
+                              <div class="d-flex flex-wrap">
+                                <div class="">
+                                  <h5 class="mb-2 text-light">
+                                    اجمالي المسحوبات
+                                  </h5>
+                                  <h3 class="mb-0 text-dark">
+                                      {% if payment_sum %}
+                                      {{payment_sum|floatformat:2}}
+                                        {% else %}
+                                        0.00
+                                        {% endif %}
+                                        جنيه
+                                  </h3>
+                                </div>
+
+                                <div class="avatar-sm ml-auto">
+                                  <div
+                                    class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                                  >
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-lg-4">
+                          <div class="card mini-stats-wid mb-0">
+                            <div class="card-body bg-danger">
+                              <div class="d-flex flex-wrap">
+                                <div class="">
+                                  <h5 class="mb-2 text-light">
+                                      الباقي للعامل
+                                  </h5>
+                                  <h3 class="mb-0 text-dark">
+                                      {% if payment_all_cost.sum_price or payment_sum %}
+                                      {{payment_all_cost.sum_price|sub:payment_sum|floatformat:2}}
+                                        {% else %}
+                                        0.00
+                                        {% endif %}
+                                        جنيه
+                                  </h3>
+                                </div>
+
+                                <div class="avatar-sm ml-auto">
+                                  <div
+                                    class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                                  >
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                  
+                    </div>
+                  </div>
+                </div>
+                <script src="/static/assets/libs/jquery/jquery.min.js"></script>
+                <script>
+                  function PaymentCreate() {
+                    $.ajax({
+                      type: "POST",
+                      url: "{% url 'Workers:WorkerPaymentCreate'  %}",
+                      data: {
+                        id: "{{object.id}}",
+                        date: $("#date").val(),
+                        price: $("#price").val(),
+                        description: $("#description").val(),
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                        dataType: "json",
+                      },
+                      success: function (response) {
+                        /* response message */
+                        if (response.msg == 1) {
+                          $("#price").val("");
+                          $("#description").val("");
+                          $("#paymnet").html("&nbsp;").load("{% url 'Workers:WorkerPayment_div' object.id %}");
+                          alert("تم الاضافة بنجاح");
+                          $("#attendance").html("&nbsp;").load("{% url 'Workers:WorkerAttendance_div' object.id %}");
+                          $("#production_worker").html("&nbsp;").load("{% url 'Workers:WorkerProductions_div' object.id %}");
+                        } else {
+                          alert("حاول مرة اخري / خطأ في البيانات");
+                        }
+                      },
+
+                      failure: function () {},
+                    });
+                  }
+
+                  function WorkerPaymentDelete(payment_id) {
+                    $.ajax({
+                      type: "POST",
+                      url: "{% url 'Workers:WorkerPaymentDelete' %}",
+                      data: {
+                        payment_id: payment_id,
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                        dataType: "json",
+                      },
+                      success: function (data) {
+                        /* response message */
+                        $("#paymnet")
+                          .html("&nbsp;")
+                          .load(
+                            "{% url 'Workers:WorkerPayment_div' object.id %}"
+                          );
+                        alert("تم الحذف بنجاح");
+                        $("#attendance").html("&nbsp;").load("{% url 'Workers:WorkerAttendance_div' object.id %}");
+                        $("#production_worker").html("&nbsp;").load("{% url 'Workers:WorkerProductions_div' object.id %}");
+                      },
+
+                      failure: function () {},
+                    });
+                  }
+                </script>
+                <script>
+                    function PayDateFilter(val) {
+                        if (val.value){
+                            val.style.backgroundColor = 'lightgreen';
+                        }
+                        else {
+                            val.style.backgroundColor = '';
+                        }
+                        date_val = val.value;
+                        $( '#paymnet' ).html( '&nbsp;' ).load( "{% url 'Workers:WorkerPayment_div' object.id %}?date_val=" + date_val );
+                    };
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

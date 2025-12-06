@@ -1,0 +1,216 @@
+<div class="table-responsive scroll">
+  <table
+    class="table prod_pag table-centered table-dark table-nowrap text-center"
+  >
+    <thead>
+      <tr>
+        <th>م</th>
+        <th>التاريخ</th>
+        <th>اليوم</th>
+        <th>الكمية بالقطعة</th>
+          <th>المنتج</th>
+          <th>فئة السعر</th>
+          <th>الإجمالي</th>
+        <th>المسؤول</th>
+          {% if request.user.is_superuser %}
+        <th><i class="fas fa-cogs"></i></th>
+          {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+        {% if production %}
+          {% for x in production %}
+          <tr style="text-align: center">
+              <td>{{forloop.counter}}</td>
+              <td>
+              <span class="badge badge-danger"
+                  >
+                  {{x.date|date:'Y-m-d'}}</span
+              >
+              </td>
+            <td>
+               {{x.day}}
+              </td>
+              <td>
+               {{x.quantity|floatformat:0}}
+              </td>
+                <td>
+               {% if x.product %}
+                 {{x.product}}
+                {% else %}
+                    -
+                {% endif %}
+              </td>
+                <td>
+               {{x.price|floatformat:2}}
+              </td>
+                <td>
+               {{x.total|floatformat:2}}
+              </td>
+              <td>{{x.admin}}</td>
+              {% if request.user.is_superuser %}
+              <td>
+{#              {% if x.id == last_production_id %}#}
+              <!--
+{#              <a#}
+{#                  href="{% url 'Workers:WorkerProductionUpdate' x.id %}"#}
+{#                  class="mr-3 text-warning"#}
+{#                  data-toggle="modal"#}
+{#                  data-target="#action_modal"#}
+{#                  data-original-title="Edit"#}
+{#                  ><i class="mdi mdi-pencil font-size-18"></i#}
+{#              ></a>#} -->
+              <a
+                  onclick="
+                          var result = confirm('هل أنت متأكد من الحذف؟');
+                            if (result) {
+                                WorkerProductionDelete('{{x.id}}')
+                            }
+                          "
+                  style="cursor: pointer"
+                  class="text-danger"
+                  ><i class="mdi mdi-close font-size-18"></i
+              ></a>
+{#              {% endif %}#}
+              </td>
+              {% endif %}
+              
+          </tr>
+          {% endfor %}
+        {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<div class="row text-center prod_pagination">
+    <div class="col-md-12">
+        <button class="btn btn-dark prod_prev">السابق</button>
+        <span class="prod_page"></span>
+        <button class="btn btn-dark prod_next">التالي</button>
+    </div>
+</div>
+<br>
+
+<div style="margin-top: 10px">
+  <div class="row">
+   
+    <div class="col-lg-6 flex-center">
+      <div class="card mini-stats-wid mb-0">
+        <div class="card-body bg-danger">
+          <div class="d-flex flex-wrap">
+            <div class="">
+              <h5 class="mb-2 text-light">
+                اجمالي الإنتاج 
+              </h5>
+              <h3 class="mb-0 text-dark">
+                
+                {% if production_total %}
+                {{production_total|floatformat:0}} قطعة
+                {% else %}
+                0 قطعة
+                {% endif %}
+              
+              </h3>
+            </div>
+
+            <div class="avatar-sm ml-auto">
+              <div
+                class="avatar-title bg-light rounded-circle text-dark font-size-20"
+              >
+              <i class="fas fa-calculator"></i>               
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+
+    <div class="col-lg-6 flex-center">
+      <div class="card mini-stats-wid mb-0">
+        <div class="card-body bg-danger">
+          <div class="d-flex flex-wrap">
+            <div class="">
+              <h5 class="mb-2 text-light">
+                اجمالي الحساب المستحق
+              </h5>
+              <h3 class="mb-0 text-dark">
+                
+                {% if production_cost %}
+                  {{production_cost|floatformat:2}} جنية
+                {% else %} 
+                  0.00 جنية
+                {% endif %}
+
+              </h3>
+            </div>
+
+            <div class="avatar-sm ml-auto">
+              <div
+                class="avatar-title bg-light rounded-circle text-dark font-size-20"
+              >
+              <i class="fas fa-dollar-sign"></i>                
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+      var itemsPerPage = 10;
+      var currentPage = 1;
+
+      function showItems() {
+        var startIndex = (currentPage - 1) * itemsPerPage;
+        var endIndex = startIndex + itemsPerPage;
+
+        $('.prod_pag tbody tr').hide();
+        $('.prod_pag tbody tr').slice(startIndex, endIndex).show();
+        $('.prod_page').empty();
+
+        var totalItems = $('.prod_pag tbody tr').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        $('.prod_prev').prop('disabled', currentPage === 1);
+        $('.prod_next').prop('disabled', currentPage === totalPages);
+
+        for (var i = 1; i <= totalPages; i++) {
+          var pageButton = $('<button>').text(i);
+          pageButton.addClass('btn');
+          if (i === currentPage) {
+            pageButton.addClass('active bg-warning');
+          }
+          pageButton.click(function() {
+            currentPage = parseInt($(this).text());
+            showItems();
+          });
+          $('.prod_page').append(pageButton);
+        }
+      }
+
+      $('.prod_prev').click(function() {
+        if (currentPage > 1) {
+          currentPage--;
+          showItems();
+        }
+      });
+
+      $('.prod_next').click(function() {
+        var totalItems = $('.prod_pag tbody tr').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (currentPage < totalPages) {
+          currentPage++;
+          showItems();
+        }
+      });
+
+      showItems();
+    });
+  </script>

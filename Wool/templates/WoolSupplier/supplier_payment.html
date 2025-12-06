@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+{% load static %}
+{% load mathfilters %}
+{% block title %}
+<title>
+    دفعات المورد {{ supplier.name }}
+</title>
+{% endblock title %}
+
+{% block css %}
+<style>
+th { white-space: nowrap; }
+table.dataTable thead .sorting_asc {
+    background-image: url("/static/assets/images/vector/sort_asc.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: 10px 10px;
+}
+table.dataTable thead .sorting_desc {
+    background-image: url("/static/assets/images/vector/sort_desc.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: 10px 10px;
+}
+table.dataTable thead .sorting {
+    background-image: url("/static/assets/images/vector/sort_both.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: 10px 10px;
+}
+table.dataTable thead .sorting_asc_disabled {
+    background-image: url("/static/assets/images/vector/sort_both.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: 10px 10px;
+}
+table.dataTable thead .sorting_desc_disabled {
+    background-image: url("/static/assets/images/vector/sort_both.png");
+    background-position: left;
+    background-repeat: no-repeat;
+    background-size: 10px 10px;
+}
+</style>
+<style>
+@media print {
+  body {
+      font-size: larger;
+      font-weight: bold;
+  }
+  .datatable {
+      font-size: larger;
+      font-weight: bold;
+  }
+}
+</style>
+{% endblock css %}
+
+
+{% block main %}
+{% load  crispy_forms_tags %}
+    <div class="main-content">
+
+      <div class="page-content">
+          <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-12"> {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+                            <i class="mdi mdi-check-all mr-2"></i>
+                            {{ message|safe }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+
+
+                      {% endif %}
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+
+                            <h3 class="mb-0 ">
+                                دفعات المورد {{ supplier.name }}
+                            </h3>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
+                                    {% if supplier.deleted == 0 %}
+                                    <li class="breadcrumb-item"><a href="{% url 'Wool:WoolSupplierList' %}">قائمة موردين الخيط
+                                    </a></li>
+                                    {% else %}
+                                    <li class="breadcrumb-item"><a href="{% url 'Wool:WoolSupplierTrashList' %}">قائمة موردين الخيط المحذوفة
+                                    </a></li>
+                                    {% endif %}
+
+                                    <li class="breadcrumb-item active">
+                                        دفعات المورد {{ supplier.name }}
+                                    </li>
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+
+                         <div class="card">
+                            <div class="card-body">
+
+                                <div class="tab-pane" id="processing" role="tabpanel">
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                    {% if not supplier.deleted %}
+                                                    <div class="table-responsive bg-light">
+                                                        <table class="table table-nowrap mb-0">
+                                                            <thead>
+                                                                <form method="post" action="{{action_url}}">
+                                                                {% csrf_token %}
+                                                                <tr>
+                                                                    <th class="col-lg-3 col-xl-3 col-md-3">
+                                                                        {{form.date|as_crispy_field}}
+                                                                    </th>
+                                                                    <th class="col-lg-3 col-xl-3 col-md-3">{{form.value|as_crispy_field}}</th>
+                                                                    <th class="col-lg-4 col-xl-4 col-md-4">{{form.reason|as_crispy_field}}</th>
+                                                                    <th class="col-lg-2 col-xl-2 col-md-2">
+                                                                        <button style="width: 100%" type="submit" class="btn btn-success">اضافة</button>
+                                                                    </th>
+                                                                </tr>
+                                                                </form>
+                                                            </thead>
+
+                                                        </table>
+                                                    </div>
+                                                    {% endif %}
+
+                                                    <div class="card-body">
+                                                        <br>
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group sel" >
+                                                                    <label>فلترة بالتاريخ من: </label>
+                                                                    <input type="date" id="min" name="min" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group sel" >
+                                                                    <label>فلترة بالتاريخ الي: </label>
+                                                                    <input type="date" id="max" name="max" class="form-control">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                        <div class="table-responsive">
+                                                            <table class="table table-centered table-nowrap text-center display" id="Paytable" style="width: 100%">
+                                                                <thead class="thead-light">
+                                                                    <tr>
+                                                                        <th>التاريخ</th>
+                                                                        <th>المبلغ</th>
+                                                                        <th>الوصف/السبب</th>
+                                                                        {% if request.user.is_superuser %}
+                                                                        {% if not supplier.deleted %}
+                                                                        <th>حذف</th>
+                                                                        {% endif %}
+                                                                        {% endif %}
+                                                                        <th>المسؤول</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+
+                                                                    {% if payment %}
+                                                                    {% for x in payment  %}
+                                                                    <tr style="text-align: center;">
+
+                                                                        <td>
+                                                                            {{x.date|date:'Y-m-d'}}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{x.value|floatformat:2}}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{x.reason}}
+                                                                        </td>
+                                                                        {% if request.user.is_superuser %}
+                                                                        {% if not supplier.deleted %}
+                                                                        <td>
+{#                                                                            {% if forloop.last %}#}
+                                                                            <a href="#" class="text-danger" data-toggle="modal" data-target="#DelModal" title="" data-original-title="Delete"><i class="mdi mdi-close font-size-18"
+                                                                            onclick="document.getElementById('del_clck').href='{% url 'Wool:DelWoolSupplierPayment' x.id %}'"
+                                                                            ></i></a>
+{#                                                                            {% endif %}#}
+                                                                        </td>
+                                                                        {% endif %}
+                                                                        {% endif %}
+                                                                        <td>
+                                                                            {{ x.admin }}
+                                                                        </td>
+                                                                    </tr>
+
+                                                                    {% endfor %}
+
+                                                                    {% endif %}
+
+                                                                </tbody>
+                                                                <tfoot>
+                                                                    <tr>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        {% if request.user.is_superuser %}
+                                                                        {% if not supplier.deleted %}
+                                                                        <th></th>
+                                                                        {% endif %}
+                                                                        {% endif %}
+                                                                        <th></th>
+                                                                    </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="modal fade" id="DelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">حذف دفعة</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body text-center">
+                        هل أنت متأكد من حذف هذه الدفعة؟
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">لا</button>
+                        <a type="button" class="btn btn-danger text-white" id="del_clck">نعم</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+          </div>
+      </div>
+  </div>
+{% endblock main %}
+
+
+{% block js %}
+<script>
+$.fn.dataTableExt.afnFiltering.push(
+    function( oSettings, aData, iDataIndex ) {
+
+        // This part to get the date from min
+        var date0 = new Date($('#min').val());
+          var day0 = ("0"+date0.getDate()).slice(-2);
+          var month0 = ("0"+(date0.getMonth() + 1)).slice(-2);
+          var year0 = date0.getFullYear();
+        var iFini = [year0, month0, day0].join('-')
+
+        // This part to get the date from max
+        var date = new Date($('#max').val());
+          var day1 = ("0"+date.getDate()).slice(-2);
+          var month1 = ("0"+(date.getMonth() + 1)).slice(-2);
+          var year1 = date.getFullYear();
+        var iFfin = [year1, month1, day1].join('-');
+
+        //console.log(date, iFini, iFfin);
+        var iStartDateCol = 0;
+        var iEndDateCol = 0;
+
+        var datofini=aData[iStartDateCol].substring(0,5)+aData[iStartDateCol].substring(5,8)+aData[iStartDateCol].substring(8,10);
+        var datoffin=aData[iStartDateCol].substring(0,5)+aData[iStartDateCol].substring(5,8)+aData[iStartDateCol].substring(8,10);
+        console.log(datofini, iFini);
+
+        if ( !Date.parse(iFini)  && !Date.parse(iFfin) )
+        {
+            return true;
+        }
+        else if ( iFini <= datofini && !Date.parse(iFfin))
+        {
+            return true;
+        }
+        else if ( iFfin >= datoffin && !Date.parse(iFini))
+        {
+            return true;
+        }
+        else if (iFini <= datofini && iFfin >= datoffin)
+        {
+            return true;
+        }
+        return false;
+    }
+);
+
+$(document).ready(function () {
+    var table = $('#Paytable').DataTable({
+            footerCallback: function (row, data, start, end, display) {
+                var api = this.api();
+                var intVal = function (i) {
+                    return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                };
+
+                total = api
+                    .column(1)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                pageTotal = api
+                    .column(1, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                $(api.column(1).footer()).html('' + pageTotal.toFixed(2) + ' ( من ' + total.toFixed(2) + ' )');
+            },
+
+            "columnDefs": [ {
+            "targets": 2,
+            "orderable": false
+            } ],
+            order: [[0, 'desc']],
+            responsive: true,
+            dom: 'B<"clear">lfrtip',
+            buttons: [
+                {
+                    extend: 'print',
+                    text: 'طباعة الجدول',
+                    exportOptions: {
+                        columns: [ 0, 2, 1 ],
+                        modifier: {
+                            page: 'current'
+                        }
+                     },
+                    charset: "utf-8",
+                    bom: "true",
+                    footer: true,
+                    customize: function (win) {
+                        $(win.document.body)
+                            .append(
+                                '<h1 style="position:absolute; bottom:0; left:0">نظام زيرو وان لإدارة مصانع التريكو</h1>'
+                            );
+                    },
+                    messageBottom: function () {
+                        {% if system_info.logo %}
+                            var img = '<img src="{{system_info.logo_base64}}" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
+                        {% else %}
+                            var img = '<img src="/static/assets/images/new.png" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
+                        {% endif %}
+                        return img
+                    },
+                    messageTop: function () {
+                        if ( $("#min").val() == '' ) {
+                            var min = 'من تاريخ: ';
+                        }
+                        else {
+                            var min = 'من تاريخ: ' + $("#min").val();
+                        }
+
+                        if ( $("#max").val() == '' ) {
+                            var max = 'الي تاريخ: ';
+                        }
+                        else {
+                            var max = 'الي تاريخ: ' + $("#max").val();
+                        }
+
+                        return min + '<br>' + max + '<br>' + '<br>'
+                    },
+                    title:
+                        '<br>' +
+                        '<h1 style="text-align: center; font-weight: bold"> ' +
+                            ' {{ system_info.name }} ' +
+                            '{{ system_info.type }}' +
+                        ' </h1>' +
+                        '<br>' +
+                        '<h1> ' +
+                            'تاريخ التقرير: ' +
+                            '{{ date|date:'Y-m-d' }}' +
+                        ' </h1>' +
+                        '<h1> ' +
+                            'دفعات ' +
+                            'مورد خيط' +
+                        ' </h1>' +
+                        '<h1> ' +
+                            'المورد: ' +
+                            '{{ supplier.name }}' +
+                        ' </h1>' +
+                        '<br>'
+                },
+            ],
+            "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "الكل"]]
+            ,language: { Show: 'عرض',search: 'بحث', searchPlaceholder: "اكتب هنا للبحث..",
+                "paginate": {
+                    "previous": "السابق",
+                    "next": "التالي",
+                    "first": "أول صفحة",
+                    "last": "آخر صفحة",
+                },
+               "lengthMenu": "عرض _MENU_ من عدد السجلات",
+                "zeroRecords": "لايتوفر بيانات - قم بأستدعاء بيانات بتاريخ آخر او منتج اخر او ابحث على معلومات اخرى",
+
+                "decimal":        "",
+                "emptyTable":     "لايوجد بيانات متاحة في الجدول",
+                "info":           "عرض _START_ الي _END_ من أصل _TOTAL_",
+                "infoEmpty":      "عرض 0 الي 0 من اصل 0",
+                "infoFiltered":   "(من أصل _MAX_ سجل)",
+                "infoPostFix":    "",
+                "thousands":      ",",
+                "loadingRecords": "تحميل...",
+                "processing":     "",
+                "zeroRecords":    "لايوجد سجل مشابه لما تبحث عنه",
+                "aria": {
+                    "sortAscending":  ": ترتيب تصاعدي",
+                    "sortDescending": ": ترتيب تنازلي"
+                }
+
+             },
+
+        });
+
+    $('#min').change( function() { table.draw(); } );
+    $('#max').change( function() { table.draw(); } );
+});
+</script>
+
+{% endblock js %}

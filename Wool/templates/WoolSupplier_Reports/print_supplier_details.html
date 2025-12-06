@@ -1,0 +1,80 @@
+{% load mathfilters %}
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>{{date|date:'Y-m-d'}} {{supplier.name}}</title>
+    <meta name="description" content="Invoice demo sample">
+      <style>
+          body {
+              font-weight: bold;
+          }
+          table tr th {
+              font-size: larger;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+
+  <body>
+    <h1 style="margin-top: -50px">
+      {% if system_info.logo %}
+       <img src="{{system_info.logo_base64}}" height="100px" width="100px">
+       {% else %}
+{#       <img src="/static/assets/images/new.png" height="100px" width="100px">#}
+          <img src="file://{{ default_icon }}" height="100px" width="100px">
+      {% endif %}
+    </h1>
+
+    <dl id="informations" style="margin-top: -50px">
+        <h2 class="text-center">{{system_info.name}}</h2>
+        <h5 style="margin-top: -15px"><span> {{date|date:'Y-m-d'}} </span>تاريخ التقرير: </h5>
+        <h5 style="margin-top: -15px"><span> {{supplier.name}} </span>كشف حساب
+            مورد الخيط:
+            </h5>
+    </dl><hr>
+
+    <table>
+        <tr>
+            <th>
+            {{ weight|floatformat:3 }}
+            كيلو
+            </th>
+            <th>اجمالي الوزن</th>
+        </tr>
+        <tr>
+            <th>
+            {{ account|floatformat:2 }}
+            جنيه
+            </th>
+            <th>اجمالي الحساب</th>
+        </tr>
+        <tr>
+            <th>
+                {{ total|floatformat:2 }}
+                جنيه
+            </th>
+            <th>اجمالي المسحوبات</th>
+        </tr>
+        <tr>
+            <th>
+            {% if account|sub:total > 0 %}
+                {{ account|sub:total|floatformat:2 }}
+            {% elif account|sub:total < 0  %}
+                {{ account|sub:total|mul:-1|floatformat:2 }}
+            {% else %}
+                0.00
+            {% endif %}
+            جنيه
+            </th>
+            <th>الباقي
+            {% if account|sub:total > 0 %}
+                    للمورد
+            {% elif account|sub:total < 0  %}
+                    علي المورد
+            {% endif %}
+            </th>
+        </tr>
+    </table>
+  </body>
+</html>

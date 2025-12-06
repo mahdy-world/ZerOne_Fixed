@@ -1,0 +1,1780 @@
+<!doctype html>
+{% load static %}
+
+<html lang="en">
+
+
+    <head>
+        {% block title %}
+            
+        {% endblock title %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+        <!-- Cairo Font -->
+        <link href='https://fonts.googleapis.com/css?family=Cairo' rel='stylesheet'>
+
+        <!-- select2 -->
+        <link href="/static/assets/select2/dist/css/select2.min.css" rel="stylesheet">
+
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="/static/assets/images/1logo.png">
+
+        <!-- RTL -->
+        <!-- Bootstrap CSS -->
+        <link href="/static/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet">
+        <!-- App Css-->
+        <link href="/static/assets/css/app-rtl.min.css" id="app-style" rel="stylesheet">
+
+        <!-- Icons Css -->
+        <link href="/static/assets/css/icons.min.css" rel="stylesheet">
+
+        <link href="/static/assets/vendor/Zero.css" rel="stylesheet">
+
+        <link href="/static/assets/datatable/datatables.min.css" rel="stylesheet">
+
+        <style>
+            .asteriskField {
+                color: red;
+            }
+        </style>
+        <style>
+            ::-webkit-scrollbar-track
+            {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+                background-color: #F5F5F5;
+                border-radius: 6px;
+            }
+
+            ::-webkit-scrollbar
+            {
+                width: 6px;
+                background-color: #F5F5F5;
+            }
+
+            ::-webkit-scrollbar-thumb
+            {
+                border-radius: 6px;
+                background-image: -webkit-gradient(linear,
+                                                   left bottom,
+                                                   left top,
+                                                   color-stop(0.44, rgb(122,153,217)),
+                                                   color-stop(0.72, rgb(73,125,189)),
+                                                   color-stop(0.86, rgb(28,58,148)));
+            }
+        </style>
+
+        <style>
+            body {
+                zoom: 88%;
+            }
+
+            .modal-backdrop {
+                zoom: 100% !important;   /* رجعه لحجمه الطبيعي */
+                position: fixed !important;
+                inset: 0 !important;  /* يغطي كامل الشاشة */
+                width: 100% !important;
+                height: 100% !important;
+            }
+        </style>
+
+        <style>
+            #pageOverlay {
+                display: none;
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                background: rgba(255, 255, 255, 0.8);
+                z-index: 9999;
+                text-align: center;
+                padding-top: 20%;
+                font-size: 1.5em;
+                color: black;
+                font-weight: bolder;
+            }
+        </style>
+
+        <style>
+            #pdfModal .modal-dialog {
+              position: fixed;
+              top: 0;
+              right: 0;
+              left: 0;
+              bottom: 0;
+              margin: 0;
+              width: 100%;
+              height: 100%;
+              max-width: 100%;
+            }
+
+            #pdfModal .modal-content {
+              height: 100%;
+              border-radius: 0;
+              border: none;
+            }
+
+            #pdfModal .modal-body {
+              height: calc(100vh - 56px); /* لضبط الارتفاع مع الـ header */
+              overflow: hidden;
+            }
+
+            #pdfModal iframe {
+              width: 100%;
+              height: 100%;
+            }
+        </style>
+        {% block css %}
+          
+        {% endblock css %}
+
+
+    </head>
+
+
+
+    <body data-sidebar="" style="background-color:#eaedef" class="sidebar-enable">
+
+        <!-- Spinner -->
+        <!-- <div id="preloader" >
+            <div id="status" >
+                <div class="spinner-chase">
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                    <div class="chase-dot"></div>
+                </div>
+            </div>
+        </div> -->
+
+        <!-- Begin page -->
+        <div id="layout-wrapper">
+            
+            {% include "components/header.html" %}
+
+            {% include "components/leftSidebar.html" %}
+
+            {% block main %}
+
+            {% endblock main %}
+
+            <!-- users -->
+            {% if request.user.is_superuser %}
+            <div class="modal fade"  data-backdrop="static" id="user_invoice_modal">
+            <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                <div class="modal-content" style="background: #fefefa;">
+                    <div class="row">
+                        <div class="col-lg-12" >
+                            <div class="card" style="background: #fefefa;">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        <b class="font-weight-bold text-center">المستخدمين</b>
+                                        <span class="card-tools" style="float: left">
+                                        <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                if (document.getElementById('expand_modal').value === '0'){
+                                                    document.getElementById('expand_modal').value = 1;
+                                                    document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                    document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                }
+                                                else {
+                                                    document.getElementById('expand_modal').value = 0;
+                                                    document.getElementById('action_modal2').className = 'modal-dialog';
+                                                    document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                }
+
+                                                ">
+                                            <input type="number" value="0" id="expand_modal" hidden />
+                                            <i class="fas fa-expand"></i>
+                                        </button>-->
+                                        <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </span>
+                                    </div>
+                                </div>
+
+
+                                <div class="card-body" style="background: #fefefa;">
+                                    <div class="row">
+                                        <div class="col-xl-6 col-lg-6 col-md-6">
+                                            <a href="{% url 'Auth:Users' %}"
+                                            data-target="#sub_modal" data-toggle="modal">
+                                                <div class="container_new">
+                                                    <div class="card">
+                                                      <div class="imgBx">
+                                                        <img class="image" src="/static/assets/images/vector/list.png">
+                                                      </div>
+                                                      <div class="contentBx">
+                                                        <h2 style="font-size: large">قائمة المستخدمين</h2>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                            </a>
+                                        </div>
+
+
+                                        <div class="col-xl-6 col-lg-6 col-md-6">
+                                             <a  href="{% url 'Auth:create_user' %}" data-target="#sub_modal" data-toggle="modal">
+                                                <div class="container_new">
+                                                    <div class="card">
+                                                      <div class="imgBx">
+                                                        <img class="image" src="/static/assets/images/vector/add.png">
+                                                      </div>
+                                                      <div class="contentBx">
+                                                        <h2 style="font-size: large">اضافة مستخدم جديد</h2>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                             </a>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            {% endif %}
+            <!-- end users -->
+
+            <!-- Factory -->
+            {% if modules.factory_active %}
+            <div class="modal fade"  data-backdrop="static" id="factory_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام المصانع</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Factories:FactoryList' %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة المصانع</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Factories:FactoryCreate' %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة مصنع جديد</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Factories:FactoryTrachList' %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if modules.invoice_active %}
+            <div class="modal fade"  data-backdrop="static" id="invoice1_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام فواتير المبيعات</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Invoices:InvoiceList' 1 %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة الفواتير</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Invoices:InvoiceCreate' 1 %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة فاتورة جديدة</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Invoices:InvoiceTrashList' 1 %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade"  data-backdrop="static" id="invoice2_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام فواتير مرتجع المبيعات</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Invoices:InvoiceList' 2 %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة الفواتير</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Invoices:InvoiceCreate' 2 %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة فاتورة جديدة</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Invoices:InvoiceTrashList' 2 %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade"  data-backdrop="static" id="invoice3_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام المبيعات القطاعي</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Invoices:InvoiceList' 3 %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة الفواتير</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Invoices:InvoiceCreate' 3 %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة فاتورة جديدة</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Invoices:InvoiceTrashList' 3 %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Product -->
+            {% if modules.product_active %}
+            <div class="modal fade"  data-backdrop="static" id="product_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام المنتجات</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Products:ProductList' %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة المنتجات</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Products:ProductCreate' %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة منتج جديد</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Products:ProductTrachList' %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Workers -->
+            {% if modules.worker_active %}
+            <div class="modal fade"  data-backdrop="static" id="worker_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام العمال</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Workers:WorkerList' %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة العمال</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Workers:WorkerCreate' %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة عامل جديد</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Workers:WorkerTrachList' %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- sellers -->
+            {% if modules.seller_active %}
+            <div class="modal fade"  data-backdrop="static" id="seller_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام التجار</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Products:SellerList' %}"> 
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة التجار</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>  
+                                            </div>
+                            
+                            
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Products:SellerCreate' %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة تاجر جديد</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a> 
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Products:SellerTrashList' %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a> 
+                                            </div>
+                                        
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if modules.supplier_active %}
+            <div class="modal fade"  data-backdrop="static" id="supplier1_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام الموردين</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Factories:SupplierList' 1 %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة الموردين</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Factories:SupplierCreate' 1 %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة مورد جديد</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Factories:SupplierTrashList' 1 %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade"  data-backdrop="static" id="supplier2_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام المستوردين</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Factories:SupplierList' 2 %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة المستوردين</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Factories:SupplierCreate' 2 %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة مستورد جديد</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Factories:SupplierTrashList' 2 %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            
+            {% if modules.treasury_active %}
+            <div class="modal fade"  data-backdrop="static" id="treasury_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام الخزائن</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Treasury:TreasuryList' %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة الخزائن</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Treasury:TreasuryCreate'  %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة خزينة جديدة</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Treasury:TreasuryTrachList' %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if modules.wool_active %}
+            <div class="modal fade"  data-backdrop="static" id="wool_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام الخيط</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a href="{% url 'Wool:WoolSupplierList' %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">قائمة موردين الخيط</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Wool:WoolSupplierCreate'  %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">اضافة مورد جديد</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                                <a  href="{% url 'Wool:WoolSupplierTrashList' %}" >
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/delete.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- sub modal -->
+            <div class="modal fade" data-backdrop="static" id="sub_modal">
+                <div class="modal-dialog modal-lg" id="sub_modal2">
+                    <div class="modal-content" id="sub_body">
+                            <span class="float-left">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </span>
+                    </div>
+                </div>
+            </div>
+            <!-- end sub modal -->
+
+            <!-- user modal -->
+            <div class="modal fade" data-backdrop="static" id="user_modal">
+                <div class="modal-dialog modal-lg" id="user_modal2">
+                    <div class="modal-content" id="user_body">
+                            <span class="float-left">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </span>
+                    </div>
+                </div>
+            </div>
+            <!-- end user modal -->
+            
+            <!-- search -->
+            <div class="modal fade" data-backdrop="static" id="search_modal">
+                <div class="modal-dialog modal-xl" >
+                    <div class="modal-content" >
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <div class="card-title">
+                                                <b class="font-weight-bold text-center">البحث داخل النظام ....</b>
+                                                <span class="card-tools" style="float: left">
+                                                <!--<button type="button" class="btn btn-tool" data-card-widget="maximize"
+                                                onclick="
+                                                if (document.getElementById('expand_modal').value === '0'){
+                                                    document.getElementById('expand_modal').value = 1;
+                                                    document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                    document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                }
+                                                else {
+                                                    document.getElementById('expand_modal').value = 0;
+                                                    document.getElementById('action_modal2').className = 'modal-dialog';
+                                                    document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                }
+
+                                                "
+                                                >
+                                                    <input type="number" value="0" id="expand_modal" hidden>
+                                                    <i class="fas fa-expand"></i>
+                                                </button>-->
+                                                <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+
+                                                {% if modules.factory_active %}
+                                                <div class="col-lg-6">
+                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن مصنع ...</span>
+                                                    <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:FactorySearch' %}">
+                                                        <div class="position-relative" >
+                                                            
+                                                            <input type="text" value="{{search}}" list="mach" autocomplete="off" class="form-control" name="factory" placeholder="بحث ... بإسم المصنع">
+                                                            <span >
+                                                                <button class="bx bx-search-alt btn btn-light" type="submit">
+                                                                </button>
+                                                            </span>
+                                                            <datalist id="mach" >
+                                                                {% for fact in factorys %}
+                                                                    <option value="{{ fact.name }}">
+                                                                        {{ fact.name }}
+                                                                        </option>
+                                                                {% endfor %}
+                                                    </datalist>
+                                                        </div>
+                                                    </form>
+                            
+                                                </div>
+                                                {% endif %}
+
+                                                {% if modules.product_active %}
+                                                <div class="col-lg-6">
+                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن منتج ...</span>
+                                                    <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:ProductSearch' %}">
+                                                        <div class="position-relative" >
+                                                            
+                                                            <input type="text" value="{{product_serach}}" list="produ" autocomplete="off" class="form-control" name="product" placeholder="بحث ... بإسم المنتج">
+                                                            <span >
+                                                                <button class="bx bx-search-alt btn btn-light" type="submit">
+                                                                </button>
+                                                            </span>
+                                                            <datalist id="produ" >
+                                                                {% for pro in products %}
+                                                                    <option value="{{ pro.name }}">
+                                                                        {{ pro.name }}
+                                                                        </option>
+                                                                {% endfor %}
+                                                    </datalist>
+                                                        </div>
+                                                    </form>
+                            
+                                                </div>
+                                                {% endif %}
+
+                                                {% if modules.seller_active %}
+                                                <div class="col-lg-6">
+                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن تاجر ...</span>
+                                                    <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:SellerSearch' %}">
+                                                        <div class="position-relative" >
+                                                            
+                                                            <input type="text" value="{{seller_serach}}" list="sel" autocomplete="off" class="form-control" name="seller" placeholder="بحث ... بإسم التاجر">
+                                                            <span >
+                                                                <button class="bx bx-search-alt btn btn-light" type="submit">
+                                                                </button>
+                                                            </span>
+                                                            <datalist id="sel" >
+                                                                {% for pro in sellers %}
+                                                                    <option value="{{ pro.name }}">
+                                                                        {{ pro.name }}
+                                                                        </option>
+                                                                {% endfor %}
+                                                    </datalist>
+                                                        </div>
+                                                    </form>
+                            
+                                                </div>
+                                                {% endif %}
+
+                                                {% if modules.worker_active %}
+                                                <div class="col-lg-6">
+                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن عامل ...</span>
+                                                    <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:WorkerSearch' %}">
+                                                        <div class="position-relative" >
+                                                            
+                                                            <input type="text" value="{{worker_serach}}" list="work" autocomplete="off" class="form-control" name="worker" placeholder="بحث ... بإسم العامل">
+                                                            <span >
+                                                                <button class="bx bx-search-alt btn btn-light" type="submit">
+                                                                </button>
+                                                            </span>
+                                                            <datalist id="work" >
+                                                                {% for pro in workers %}
+                                                                    <option value="{{ pro.name }}">
+                                                                        {{ pro.name }}
+                                                                        </option>
+                                                                {% endfor %}
+                                                    </datalist>
+                                                        </div>
+                                                    </form>
+                            
+                                                </div>
+                                                {% endif %}
+
+                                                {% if modules.invoice_active %}
+                                                <div class="col-lg-6">
+                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن فاتورة ...</span>
+                                                    <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:InvoiceSearch' %}">
+                                                        <div class="position-relative" >
+
+                                                            <input type="number" value="{{invoice_serach}}" autocomplete="off" class="form-control" name="invoice" placeholder="بحث ... برقم الفاتورة">
+                                                            <span >
+                                                                <button class="bx bx-search-alt btn btn-light" type="submit">
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                                {% endif %}
+
+                                                {% if modules.supplier_active %}
+                                                <div class="col-lg-6">
+                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن مورد ...</span>
+                                                    <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:SpSupplierSearch' 1 %}">
+                                                        <div class="position-relative" >
+
+                                                            <input type="text" {% if type == 1 %} value="{{search}}" {% endif %} list="supp" autocomplete="off" class="form-control" name="supplier" placeholder="بحث ... بإسم المورد">
+                                                            <span >
+                                                                <button class="bx bx-search-alt btn btn-light" type="submit">
+                                                                </button>
+                                                            </span>
+                                                            <datalist id="supp" >
+                                                                {% for supp in suppliers %}
+                                                                    {% if supp.type == 1 %}
+                                                                    <option value="{{ supp.name }}">
+                                                                        {{ supp.name }}
+                                                                        </option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                    </datalist>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+
+                                                <div class="col-lg-6">
+                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن مستورد ...</span>
+                                                    <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:SpSupplierSearch' 2 %}">
+                                                        <div class="position-relative" >
+
+                                                            <input type="text" {% if type == 2 %} value="{{search}}" {% endif %} list="supp2" autocomplete="off" class="form-control" name="supplier" placeholder="بحث ... بإسم المستورد">
+                                                            <span >
+                                                                <button class="bx bx-search-alt btn btn-light" type="submit">
+                                                                </button>
+                                                            </span>
+                                                            <datalist id="supp2" >
+                                                                {% for supp in suppliers %}
+                                                                    {% if supp.type == 2 %}
+                                                                    <option value="{{ supp.name }}">
+                                                                        {{ supp.name }}
+                                                                        </option>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                    </datalist>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                                {% endif %}
+
+                                                {% if modules.treasury_active %}
+                                                <div class="col-lg-6">
+                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن خزنة ...</span>
+                                                    <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:TreasurySearch' %}">
+                                                        <div class="position-relative">
+
+                                                            <input type="text" value="{{treasury_serach_val}}"
+                                                                list="tre_list" autocomplete="off" class="form-control" name="treasury"
+                                                                placeholder="بحث ... بإسم الخزنة">
+                                                                <span >
+                                                                    <button class="bx bx-search-alt btn btn-light" type="submit">
+                                                                    </button>
+                                                                </span>
+                                                            <datalist id="tre_list">
+                                                                {% for w in treasurys %}
+                                                                <option value="{{ w.name }}">
+                                                                    {{ w.name }}
+                                                                </option>
+                                                                {% endfor %}
+                                                            </datalist>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if modules.wool_active %}
+                                                <div class="col-lg-6">
+                                                    <span style="margin-right: 10px;" class="font-weight-bold">بحث عن مورد خيط ...</span>
+                                                    <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:WoolSupplierSearch' %}">
+                                                        <div class="position-relative" >
+
+                                                            <input type="text" value="{{wool_supplier_search}}" list="wool_supp" autocomplete="off" class="form-control" name="wool_supplier" placeholder="بحث ... بإسم المورد">
+                                                            <span >
+                                                                <button class="bx bx-search-alt btn btn-light" type="submit">
+                                                                </button>
+                                                            </span>
+                                                            <datalist id="wool_supp" >
+                                                                {% for supp in wool_suppliers %}
+                                                                    <option value="{{ supp.name }}">
+                                                                        {{ supp.name }}
+                                                                        </option>
+                                                                {% endfor %}
+                                                    </datalist>
+                                                        </div>
+                                                    </form>
+
+                                                </div>
+                                                {% endif %}
+
+                                            </div>
+
+                                           
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                  
+                    </div>
+                </div>
+            </div>
+            <!-- end search -->
+
+              <!-- action modal -->
+              <div class="modal fade" data-backdrop="static" id="action_modal">
+                <div class="modal-dialog modal-lg" id="action_modal2">
+                    <div class="modal-content" id="action_body">
+                            <span class="float-left">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </span>
+
+
+                    </div>
+                </div>
+            </div>
+            <!-- end action modal -->
+
+            <div class="modal fade" data-backdrop="static" id="pdfModal" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title">عرض التقرير</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
+                      <span aria-hidden="true" style="font-size: medium">&times; إغلاق التقرير &times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body p-0">
+                    <div id="pdfLoader" class="p-3 text-center">
+                      <div class="progress" style="height: 25px;">
+                        <div id="pdfProgressBar" class="progress-bar bg-success"
+                             role="progressbar" style="width: 0%">
+                          0%
+                        </div>
+                      </div>
+                      <small class="text-muted">جاري تحميل التقرير...</small>
+                    </div>
+
+                    <iframe id="pdfFrame" src="" width="100%" height="100%" style="border:none; display:none;"></iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="pageOverlay">جاري النسخ، الرجاء الانتظار...</div>
+
+            <!-- footer -->
+            <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <span style="font-size: larger">
+                            <span>جميع الحقوق محفوظة © <a>ZerOne 2021</a></span>
+                            <script>
+                                if (new Date().getFullYear() !== 2021){
+                                    document.write('- ' + new Date().getFullYear())
+                                }
+                            </script>
+                        </span>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-right d-none d-sm-block">
+                            <img src="/static/assets/images/flags/egypt.png" width="20px" height="20px" style="margin-bottom: 3px">
+                            <img src="/static/assets/images/new.png" width="20px" height="20px" style="margin-bottom: 5px">
+                            <span style="font-size: larger">.Designed &amp; Developed by ZerOne Team</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </footer>   
+            <!-- end footer -->
+
+        </div>
+        <!-- END layout-wrapper -->
+
+
+
+        <!-- JAVASCRIPT -->
+        <script src="/static/assets/libs/jquery/jquery.min.js"></script>
+        <script src="/static/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="/static/assets/libs/metismenu/metisMenu.min.js"></script>
+        <script src="/static/assets/libs/simplebar/simplebar.min.js"></script>
+        <script src="/static/assets/libs/node-waves/waves.min.js"></script>
+
+        <script src="/static/assets/datatable/datatables.min.js"></script>
+
+        <!-- App js -->
+        <script src="/static/assets/js/app.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/assets/vendor/Zero.js"></script>
+        <script src="/static/js/all.js"></script>
+        <script src="/static/assets/libs/simplebar/simplebar.min.js"></script>
+
+        <!-- select2 -->
+        <script src="/static/assets/select2/dist/js/select2.min.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!--
+{#        <script>#}
+{#            var arabicNumbers = ['۰', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];#}
+{#            $('.translate').text(function(i, v) {#}
+{#            var chars = v.split('');#}
+{#            for (var i = 0; i < chars.length; i++) {#}
+{#                if (/\d/.test(chars[i])) {#}
+{#                chars[i] = arabicNumbers[chars[i]];#}
+{#                }#}
+{#            }#}
+{#            return chars.join('');#}
+{#            })#}
+{#        </script>#}
+
+{#        <script type="text/javascript">#}
+{#            var map = ["&\#1632;","&\#1633;","&\#1634;","&\#1635;","&\#1636;",#}
+{#                        "&\#1637;","&\#1638;","&\#1639;","&\#1640;","&\#1641;"]#}
+{#            var replaceDigits = function() {#}
+{#                document.body.innerHTML =#}
+{#                    document.body.innerHTML.replace(#}
+{#                        /\d(?=[^<>]*(<|$))/g,#}
+{#                        function($0) { return map[$0] }#}
+{#                    );#}
+{#            }#}
+{#            window.onload = replaceDigits#}
+{#        </script>#}-->
+
+        <script>
+            var inactivityTimeout = null;
+
+            function reloadPage() {
+              location.reload();
+            }
+
+            function resetTimer() {
+              clearTimeout(inactivityTimeout);
+              inactivityTimeout = setTimeout(reloadPage, 60*15*1000); // 60000 milliseconds = 1 minute
+            }
+
+            // Reset the timer whenever there is user interaction
+            window.addEventListener('mousemove', resetTimer);
+            window.addEventListener('keydown', resetTimer);
+            window.addEventListener('scroll', resetTimer);
+
+            // Start the initial timer
+            resetTimer();
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const backup_btn = document.getElementById('backup_btn');
+                const backup_btn2 = document.getElementById('backup_btn2');
+
+                if (backup_btn) {
+                    backup_btn.addEventListener('click', function() {
+                        backup_btn.disabled = true;
+                        backup_btn.value = "جاري النسخ...";
+                        document.getElementById('pageOverlay').style.display = 'block';
+                    });
+                }
+
+                if (backup_btn2) {
+                    backup_btn2.addEventListener('click', function() {
+                        backup_btn2.disabled = true;
+                        backup_btn2.value = "جاري النسخ...";
+                        document.getElementById('pageOverlay').style.display = 'block';
+                    });
+                }
+            });
+        </script>
+
+        <script>
+            let progressInterval;
+
+            $('#pdfModal').on('show.bs.modal', function (e) {
+                var button = $(e.relatedTarget);
+                var url = button.data('url');
+
+                // reset
+                $('#pdfLoader').show();
+                $('#pdfFrame').hide();
+                $('#pdfProgressBar').css('width', '0%').text('0%');
+
+                // progress bar fill (وهمي)
+                let progress = 0;
+                progressInterval = setInterval(function() {
+                    if (progress < 90) {   // نخليها توصل لـ 90% بس
+                        progress += 5;
+                        $('#pdfProgressBar').css('width', progress + '%').text(progress + '%');
+                    }
+                }, 300); // كل 0.3 ثانية
+
+                // تحميل التقرير
+                $('#pdfFrame').attr('src', url);
+            });
+
+            $('#pdfModal').on('hidden.bs.modal', function () {
+                $('#pdfFrame').attr('src', '');
+                clearInterval(progressInterval);
+            });
+
+            // ✅ عند انتهاء تحميل التقرير
+            $('#pdfFrame').on('load', function () {
+                clearInterval(progressInterval);
+                $('#pdfProgressBar').css('width', '100%').text('100%');
+                setTimeout(function() {
+                    $('#pdfLoader').hide();
+                    $('#pdfFrame').show();
+                }, 500); // نخليها تستنى نص ثانية علشان يبان انها خلصت
+            });
+        </script>
+
+        {% block js %}
+
+        {% endblock js %}
+
+
+    </body>
+
+</html>

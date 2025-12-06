@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% block title %}
+<title>
+قائمة الموردين
+</title>
+
+{% endblock title %}
+
+{% block main %}
+    <div class="main-content">
+
+      <div class="page-content">
+          <div class="container-fluid">
+           
+                <div class="row">
+                    <div class="col-12"> {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+                            <i class="mdi mdi-check-all mr-2"></i>
+                            {{ message|safe }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+
+            
+                      {% endif %}
+                    </div>
+                   
+                </div>
+              
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+                            
+                            {% if message == "active" %}
+                                <h4 class="mb-0">
+                                    قائمة موردين الخيط
+                                    <a class="badge badge-success" style="font-size:small;" href="{% url 'Wool:WoolSupplierCreate' %}" data-toggle="modal" data-target="#action_modal">
+                                            <i class="fas fa-plus-square fx-2"></i>
+                                    </a>
+
+                                    <a class="badge badge-info" style="font-size:small;" href="{% url 'Wool:WoolSupplierList' %}">
+                                       <i class="fas fa-list-ul"></i>
+                                    </a>
+                                     
+                                    <a  class="badge badge-danger" style="font-size:small;" href="{% url 'Wool:WoolSupplierTrashList' %}">
+                                            <i class="fas fa-trash"></i>
+                                    </a>
+                                     
+                                 </h4>
+                                
+                            {% else %}
+                                <h4 class="mb-0"> سلة مهملات موردين الخيط
+                                    <a class="badge badge-success" style="font-size:small;" href="{% url 'Wool:WoolSupplierCreate' %}" data-toggle="modal" data-target="#action_modal">
+                                            <i class="fas fa-plus-square fx-2"></i>
+                                    </a>
+
+                                    <a class="badge badge-info" style="font-size:small;" href="{% url 'Wool:WoolSupplierList' %}">
+                                       <i class="fas fa-list-ul"></i>
+                                    </a>
+                                     
+                                    <a  class="badge badge-danger" style="font-size:small;" href="{% url 'Wool:WoolSupplierTrashList' %}">
+                                            <i class="fas fa-trash"></i>
+                                    </a>
+                                     
+                                 </h4>
+                            
+                            {% endif %}
+
+                            <span class="badge badge-dark font-size-15"> الاجمالي : {{count}}
+                            مورد
+                            </span>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
+
+                                    {% if message == "active" %}
+                                    <li class="breadcrumb-item active">قائمة موردين الخيط</li>
+                                    {% else %}
+                                    <li class="breadcrumb-item active">قائمة موردين الخيط المحذوفة</li>
+                                    {% endif %}
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% if object_list %}
+                <div class="row">
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-3">
+                        {% if message == "active" %}
+                        <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:WoolSupplierSearch' %}">
+                            <div class="position-relative" >
+
+                                <input type="text" style="background-color: white" value="{{wool_supplier_search}}" list="wool_supp" autocomplete="off" class="form-control" name="wool_supplier"
+                                       placeholder="بحث ... بإسم المورد"
+                                >
+                                <span >
+                                    <button class="bx bx-search-alt btn btn-warning" type="submit">
+                                    </button>
+                                </span>
+                                <datalist id="wool_supp" >
+                                    {% for supp in wool_suppliers %}
+                                        <option value="{{ supp.name }}">
+                                            {{ supp.name }}
+                                            </option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                {% for x in object_list  %}
+                <div class="col-xl-4 col-md-4 col-sm-6">
+                  <div class="card text-center">
+                      <div class="card-body">
+                          <div class="avatar-sm mx-auto mb-4 mt-5">
+                              <span class="avatar-title rounded-circle bg-soft-primary text-primary font-size-16">
+                                <img src="/static/assets/images/vector/supplier.png" alt="" width="150px">
+
+                              </span>
+                          </div><br>
+                          <h3><a href="#" class="text-dark"> {{x.name}}</a></h3>
+
+                            <div class=" d-flex justify-content-center">
+                                <div style="padding-left: 10px;">
+                                    <p class="text-muted "> الهاتف : {{ x.phone }}
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div style="margin-top: 5px;">
+                                <ul class="list-inline mb-0">
+                                    <li class="list-inline-item mr-1">
+                                        <div>
+                                            <a  href="{% url 'Wool:WoolSupplierQuantity' x.id %}" data-placement="top" title="" data-original-title="Message">
+                                                <span class="badge  badge-success" style="padding: 5px;"><i class="fas fa-dolly"></i> الكميات</span>
+                                            </a>
+                                        </div>
+                                    </li>
+
+                                    <li class="list-inline-item mr-1">
+                                        <div >
+                                            <a href="{% url 'Wool:WoolSupplierPayment' x.id %}" data-placement="top" title="" data-original-title="Message">
+                                                <span class="badge  badge-primary"  style="padding: 5px;"><i class="fas fa-hand-holding-usd"></i> الدفعات</span>
+                                            </a>
+                                        </div>
+                                    </li>
+
+                                    <li class="list-inline-item mr-1">
+                                        <div>
+{#                                            <a href="{% url 'Wool:PrintWoolSupplierAll' x.id %}" target="_blank">#}
+                                            <a href="javascript:void(0)" data-toggle="modal" data-target="#pdfModal" data-url="{% url 'Wool:PrintWoolSupplierAll' x.id %}">
+                                                <span class="badge  badge-secondary" style="padding: 5px;"><i class="fas fa-print"></i> كشف حساب</span>
+                                            </a>
+                                        </div>
+                                    </li>
+                                </ul>
+                                
+
+                            </div>
+                        </div>
+                      <div class="card-footer bg-transparent border-top">
+                          <div class="contact-links d-flex justify-content-center font-size-20">
+                            {% if request.user.is_superuser %}
+                            {% if message == "active"  %}
+
+                            <div class="mr-3">
+                                 <a href="{% url 'Wool:WoolSupplierUpdate' x.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                     <span class="badge  badge-info"><i class='bx bx-edit' ></i>تعديل</span>
+                                </a>
+                             </div>
+    
+                            <div class="">
+                                <a href="{% url 'Wool:WoolSupplierDelete' x.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Profile">
+                                    <span class="badge  badge-danger"><i class='bx bxs-trash'  ></i>حذف</span>
+                                </a>
+                            </div>
+                        {% else %}
+                             <div class="mr-3">
+                                    <a href="{% url 'Wool:WoolSupplierRestore' x.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                        <span class="badge badge-dark"><i class='bx bx-redo '></i> استرجاع
+                                        </span>
+                                    </a>
+                            </div>
+
+                            <div class="">
+                                <a href="{% url 'Wool:WoolSupplierSuperDelete' x.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Profile">
+                                    <span class="badge badge-danger"><i class='bx bxs-trash '   ></i> حذف نهائي </span>
+                                     
+                                </a>
+                            </div>
+                        {% endif %}
+                            {% endif %}
+                              
+                            </div>
+                      </div>
+                  </div>
+                </div>
+
+                {% endfor %}
+
+
+                </div>
+
+                {% if is_paginated %}
+                {% include "components/paginator.html" %}
+                {% endif %}
+
+                {% else %}
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="text-center mb-5 mt-5">
+                            <h1 class="display-2 font-weight-medium">4<i class="bx bx-buoy bx-spin text-primary display-3"></i>4</h1>
+                            {% if message == "active" %}
+                            <h4 class="text-uppercase">لا توجد بيانات</h4>
+                            {% else %}
+                            <h4 class="text-uppercase">لا توجد بيانات محذوفة</h4>
+                            {% endif %}
+                            <div class="mt-3 text-center">
+                                
+                                {% if message == "active" %}
+                                    <a class="btn btn-primary waves-effect waves-light" href="{% url 'Wool:WoolSupplierCreate' %}" data-toggle="modal" data-target="#action_modal">اضافة بيانات</a>
+                                {% endif %}
+                                    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-12 d-flex justify-content-center ">
+                
+                        <img src="/static/assets/images/error-img.png" width="400px" height="188px" alt="" class="img-fluid" >
+                
+                    </div>
+                </div>
+
+                {% endif %}
+
+          </div>
+      </div>
+  </div>
+{% endblock main %}

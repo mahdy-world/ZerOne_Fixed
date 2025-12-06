@@ -1,0 +1,266 @@
+{% if not modules.stop_date or modules.stop_date and today < modules.stop_date %}
+<div class="main-content">
+
+    <div class="page-content">
+        <!--<div class="container">-->
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-12">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+                        <i class="mdi mdi-check-all mr-2"></i>
+                        {{ message|safe }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- start page title -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="page-title-box d-flex align-items-center justify-content-between">
+                        <h4 class="mb-0 font-size-18">الرئيسية</h4>
+
+                        <div class="page-title-right">
+                            <ol class="breadcrumb m-0">
+                                <li class="breadcrumb-item"><a href="javascript: void(0);">لوحة التحكم</a></li>
+                            </ol>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end page title -->
+
+            
+            <div class="row">
+                {% if modules.invoice_active %}
+                <div class="col-xl-4 col-lg-4 col-md-4">
+                    <a data-toggle="modal" data-target="#invoice1_modal">
+                        <div class="container_new">
+                            <div class="card">
+                                <div class="imgBx">
+                                    <img class="image" src="/static/assets/images/vector/printt.png">
+                                </div>
+                                <div class="contentBx">
+                                    <h2 style="font-size: large">فواتير المبيعات</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-xl-4 col-lg-4 col-md-4">
+                    <a data-toggle="modal" data-target="#invoice2_modal">
+                        <div class="container_new">
+                            <div class="card">
+                                <div class="imgBx">
+                                    <img class="image" src="/static/assets/images/vector/printt.png">
+                                </div>
+                                <div class="contentBx">
+                                    <h2 style="font-size: large">فواتير مرتجع المبيعات</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-xl-4 col-lg-4 col-md-4">
+                    <a data-toggle="modal" data-target="#invoice3_modal">
+                        <div class="container_new">
+                            <div class="card">
+                                <div class="imgBx">
+                                    <img class="image" src="/static/assets/images/vector/printt.png">
+                                </div>
+                                <div class="contentBx">
+                                    <h2 style="font-size: large">المبيعات القطاعي</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if modules.factory_active %}
+                <div class="col-xl-4 col-lg-4 col-md-4">
+                    <a href="" data-toggle="modal" data-target="#factory_modal">
+                        <div class="container_new  "> 
+                            <div class="card">
+                              <div class="imgBx">
+                                <img class="image" src="/static/assets/images/vector/factory2.png">
+                              </div>
+                              <div class="contentBx">
+                                <h2 style="font-size: large">المصانع</h2>
+                              </div>
+                            </div>
+                          </div>
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if modules.product_active %}
+                <div class="col-xl-4 col-lg-4 col-md-4">
+                    <a data-toggle="modal" data-target="#product_modal">
+                        <div class="container_new">
+                            <div class="card">
+                                <div class="imgBx">
+                                    <img class="image" src="/static/assets/images/vector/product2.png">
+                                </div>
+                                <div class="contentBx">
+                                    <h2 style="font-size: large">المنتجات</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+              
+            {% if modules.worker_active %}
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <a data-toggle="modal" data-target="#worker_modal">
+                    <div class="container_new">
+                        <div class="card">
+                            <div class="imgBx">
+                                <img class="image" src="/static/assets/images/vector/worker2.png">
+                            </div>
+                            <div class="contentBx">
+                                <h2 style="font-size: large">العمال</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+                
+            {% if modules.seller_active %}
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <a data-toggle="modal" data-target="#seller_modal">
+                    <div class="container_new">
+                        <div class="card">
+                            <div class="imgBx">
+                                <img class="image" src="/static/assets/images/vector/seller2.png">
+                            </div>
+                            <div class="contentBx">
+                                <h2 style="font-size: large">التجار</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+
+            {% if modules.supplier_active %}
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <a data-toggle="modal" data-target="#supplier1_modal">
+                    <div class="container_new">
+                        <div class="card">
+                            <div class="imgBx">
+                                <img class="image" src="/static/assets/images/vector/supplier.png">
+                            </div>
+                            <div class="contentBx">
+                                <h2 style="font-size: large">الموردين</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <a data-toggle="modal" data-target="#supplier2_modal">
+                    <div class="container_new">
+                        <div class="card">
+                            <div class="imgBx">
+                                <img class="image" src="/static/assets/images/vector/supplier.png">
+                            </div>
+                            <div class="contentBx">
+                                <h2 style="font-size: large">المستوردين</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+
+            {% if modules.wool_active %}
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <a data-toggle="modal" data-target="#wool_modal">
+                    <div class="container_new">
+                        <div class="card">
+                            <div class="imgBx">
+                                <img class="image" src="/static/assets/images/vector/supplier.png">
+                            </div>
+                            <div class="contentBx">
+                                <h2 style="font-size: large">الخيط</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+
+            {% if modules.treasury_active %}
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <a data-toggle="modal" data-target="#treasury_modal">
+                    <div class="container_new">
+                        <div class="card">
+                            <div class="imgBx">
+                                <img class="image" src="/static/assets/images/vector/treasury1.png">
+                            </div>
+                            <div class="contentBx">
+                                <h2 style="font-size: large">الخزائن</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <a data-toggle="modal" data-target="#search_modal">
+                    <div class="container_new">
+                        <div class="card">
+                            <div class="imgBx">
+                                <img class="image" src="/static/assets/images/vector/search2.png">
+                            </div>
+                            <div class="contentBx">
+                                <h2 style="font-size: large">البحث</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            {% if request.user.is_superuser %}
+            <div class="col-xl-4 col-lg-4 col-md-4">
+                <a data-toggle="modal" data-target="#user_invoice_modal">
+                    <div class="container_new">
+                        <div class="card">
+                            <div class="imgBx">
+                                <img class="image" src="/static/assets/images/vector/users2.png">
+                            </div>
+                            <div class="contentBx">
+                                <h2 style="font-size: large"> المستخدمين</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+            {% endif %}
+
+            </div>
+
+          
+            <!-- end row -->
+        </div>
+        <!-- container-fluid -->
+    </div>
+    
+</div>
+{% endif %}

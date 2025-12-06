@@ -1,0 +1,555 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title> التاجر: {{seller.name}} </title>
+
+{% endblock title %}
+
+{% load products_tags %}
+
+{% block main %}
+{% load mathfilters %}
+<div class="main-content">
+      <div class="page-content">
+          <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-12"> {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+                            <i class="mdi mdi-check-all mr-2"></i>
+                            {{ message|safe }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+
+
+                      {% endif %}
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+
+
+                                <h4 class="mb-0">
+                                     التاجر {{seller.name}}
+                                     <a class="badge badge-success" style="font-size:small;" href="{% url 'Products:SellerCreate' %}" data-toggle="modal" data-target="#action_modal">
+                                            <i class="fas fa-plus-square fx-2"></i>
+                                    </a>
+
+                                    <a class="badge badge-info" style="font-size:small;" href="{% url 'Products:SellerList' %}">
+                                       <i class="fas fa-list-ul"></i>
+                                    </a>
+
+                                    <a  class="badge badge-danger" style="font-size:small;" href="{% url 'Products:SellerTrashList' %}">
+                                            <i class="fas fa-trash"></i>
+                                    </a>
+                                 </h4>
+
+
+
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
+
+                                    <li class="breadcrumb-item">
+                                        {% if seller.deleted %}
+                                        <a href="{% url 'Products:SellerTrashList' %}">قائمة التجار المحذوفة</a>
+                                        {% else %}
+                                        <a href="{% url 'Products:SellerList' %}">قائمة التجار</a>
+                                        {% endif %}
+                                    </li>
+
+                                    <li class="breadcrumb-item active"> التاجر {{seller.name}}</li>
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                        <div class="card-body">
+
+                            <!-- بيانات التاجر -->
+                            <div class="row alert alert-primary">
+                                <div class="col-lg-4">
+                                    <span class="font-weight-bold  font-size-14" >
+                                        <i class="fas fa-paragraph"></i>
+                                        أسم التاجر:
+                                    </span>
+                                    {{seller.name}}
+                                </div>
+
+                                <div class="col-lg-4">
+                                    <span class="font-weight-bold font-size-14" >
+                                        <i class="fas fa-phone"></i>
+                                        رقم الهاتف:
+                                    </span>
+                                    {{seller.phone}}
+                                </div>
+
+                                <div class="col-lg-4">
+                                    <span class="font-weight-bold font-size-14" >
+                                        <i class="fas fa-address-card"></i>
+                                        العنوان:
+                                    </span>
+                                    {{seller.address}}
+                                </div>
+
+                                <div class="col-lg-4">
+                                    <span class="font-weight-bold  font-size-14" >
+                                        <i class="fas fa-info-circle"></i>
+                                        الرقم القومي:
+                                    </span>
+                                    {{seller.nation_no}}
+                                </div>
+
+                                <div class="col-lg-4">
+                                    <span class="font-weight-bold  font-size-14" >
+                                        <i class="fas fa-flash"></i>
+                                        اتفاق مسبق:
+                                    </span>
+                                    {{seller.agreement}}
+                                </div>
+
+                                <div class="col-lg-4">
+                                    {% if request.user.is_superuser %}
+                                    <div>
+                                    {% if seller.deleted %}
+                                    <a href="{% url 'Products:SellerRestore' seller.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                        <span class="badge badge-dark"><i class='bx bx-redo '></i> استرجاع</span>
+                                    </a>
+                                    <a href="{% url 'Products:SellerSuperDelete' seller.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Profile">
+                                        <span class="badge badge-danger"><i class='bx bxs-trash '   ></i> حذف نهائي </span>
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'Products:SellerUpdate' seller.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                        <span class="badge  badge-info"><i class='bx bx-edit' ></i>تعديل</span>
+                                    </a>
+                                    {% sellers_debit seller.id as sellers_debit_val %}
+                                    {% if sellers_debit_val == 0 %}
+                                    <a href="{% url 'Products:SellerDelete' seller.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Profile">
+                                        <span class="badge  badge-danger"><i class='bx bxs-trash'  ></i>حذف</span>
+                                    </a>
+                                    {% endif %}
+                                    {% endif %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                            <!-- نهاية بيانات التاجر -->
+
+
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs nav-tabs-custom nav-justified" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#SellerAccount" role="tab" aria-selected="true">
+                                        <span class="d-block d-sm-none"><i class="fas fa-home"></i></span>
+                                        <span class="d-none d-sm-block"> <i class="fas fa-list"></i>الحساب</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#SellerPayments" role="tab" aria-selected="true">
+                                        <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                        <span class="d-none d-sm-block"><i class="fas fa-dolly"></i>فواتير المبيعات</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#SellerReturns" role="tab" aria-selected="true">
+                                        <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                        <span class="d-none d-sm-block"><i class="fas fa-dolly"></i>فواتير المرتجع</span>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content text-muted">
+                                <!--الحساب-->
+                                <div class="tab-pane active" id="SellerAccount" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="card" >
+                                                <div class="card-body">
+                                                    {% if seller.deleted == 0 %}
+                                                    <div class="card-footer bg-transparent">
+                                                        <div class="text-center font-size-20">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <a href="{% url 'Products:PaidSellerValue' seller.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                                                      <span class="btn btn-outline-secondary"><i class='bx bx-money' ></i>استلام مبلغ من التاجر</span>
+                                                                    </a>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <a href="{% url 'Products:PaidSellerValue2' seller.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                                                      <span class="btn btn-outline-secondary"><i class='bx bx-money' ></i>تسليم مبلغ الي التاجر</span>
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                    <div class="table-responsive">
+                                                        <table class="table table-centered">
+                                                            <thead class="thead-light text-center">
+                                                                <tr>
+                                                                    <th scope="col" >#</th>
+                                                                    <th scope="col">
+                                                                        التاريخ
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        القيمة
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        السبب/الوصف
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        نوع الدفع
+                                                                    </th>
+                                                                    {% if request.user.is_superuser %}
+                                                                    <th scope="col"><i class="fas fa-cogs"></i></th>
+                                                                    {% endif %}
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="text-center ">
+                                                              {% for x in object_list  %}
+                                                              <tr>
+                                                                <td>
+                                                                    {{forloop.counter}}
+                                                                </td>
+                                                                <td>
+                                                                    <h5 class="font-size-16 ">
+                                                                        {{x.date|date:'Y-m-d'}}
+                                                                    </h5>
+                                                                </td>
+                                                                <td>
+                                                                    <h5 class="badge badge-danger font-size-16">
+                                                                        <i class="fas fa-dollar-sign"></i>
+                                                                        {{x.paid_value|floatformat:2}}
+                                                                    </h5>
+                                                                </td>
+                                                              <td>
+                                                                    <h5 class="font-size-16 ">
+                                                                        {% if x.paid_reason %}
+                                                                        {{x.paid_reason}}
+                                                                        {% endif %}
+                                                                    </h5>
+                                                                </td>
+                                                                <td>
+                                                                    <h4
+                                                                            {% if x.paid_type == 1 %}
+                                                                            class="font-size-16 text-success"
+                                                                            {% else %}
+                                                                            class="font-size-16 text-danger"
+                                                                            {% endif %}
+                                                                    >
+                                                                        {{x.get_paid_type_display}}
+                                                                    </h4>
+
+                                                                </td>
+                                                                {% if request.user.is_superuser %}
+                                                               <td>
+{#                                                               {% if x.id == last_pay_id %}#}
+                                                               {% if x.op %}
+                                                                <a href="{% url 'Products:SellerPaymentDelete' x.id %}" onclick="return confirm('هل أنت متأكد من حذف القيمة؟');" class="text-danger" ><i class="mdi mdi-close font-size-22"></i></a>
+                                                               {% endif %}
+{#                                                               {% endif %}#}
+                                                               </td>
+                                                               {% endif %}
+
+                                                            </tr>
+
+                                                              {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4 text-center">
+                                                    <p class="btn btn-block btn-warning">
+                                                    قيمة افتتاحية:
+                                                    {% if seller.initial_balance_debit %}
+                                                    {{ seller.initial_balance_debit|floatformat:2 }}
+                                                    {% else %}
+                                                    0.00
+                                                    {% endif %}
+                                                    جنيه
+                                                    {% if seller.initial_balance_debit %}
+                                                    {% if seller.initial_balance_type == 1 %}
+                                                    للتاجر
+                                                    {% else %}
+                                                    علي التاجر
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-4 text-center">
+                                                    <p class="btn btn-block btn-success">
+                                                    التاجر دفع لك:
+                                                    {% if from.sum %}
+                                                    {{ from.sum|floatformat:2 }}
+                                                    {% else %}
+                                                    0.00
+                                                    {% endif %}
+                                                    جنيه
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-4 text-center">
+                                                    <p class="btn btn-block btn-danger">
+                                                    أنت دفعت للتاجر:
+                                                    {% if to.sum %}
+                                                    {{ to.sum|floatformat:2 }}
+                                                    {% else %}
+                                                    0.00
+                                                    {% endif %}
+                                                    جنيه
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--فواتير المبيعات-->
+                                <div class="tab-pane" id="SellerPayments" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="card" >
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-centered   ">
+                                                            <thead class="thead-light text-center">
+                                                                <tr>
+                                                                    <th scope="col" >#</th>
+                                                                    <th scope="col">
+                                                                        التاريخ
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        القيمة
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        الخصم
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        الاجمالي
+                                                                    </th>
+{#                                                                    <th scope="col">#}
+{#                                                                        قيمة مرتجع#}
+{#                                                                    </th>#}
+                                                                    <th scope="col">
+                                                                        حالة الفاتورة
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="text-center ">
+                                                              {% for x in invoices  %}
+                                                              <tr>
+                                                                <td>
+                                                                    {{forloop.counter}}
+                                                                </td>
+                                                                <td>
+                                                                    <h5 class="font-size-16 ">
+                                                                        <a href="{% url 'Invoices:InvoiceDetail' x.id %}">{{x.date|date:'Y-m-d'}}</a>
+                                                                    </h5>
+
+                                                                </td>
+                                                                <td>
+                                                                    <h5 class="badge badge-danger font-size-16">
+                                                                        <i class="fas fa-dollar-sign"></i>
+                                                                        {{x.total|floatformat:2}}
+                                                                    </h5>
+                                                                </td>
+                                                                <td>
+                                                                    <h5 class="badge badge-danger font-size-16">
+                                                                        <i class="fas fa-dollar-sign"></i>
+                                                                        {{x.discount|floatformat:2}}
+                                                                    </h5>
+                                                                </td>
+                                                                <td>
+                                                                    <h5 class="badge badge-danger font-size-16">
+                                                                        <i class="fas fa-dollar-sign"></i>
+                                                                        {{x.total|sub:x.discount|floatformat:2}}
+                                                                    </h5>
+                                                                </td>
+{#                                                                <td>#}
+{#                                                                    <h5 class="badge badge-danger font-size-16">#}
+{#                                                                        <i class="fas fa-dollar-sign"></i>#}
+{#                                                                        {{x.return_value|floatformat:2}}#}
+{#                                                                    </h5>#}
+{#                                                                </td>#}
+                                                                <td>
+                                                                    <h4
+                                                                            {% if x.close %}
+                                                                            class="font-size-16 text-success"
+                                                                            {% elif x.saved %}
+                                                                            class="font-size-16 text-info"
+                                                                            {% else %}
+                                                                            class="font-size-16 text-warning"
+                                                                            {% endif %}
+                                                                    >
+                                                                        {% if x.close %}
+                                                                            مغلقة "تم الحفظ بشكل نهائي"
+                                                                            {% elif x.saved %}
+                                                                            حفظ مؤقت "يمكنك الارجاع"
+                                                                            {% else %}
+                                                                            مفتوحة "غير محفوظة"
+                                                                            {% endif %}
+                                                                    </h4>
+
+                                                                </td>
+
+
+                                                            </tr>
+
+                                                              {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <p class="btn btn-block btn-success">
+                                                    إجمالي قيمة المبيعات:
+                                                    {% if invoices_sum %}
+                                                    {{ invoices_sum|floatformat:2 }}
+                                                    {% else %}
+                                                    0.00
+                                                    {% endif %}
+                                                    جنيه
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--فواتير المرتجع-->
+                                <div class="tab-pane" id="SellerReturns" role="tabpanel">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="card" >
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-centered   ">
+                                                            <thead class="thead-light text-center">
+                                                                <tr>
+                                                                    <th scope="col" >#</th>
+                                                                    <th scope="col">
+                                                                        التاريخ
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        القيمة
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        الخصم
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        الاجمالي
+                                                                    </th>
+                                                                    <th scope="col">
+                                                                        حالة الفاتورة
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="text-center ">
+                                                              {% for x in r_invoices  %}
+                                                              <tr>
+                                                                <td>
+                                                                    {{forloop.counter}}
+                                                                </td>
+                                                                <td>
+                                                                    <h5 class="font-size-16 ">
+                                                                        <a href="{% url 'Invoices:InvoiceDetail' x.id %}">{{x.date|date:'Y-m-d'}}</a>
+                                                                    </h5>
+
+                                                                </td>
+                                                                <td>
+                                                                    <h5 class="badge badge-danger font-size-16">
+                                                                        <i class="fas fa-dollar-sign"></i>
+                                                                        {{x.total|floatformat:2}}
+                                                                    </h5>
+                                                                </td>
+                                                                <td>
+                                                                    <h5 class="badge badge-danger font-size-16">
+                                                                        <i class="fas fa-dollar-sign"></i>
+                                                                        {{x.discount|floatformat:2}}
+                                                                    </h5>
+                                                                </td>
+                                                                <td>
+                                                                    <h5 class="badge badge-danger font-size-16">
+                                                                        <i class="fas fa-dollar-sign"></i>
+                                                                        {{x.total|sub:x.discount|floatformat:2}}
+                                                                    </h5>
+                                                                </td>
+                                                                <td>
+                                                                    <h4
+                                                                            {% if x.close %}
+                                                                            class="font-size-16 text-success"
+                                                                            {% elif x.saved %}
+                                                                            class="font-size-16 text-info"
+                                                                            {% else %}
+                                                                            class="font-size-16 text-warning"
+                                                                            {% endif %}
+                                                                    >
+                                                                        {% if x.close %}
+                                                                            مغلقة "تم الحفظ بشكل نهائي"
+                                                                            {% elif x.saved %}
+                                                                            حفظ مؤقت "يمكنك الارجاع"
+                                                                            {% else %}
+                                                                            مفتوحة "غير محفوظة"
+                                                                            {% endif %}
+                                                                    </h4>
+
+                                                                </td>
+
+
+                                                            </tr>
+
+                                                              {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <p class="btn btn-block btn-danger">
+                                                    إجمالي قيمة مرتجع المبيعات:
+                                                    {% if r_invoices_sum %}
+                                                    {{ r_invoices_sum|floatformat:2 }}
+                                                    {% else %}
+                                                    0.00
+                                                    {% endif %}
+                                                    جنيه
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    </div>
+
+                </div>
+
+          </div>
+      </div>
+</div>
+{% endblock main %}
+               
+                
+
+
+

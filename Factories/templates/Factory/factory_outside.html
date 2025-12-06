@@ -1,0 +1,421 @@
+{% load crispy_forms_tags %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <!-- الخارج المصنع -->
+                <div class="tab-pane" id="processing_outside" role="tabpanel">
+                    <div class="row">
+                        <div class="col-lg-12">
+
+                            {% if factory.deleted == 0 %}
+                            <div class="table-responsive" id="order_list_outside">
+                                <table class="table table-nowrap table-borderless">
+                                    <thead>
+                                    <form>
+
+                                        <tr>
+
+                                            <th class="col-lg-1 col-xl-1 col-md-1" style="width: 20%;">
+                                                {{outside_form.date|as_crispy_field}}
+                                            </th>
+                                            <th class="col-lg-1 col-xl-1 col-md-1" style="width: 30%;">
+                                                {{outside_form.weight|as_crispy_field}}
+                                            </th>
+                                            <th class="col-lg-1 col-xl-1 col-md-1" style="width: 20%;">
+                                                {{outside_form.color|as_crispy_field}}
+                                            </th>
+                                            <th class="col-lg-1 col-xl-1 col-md-1" style="width: 20%;">
+                                                {{outside_form.wool_type|as_crispy_field}}
+                                            </th>
+                                            <th class="col-lg-1 col-xl-1 col-md-1" style="width: 20%;">
+                                                {{outside_form.percent_loss|as_crispy_field}}
+                                            </th>
+                                            <th class="col-lg-1 col-xl-1 col-md-1" style="width: 20%;">
+                                                {{outside_form.weight_after_loss|as_crispy_field}}
+                                            </th>
+                                            <th class="col-lg-1 col-xl-1 col-md-1">
+                                                <a onClick="OutSideCreate()"
+                                                        class="btn btn-block btn-success">اضافة
+                                                </a>
+                                            </th>
+
+                                        </tr>
+                                    </form>
+
+
+                                    </thead>
+
+                                </table>
+                            </div>
+                            {% endif %}
+                            <style>
+                                /*.table-responsive {*/
+                                /*    max-height: 500px;*/
+                                /*}*/
+
+                                /*.scroll{*/
+                                    /*overflow-y: scroll;*/
+                                    /*overflow-x: scroll;*/
+                                 /*}*/
+                                /*.table-responsive::-webkit-scrollbar {*/
+                                /*    display: none;*/
+                                /*}*/
+                            </style>
+
+                            <div class="table-responsive">
+                                <table class="table table-centered table-dark table-nowrap text-center">
+                                    <thead>
+                                        <tr>
+                                            <td style="width: 60%" class="out_sell">
+                                                <select class="form-control" id="out_specific_wool" style="width: 100%" onchange="OutWoolFilter(this)">
+                                                    <option disabled selected value="">عرض كميات خامة معينة؟</option>
+                                                    <option value=" ">كل الخامات</option>
+                                                    <option value="1">قطن</option>
+                                                    <option value="2">صوف</option>
+                                                    <option value="3">عجينة</option>
+                                                    <option value="4">سبن</option>
+                                                    <option value="5">لكرة</option>
+                                                    <option value="6">رمش</option>
+                                                    <option value="7">عصب</option>
+                                                    <option value="8">بلستر</option>
+                                                    <option value="9">استك</option>
+                                                </select>
+                                            </td>
+                                            <td style="width: 40%">
+                                                <input type="date" class="form-control" id="out_specific_date" style="width: 100%" onchange="OutDateFilter(this)">
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+
+                            <div id="outside">
+                                <div class="table-responsive scroll">
+                                    <table class="table pag table-centered table-dark table-nowrap text-center">
+                                        <thead>
+                                        <tr>
+                                            <th>م</th>
+                                            <th>التاريخ</th>
+                                            <th>الوزن</th>
+                                            <th>اللون</th>
+                                            <th>نوع الخامة</th>
+                                            <th>نسبة الهالك</th>
+                                            <th>الوزن بعد الهالك</th>
+                                            <th>المسؤول</th>
+                                            {% if request.user.is_superuser %}
+                                            <th><i class="fas fa-cogs"></i></th>
+                                            {% endif %}
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for x in outSide %}
+                                        <tr style="text-align: center;">
+                                            <td>{{forloop.counter}}</td>
+                                            <td><span class="font-size-18"><i class="fas fa-calendar-alt"></i> {{x.date|date:'Y-m-d'}}</span>
+                                            </td>
+                                            <td><span class=" font-size-18"><i class="fas fa-balance-scale"></i> {{x.weight|floatformat:3}}</span>
+                                            </td>
+                                            <td><i class="fas fa-palette"></i> {{x.color}}</td>
+                                            <td> {% if x.wool_type %}{{x.get_wool_type_display}}{% endif %}</td>
+                                            <td><span><i class="fas fa-percent"></i> {{x.percent_loss|floatformat:1}}</span></td>
+                                            <td><span class=" font-size-18"><i class="fas fa-balance-scale"></i> {{x.weight_after_loss|floatformat:3}}</span>
+                                            </td>
+                                            <td><i class="fas fa-user-tie"></i> {{x.admin}}</td>
+                                            {% if request.user.is_superuser %}
+                                            <td>
+{#                                            {% if x.id == last_outside_id %}#}
+                                                <!--
+{#                                                            <a href="{% url 'Factories:FactoryOutSideUpdate' x.id %}" class="mr-3 text-warning" data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>#}-->
+                                                <a onClick="
+                                                    /*
+                                                    var result = confirm('هل أنت متأكد من الحذف؟');
+                                                    if (result) {
+                                                        OutsideDelete('{{x.id}}')
+                                                    }
+                                                    */
+                                                    Swal.fire({
+                                                      title: 'انتبه!',
+                                                      text: 'هل أنت متأكد من الحذف؟',
+                                                      icon: 'warning',
+                                                      showCancelButton: true,
+                                                      confirmButtonText: 'نعم، احذف',
+                                                      cancelButtonText: 'الغاء'
+                                                    }).then((result) => {
+                                                      if (result.isConfirmed) {
+                                                        OutsideDelete('{{x.id}}')
+                                                      }
+                                                    });
+                                                    "
+                                                   style="cursor: pointer;" class="text-danger"><i
+                                                        class="mdi mdi-close font-size-18"></i></a>
+{#                                            {% endif %}#}
+                                            </td>
+                                            {% endif %}
+
+
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="row text-center pagination">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-dark prev">السابق</button>
+                                        <span class="page"></span>
+                                        <button class="btn btn-dark next">التالي</button>
+                                    </div>
+                                </div>
+                                <br>
+
+                                <div style="margin-top:10px">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="card mini-stats-wid mb-0">
+                                                <div class="card-body bg-danger">
+
+                                                    <div class="d-flex flex-wrap">
+                                                        <div class="mr-3">
+                                                            <h5 class=" mb-2 text-light">اجمالي الوزن</h5>
+                                                            <h5 class="mb-0 text-dark">
+                                                                {% if sum_weight %}
+                                                                {{sum_weight|floatformat:3}}
+                                                                {% else %}
+                                                                0.000
+                                                                {% endif %}
+                                                                كيلو جرام</h5>
+                                                        </div>
+
+
+                                                        <div class="avatar-xs ml-auto">
+                                                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                                                <i class="fas fa-balance-scale"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="card mini-stats-wid mb-0">
+                                                <div class="card-body bg-danger">
+
+                                                    <div class="d-flex flex-wrap">
+                                                        <div class="mr-3">
+                                                            <h5 class=" mb-2 text-light">اجمالي الوزن بعد الهالك</h5>
+                                                            <h5 class="mb-0 text-dark">
+                                                                {% if sum_weight_after %}
+                                                                {{sum_weight_after|floatformat:3}}
+                                                                {% else %}
+                                                                0.000
+                                                                {% endif %}
+                                                                كيلو جرام</h5>
+                                                        </div>
+
+
+                                                        <div class="avatar-xs ml-auto">
+                                                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                                                <i class="fas fa-balance-scale"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="card">
+                                                <div class="card-body bg-primary">
+                                                    <h5 class="text-light text-center" style="margin-top: -15px">اعادة احتساب الهالك</h5>
+                                                    <form method="post" id="new_percent_loss" action="{% url 'Factories:UpdateFactoryOutsideLoss' factory.id %}">
+                                                        {% csrf_token %}
+                                                        <div class="row" style="margin-top: 15px; margin-bottom: -10px">
+                                                            <div class="col-md-8">
+                                                                <input type="number" class="form-control" name="new_percent_loss" placeholder="النسبة" required min="0">
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <input type="submit" class="btn btn-light" value="تأكيد">
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script src="/static/assets/libs/jquery/jquery.min.js"></script>
+
+                            <script>
+                                $(document).ready(function() {
+                                    $('#out_specific_wool').select2();
+                                });
+
+                                $(document).ready(function() {
+                                    $('#weight').on('keyup change', function () {
+                                        const weight = $('#weight').val();
+                                        const percent_loss = $('#percent_loss').val();
+                                        if (percent_loss == 0) {
+                                            $('#weight_after_loss').val(weight)
+                                        } else {
+                                            let prcent_loss_valu = (weight - (weight * percent_loss) / 100);
+                                            $('#weight_after_loss').val(prcent_loss_valu);
+                                        }
+                                    });
+
+                                    $('#percent_loss').on('keyup change', function () {
+                                        const weight = $('#weight').val();
+                                        const percent_loss = $('#percent_loss').val();
+                                        if (percent_loss == 0) {
+                                            $('#weight_after_loss').val(weight)
+                                        } else {
+                                            let prcent_loss_valu = (weight - (weight * percent_loss) / 100);
+                                            $('#weight_after_loss').val(prcent_loss_valu);
+                                        }
+                                    });
+                                });
+
+                                function OutSideCreate() {
+                                    $('a[href="#Outside_factory"]').tab('show');
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "{% url 'Factories:FactoryOutSideCreate'  %}",
+                                        data: {
+                                            id: '{{object.id}}',
+                                            date: $('#datee').val(),
+                                            weight: $('#weight').val(),
+                                            color: $('#color').val(),
+                                            wool_type: $('#wool_type').val(),
+                                            percent_loss: $('#percent_loss').val(),
+                                            weight_after_loss: $('#weight_after_loss').val(),
+                                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                                            dataType: "json",
+                                        },
+                                        success: function (response) {
+                                            /* response message */
+                                            if (response.msg == 1) {
+                                                $('#weight').val('');
+                                                $('#color').val('');
+                                                $('#wool_type').val('');
+                                                $('#weight_after_loss').val('');
+                                                $('#outside').html('&nbsp;').load("{% url 'Factories:FactoryOutSide_div' object.id %}");
+                                                //alert("تم الاضافة بنجاح");
+                                                Swal.fire({
+                                                  title: 'نجاح!',
+                                                  text: 'تمت الاضافة بنجاح',
+                                                  icon: 'success',
+                                                  confirmButtonText: 'تم'
+                                                });
+                                                $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}");
+                                                $("#paymnet").html("&nbsp;").load("{% url 'Factories:FactoryPayment_div' object.id %}");
+                                            } else {
+                                                //alert("حاول مرة اخري / خطأ في البيانات");
+                                                Swal.fire({
+                                                  title: 'خطأ!',
+                                                  text: 'حاول مرة اخري / خطأ في البيانات',
+                                                  icon: 'error',
+                                                  confirmButtonText: 'تم'
+                                                });
+                                            }
+
+
+                                        },
+
+                                        failure: function () {
+
+                                        }
+                                    });
+
+
+                                }
+
+                                function OutsideDelete(outside_id) {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "{% url 'Factories:FactoryOutsideDelete' %}",
+                                        data: {
+                                            outside_id: outside_id,
+                                            csrfmiddlewaretoken: '{{ csrf_token }}',
+                                            dataType: "json",
+                                        },
+                                        success: function (response) {
+                                            /* response message */
+                                            $('#outside').html('&nbsp;').load("{% url 'Factories:FactoryOutSide_div' object.id %}");
+                                            //alert("تم الحذف بنجاح");
+                                            Swal.fire({
+                                              title: 'نجاح!',
+                                              text: 'تم الحذف بنجاح',
+                                              icon: 'success',
+                                              confirmButtonText: 'تم'
+                                            });
+                                            $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}");
+                                            $("#paymnet").html("&nbsp;").load("{% url 'Factories:FactoryPayment_div' object.id %}");
+                                        },
+
+                                        failure: function () {
+                                            //alert("خطأ  في الاضافة ");
+                                            Swal.fire({
+                                              title: 'خطأ!',
+                                              text: 'حاول مرة اخري / خطأ اثناء الحذف',
+                                              icon: 'error',
+                                              confirmButtonText: 'تم'
+                                            });
+                                        }
+                                    });
+                                }
+
+                            </script>
+                            <script>
+                                function OutWoolFilter(val) {
+                                    if (val.value && val.value!= ' '){
+                                        $( '.out_sell' ).find('.select2-container').find('.select2-selection--single').css("background-color","lightgreen");
+                                    }
+                                    else {
+                                        $( '.out_sell' ).find('.select2-container').find('.select2-selection--single').css("background-color","");
+                                    }
+
+                                    $( '#out_specific_date' ).css("background-color","");
+                                    $( '#out_specific_date' ).val('');
+
+                                    wool_val = val.value;
+                                    $( '#outside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryOutSide_div' object.id %}?wool_val=" + wool_val );
+                                };
+                                function OutDateFilter(val) {
+                                    if (val.value){
+                                        val.style.backgroundColor = 'lightgreen';
+                                    }
+                                    else {
+                                        val.style.backgroundColor = '';
+                                    }
+
+                                    $('#out_specific_wool').select2('destroy');
+                                    $('#out_specific_wool').val('').select2();
+
+                                    date_val = val.value;
+                                    $( '#outside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryOutSide_div' object.id %}?date_val=" + date_val );
+                                };
+                            </script>
+                            <script>
+                              document.getElementById('new_percent_loss').addEventListener('submit', function() {
+                                  localStorage['percent_loss'] = 'percent_loss';
+                              });
+
+                              $( document ).ready(function() {
+                                  if (localStorage['percent_loss']){
+                                      $('a[href="#Outside_factory"]').tab('show');
+                                      localStorage.removeItem("percent_loss");
+                                  }
+                              });
+                            </script>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

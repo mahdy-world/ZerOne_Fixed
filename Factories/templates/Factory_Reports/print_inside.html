@@ -1,0 +1,116 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>{{date|date:'Y-m-d'}} {{factory.name}}</title>
+    <meta name="description" content="Invoice demo sample">
+      <style>
+          body {
+              font-weight: bold;
+          }
+          table tr th {
+              font-size: larger;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+
+  <body>
+    <h1 style="margin-top: -50px">
+      {% if system_info.logo %}
+       <img src="{{system_info.logo_base64}}" height="100px" width="100px">
+       {% else %}
+{#       <img src="/static/assets/images/new.png" width="100px" height="100px">#}
+          <img src="file://{{ default_icon }}" height="100px" width="100px">
+      {% endif %}
+    </h1>
+
+    <dl id="informations" style="margin-top: -50px">
+        <h2 class="text-center">{{system_info.name}}</h2>
+        <h5 style="margin-top: -15px"><span>{{date|date:'Y-m-d'}}</span>تاريخ التقرير :</h5>
+        <h5 style="margin-top: -15px"><span>{{factory.name}}</span>داخل مصنع: </h5>
+    </dl><hr>
+
+    {% if from_date or to_date %}
+    <h5 style="text-align: center; text-decoration: underline">
+        فلترة: من
+        {% if from_date %}
+        {{ from_date }}
+        {% else %}
+        البداية
+        {% endif %}
+        الي
+        {% if to_date %}
+        {{ to_date }}
+        {% else %}
+        الآن
+        {% endif %}
+    </h5>
+    {% endif %}
+
+    <table>
+      <thead>
+        <tr>
+          <td>اجمالي الحساب</td>
+          <td>عدد الساعات</td>
+          <td>عدد القطع</td>
+          <td>المنتج</td>
+          <td>الوزن الكلي</td>
+          <td>التاريخ</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for x in queryset %}
+          <tr>
+            <th>{{x.total_account|floatformat:2}}</th>
+            <th>{{x.hour_count|floatformat:2}}</th>
+            <th>{{x.product_count}}</th>
+            <th>{{x.product}}</th>
+            <th>{{x.weight|floatformat:3}}</th>
+            <th>{{x.date|date:'Y-m-d'}}</th>
+          </tr>
+        {% endfor %}
+        <tr>
+            <td>
+                {% if sum_weight %}
+                {{sum_weight|floatformat:2}}
+                {% else %}
+                0.00
+                {% endif %}
+            </td>
+            <td>
+                {% if sum_hours %}
+                {{sum_hours|floatformat:2}}
+                {% else %}
+                0.00
+                {% endif %}
+            </td>
+            <td>
+                {% if sum_count %}
+                {{sum_count|floatformat:0}}
+                {% else %}
+                0
+                {% endif %}
+            </td>
+            <td>
+                {% if prods %}
+                {{prods|floatformat:0}}
+                {% else %}
+                0
+                {% endif %}
+            </td>
+            <td>
+                {% if weight %}
+                {{weight|floatformat:3}}
+                {% else %}
+                0.000
+                {% endif %}
+            </td>
+            <td>
+                إجماليات
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

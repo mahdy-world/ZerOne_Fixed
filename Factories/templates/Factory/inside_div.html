@@ -1,0 +1,370 @@
+{% load mathfilters %}
+<div class="table-responsive scroll" >
+    <table class="table in_pag table-centered table-dark table-nowrap text-center">
+        <thead>
+            <tr>
+                <th>م</th>
+                <th>التاريخ</th>
+                <th>الوزن المستلم</th>
+                <th>اللون</th>
+                <th>نوع الخامة</th>
+                <th>الموديل</th>
+                <th>وزن الموديل</th>
+                <th>عدد الموديل</th>
+                <th>وقت الموديل</th>
+                <th>عدد الساعات</th>
+                <th>سعر الساعة</th>
+                <th>اجمالي الحساب</th>
+                <th>المسؤول</th>
+                {% if request.user.is_superuser %}
+                <th><i class="fas fa-cogs"></i></th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody >
+        {% for w in inSide  %}
+            <tr style="text-align: center;">
+            <td>{{forloop.counter}}</td>
+                <td><span class="font-size-18"><i class="fas fa-calendar-alt"></i> {{w.date|date:'Y-m-d'}}</span></td>
+                <td> {{w.weight|floatformat:3}}</td>
+                <td>{{w.color}}</td>
+                <td>{% if w.wool_type %}{{w.get_wool_type_display}}{% endif %}</td>
+                <td> {{w.product}}</td>
+                <td> {{w.product_weight|floatformat:1}}</td>
+                <td>{{w.product_count}}</td>
+                <td> {{w.product_time|floatformat:1}} </td>
+                <td> {{w.hour_count|floatformat:2}}</td>
+                <td> {{w.hour_price|floatformat:2}} </td>
+                <td><i class="fas fa-dollar-sign"></i> {{w.total_account|floatformat:2}} </td>
+                <td><i class="fas fa-user-tie"></i> {{w.admin}} </td>
+               {% if request.user.is_superuser %}
+               <td>
+{#               {% if w.id == last_inside_id %}#}
+               <!--
+{#                <a href="{% url 'Factories:FactoryInSideUpdate' w.id %}" class="mr-3 text-warning" data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>#}-->
+                <a onclick="
+                        /*
+                        var result = confirm('هل أنت متأكد من الحذف؟');
+                        if (result) {
+                            InsideDelete('{{w.id}}')
+                        }
+                        */
+                        Swal.fire({
+                          title: 'انتبه!',
+                          text: 'هل أنت متأكد من الحذف؟',
+                          icon: 'warning',
+                          showCancelButton: true,
+                          confirmButtonText: 'نعم، احذف',
+                          cancelButtonText: 'الغاء'
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            InsideDelete('{{w.id}}')
+                          }
+                        });
+                        " style="cursor: pointer;" class="text-danger" ><i class="mdi mdi-close font-size-18"></i></a>
+{#               {% endif %}#}
+               </td>
+               {% endif %} 
+               
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="row text-center in_pagination">
+    <div class="col-md-12">
+        <button class="btn btn-dark in_prev">السابق</button>
+        <span class="in_page"></span>
+        <button class="btn btn-dark in_next">التالي</button>
+    </div>
+</div>
+<br>
+
+<div style="margin-top:10px">
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card mini-stats-wid mb-0">
+                <div class="card-body bg-danger">
+                    
+                    <div class="d-flex flex-wrap">
+                        <div class="mr-3">
+                            <h5 class=" mb-2 text-light">اجمالي الوزن الخارج</h5>
+                            <h5 class="mb-0 text-dark">
+                                {% if sum_outside %}
+                                {{sum_outside|floatformat:3}}
+                                {% else %}
+                                0.000
+                                {% endif %}
+                                كيلو جرام</h5>
+                        </div>
+
+
+                        <div class="avatar-xs ml-auto">
+                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card mini-stats-wid mb-0">
+                <div class="card-body bg-danger">
+                    
+                    <div class="d-flex flex-wrap">
+                        <div class="mr-3">
+                            <h5 class=" mb-2 text-light">اجمالي الوزن المستلم</h5>
+                            <h5 class="mb-0 text-dark">
+                                {% if sum_weightt %}
+                                {{sum_weightt|floatformat:3}}
+                                {% else %}
+                                0.000
+                                {% endif %}
+                                كيلو جرام</h5>
+                        </div>
+
+
+                        <div class="avatar-xs ml-auto">
+                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                <i class="fas fa-dolly"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card mini-stats-wid mb-0">
+                <div class="card-body bg-danger">
+
+                    <div class="d-flex flex-wrap">
+                        <div class="mr-3">
+                            <h5 class=" mb-2 text-light">الوزن المتبقي</h5>
+                            <h5 class="mb-0 text-dark">
+                                {% if sum_outside or sum_weightt %}
+                                {{sum_outside|sub:sum_weightt|floatformat:3}}
+                                {% else %}
+                                0.000
+                                {% endif %}
+                                كيلو جرام</h5>
+                        </div>
+
+
+                        <div class="avatar-xs ml-auto">
+                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card">
+                <div class="card-body bg-primary">
+                    <h5 class="text-light text-center" style="margin-top: -15px">اعادة احتساب الساعه</h5>
+                    <form method="post" id="new_hour_price" action="{% url 'Factories:UpdateFactoryHourPrice' factory.id %}">
+                        {% csrf_token %}
+                        <div class="row" style="margin-top: 15px; margin-bottom: -10px">
+                            <div class="col-md-8">
+                                <input type="number" class="form-control" name="new_hour_price_input" placeholder="سعر الساعه" required min="0">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="submit" class="btn btn-light" value="تأكيد">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-lg-3">
+            <div class="card mini-stats-wid mb-0">
+                <div class="card-body bg-danger">
+
+                    <div class="d-flex flex-wrap">
+                        <div class="mr-3">
+                            <h5 class=" mb-2 text-light">عدد الموديلات</h5>
+                            <h5 class="mb-0 text-dark">
+                                {% if models_count %}
+                                {{models_count|floatformat:0}}
+                                {% else %}
+                                0
+                                {% endif %}
+                                موديل</h5>
+                        </div>
+
+
+                        <div class="avatar-xs ml-auto">
+                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                <i class="fas fa-list-ol"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card mini-stats-wid mb-0">
+                <div class="card-body bg-danger">
+                    
+                    <div class="d-flex flex-wrap">
+                        <div class="mr-3">
+                            <h5 class=" mb-2 text-light">عدد القطع</h5>
+                            <h5 class="mb-0 text-dark">
+                                {% if products_count %}
+                                {{products_count|floatformat:0}}
+                                {% else %}
+                                0
+                                {% endif %}
+                                قطعة</h5>
+                        </div>
+
+
+                        <div class="avatar-xs ml-auto">
+                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                <i class="fas fa-list-ol"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card mini-stats-wid mb-0">
+                <div class="card-body bg-danger">
+
+                    <div class="d-flex flex-wrap">
+                        <div class="mr-3">
+                            <h5 class=" mb-2 text-light">عدد الساعات</h5>
+                            <h5 class="mb-0 text-dark">
+                                {% if hours_count %}
+                                {{hours_count|floatformat:0}}
+                                {% else %}
+                                0.00
+                                {% endif %}
+                                ساعة و
+                                {% if minutes_count %}
+                                {{minutes_count|floatformat:0}}
+                                {% else %}
+                                0.00
+                                {% endif %}
+                                دقيقة
+                            </h5>
+                        </div>
+
+
+                        <div class="avatar-xs ml-auto">
+                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                <i class="fas fa-list-ol"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card mini-stats-wid mb-0">
+                <div class="card-body bg-danger">
+
+                    <div class="d-flex flex-wrap">
+                        <div class="mr-3">
+                            <h5 class=" mb-2 text-light">اجمالي الحساب</h5>
+                            <h5 class="mb-0 text-dark">
+                                {% if sum_weightt_after %}
+                                {{sum_weightt_after|floatformat:2}}
+                                {% else %}
+                                0.00
+                                {% endif %}
+                                جنية</h5>
+                        </div>
+
+
+                        <div class="avatar-xs ml-auto">
+                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  document.getElementById('new_hour_price').addEventListener('submit', function() {
+      localStorage['hour_price'] = 'hour_price';
+  });
+
+  $( document ).ready(function() {
+      if (localStorage['hour_price']){
+          $('a[href="#Inside_factory"]').tab('show');
+          localStorage.removeItem("hour_price");
+      }
+  });
+</script>
+<script>
+    $(document).ready(function() {
+      var itemsPerPage = 10;
+      var currentPage = 1;
+
+      function showItems() {
+        var startIndex = (currentPage - 1) * itemsPerPage;
+        var endIndex = startIndex + itemsPerPage;
+
+        $('.in_pag tbody tr').hide();
+        $('.in_pag tbody tr').slice(startIndex, endIndex).show();
+        $('.in_page').empty();
+
+        var totalItems = $('.in_pag tbody tr').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        $('.in_prev').prop('disabled', currentPage === 1);
+        $('.in_next').prop('disabled', currentPage === totalPages);
+
+        for (var i = 1; i <= totalPages; i++) {
+          var pageButton = $('<button>').text(i);
+          pageButton.addClass('btn');
+          if (i === currentPage) {
+            pageButton.addClass('active bg-warning');
+          }
+          pageButton.click(function() {
+            currentPage = parseInt($(this).text());
+            showItems();
+          });
+          $('.in_page').append(pageButton);
+        }
+      }
+
+      $('.in_prev').click(function() {
+        if (currentPage > 1) {
+          currentPage--;
+          showItems();
+        }
+      });
+
+      $('.in_next').click(function() {
+        var totalItems = $('.in_pag tbody tr').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (currentPage < totalPages) {
+          currentPage++;
+          showItems();
+        }
+      });
+
+      showItems();
+    });
+</script>

@@ -1,0 +1,79 @@
+{% load mathfilters %}
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>{{date|date:'Y-m-d'}} {{worker.name}}</title>
+    <meta name="description" content="Invoice demo sample">
+      <style>
+          body {
+              font-weight: bold;
+          }
+          table tr th {
+              font-size: larger;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+
+  <body>
+    <h1 style="margin-top: -50px">
+      {% if system_info.logo %}
+       <img src="{{system_info.logo_base64}}" height="100px" width="100px">
+       {% else %}
+{#       <img src="/static/assets/images/new.png" height="100px" width="100px">#}
+          <img src="file://{{ default_icon }}" height="100px" width="100px">
+      {% endif %}
+    </h1>
+
+    <dl id="informations" style="margin-top: -50px">
+        <h2 class="text-center">{{system_info.name}}</h2>
+        <h5 style="margin-top: -15px"><span> {{date|date:'Y-m-d'}} </span>تاريخ التقرير: </h5>
+        <h5 style="margin-top: -15px"><span> {{worker.name}} </span>كشف حساب العامل: </h5>
+    </dl><hr>
+
+    <table>
+        <tr>
+            {% if worker.worker_type == 6 %}
+            <th>
+            {{ total_production|floatformat:0 }} قطعة
+            </th>
+            <th>اجمالي الإنتاج</th>
+            {% else %}
+            <th>
+                {{ real_days }} يوم
+                و {{ rest_hours }} ساعة
+            </th>
+            <th>اجمالي أيام الحضور</th>
+            {% endif %}
+        </tr>
+        <tr>
+            <th>{{ total|floatformat:2 }} جنيه</th>
+            <th>اجمالي الحساب</th>
+        </tr>
+        <tr>
+            <th>{{ payment_sum|floatformat:2 }} جنيه</th>
+            <th>اجمالي المسحوبات</th>
+        </tr>
+        <tr>
+            <th>
+            {% if total|sub:payment_sum > 0 %}
+                {{ total|sub:payment_sum|floatformat:2 }}
+            {% elif total|sub:payment_sum < 0  %}
+                {{ total|sub:payment_sum|mul:-1|floatformat:2 }}
+            {% else %}
+                0.00
+            {% endif %}
+            جنيه
+            </th>
+            <th>الباقي
+            {% if total|sub:payment_sum > 0 %}
+                للعامل
+            {% elif total|sub:payment_sum < 0  %}
+                علي العامل
+            {% endif %}
+            </th>
+        </tr>
+    </table>
+  </body>
+</html>

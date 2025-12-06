@@ -1,0 +1,210 @@
+<div class="table-responsive scroll" >
+    <table class="table pay_pag table-centered table-dark table-nowrap text-center">
+        <thead>
+            <tr>
+                <th>م</th>
+                <th>التاريخ</th>
+                <th>المبلغ</th>
+                <th>المستلم</th>
+                <th>المسؤول</th>
+                {% if request.user.is_superuser %}
+                <th><i class="fas fa-cogs"></i></th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody >
+        {% for x in payment  %}
+            <tr style="text-align: center;">
+                <td>{{forloop.counter}}</td>
+                <td><span class="badge badge-danger"><i class="fas fa-calendar-alt"></i> {{x.date|date:'Y-m-d'}}</span></td>
+                <td><i class="fas fa-dollar-sign"></i> {{x.price|floatformat:2}}</td>
+                <td><i class="fas fa-user"></i> {{x.recipient}} </td>
+                <td><i class="fas fa-user-tie"></i> {{x.admin}} </td>
+                {% if request.user.is_superuser %}
+                <td>
+{#                {% if x.id == last_payment_id %}#}
+                <!--
+{#                    <a href="{% url 'Factories:FactoryPaymentUpdate' x.id %}" class="mr-3 text-warning" data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>#}-->
+                    <a onclick="
+                            /*
+                            var result = confirm('هل أنت متأكد من الحذف؟');
+                            if (result) {
+                                PaymentDelete('{{x.id}}')
+                            }
+                            */
+                            Swal.fire({
+                              title: 'انتبه!',
+                              text: 'هل أنت متأكد من الحذف؟',
+                              icon: 'warning',
+                              showCancelButton: true,
+                              confirmButtonText: 'نعم، احذف',
+                              cancelButtonText: 'الغاء'
+                            }).then((result) => {
+                              if (result.isConfirmed) {
+                                PaymentDelete('{{x.id}}')
+                              }
+                            });
+                            " style="cursor: pointer;" class="text-danger" ><i class="mdi mdi-close font-size-18"></i></a>
+{#                {% endif %}#}
+                </td>
+                
+                {% endif %}
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="row text-center pay_pagination">
+    <div class="col-md-12">
+        <button class="btn btn-dark pay_prev">السابق</button>
+        <span class="pay_page"></span>
+        <button class="btn btn-dark pay_next">التالي</button>
+    </div>
+</div>
+<br>
+
+<div style="margin-top:10px">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card mini-stats-wid mb-0">
+                <div class="card-body bg-danger">
+                    
+                    <div class="d-flex flex-wrap">
+                        <div class="mr-3">
+                            <h5 class=" mb-2 text-light"> الحساب المستحق</h5>
+                            <h5 class="mb-0 text-dark">
+                                {% if total_account %}
+                                {{total_account|floatformat:2}}
+                                {% else %}
+                                0.00
+                                {% endif %}
+                                جنية
+                            </h5>
+                        </div>
+
+
+                        <div class="avatar-xs ml-auto">
+                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card mini-stats-wid mb-0">
+                <div class="card-body bg-danger">
+                    
+                    <div class="d-flex flex-wrap">
+                        <div class="">
+                            <h5 class=" mb-2 text-light">اجمالي المسحوبات</h5>
+                            <h5 class="mb-0 text-dark">
+                                {% if payment_sum %}
+                                {{payment_sum|floatformat:2}}
+                                {% else %}
+                                0.00
+                                {% endif %}
+                                جنية
+                            </h5>
+                        </div>
+
+
+                        <div class="avatar-xs ml-auto">
+                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card mini-stats-wid mb-0">
+                <div class="card-body bg-danger">
+                    
+                    <div class="d-flex flex-wrap">
+                        <div class="">
+                            <h5 class=" mb-2 text-light">باقي الحساب</h5>
+                            <h5 class="mb-0 text-dark">
+                                {% if total %}
+                                {{total|floatformat:2}}
+                                {% else %}
+                                0.00
+                                {% endif %}
+                                جنية
+                            </h5>
+                        </div>
+
+
+                        <div class="avatar-xs ml-auto">
+                            <div class="avatar-title bg-light rounded-circle text-dark font-size-20">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+      var itemsPerPage = 10;
+      var currentPage = 1;
+
+      function showItems() {
+        var startIndex = (currentPage - 1) * itemsPerPage;
+        var endIndex = startIndex + itemsPerPage;
+
+        $('.pay_pag tbody tr').hide();
+        $('.pay_pag tbody tr').slice(startIndex, endIndex).show();
+        $('.pay_page').empty();
+
+        var totalItems = $('.pay_pag tbody tr').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        $('.pay_prev').prop('disabled', currentPage === 1);
+        $('.pay_next').prop('disabled', currentPage === totalPages);
+
+        for (var i = 1; i <= totalPages; i++) {
+          var pageButton = $('<button>').text(i);
+          pageButton.addClass('btn');
+          if (i === currentPage) {
+            pageButton.addClass('active bg-warning');
+          }
+          pageButton.click(function() {
+            currentPage = parseInt($(this).text());
+            showItems();
+          });
+          $('.pay_page').append(pageButton);
+        }
+      }
+
+      $('.pay_prev').click(function() {
+        if (currentPage > 1) {
+          currentPage--;
+          showItems();
+        }
+      });
+
+      $('.pay_next').click(function() {
+        var totalItems = $('.pay_pag tbody tr').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (currentPage < totalPages) {
+          currentPage++;
+          showItems();
+        }
+      });
+
+      showItems();
+    });
+  </script>

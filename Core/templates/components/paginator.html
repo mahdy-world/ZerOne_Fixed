@@ -1,0 +1,78 @@
+<div class="row" style="width: 100%">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <ul class="pagination pagination-rounded justify-content-center mt-1 mb-5">
+
+            {# زر الذهاب لأول صفحة #}
+            {% if page_obj.number > 1 %}
+                <li class="page-item" title="أول صفحة">
+                    <a href="?page=1" class="page-link"><i class="mdi mdi-page-last"></i></a>
+                </li>
+            {% else %}
+                <li class="page-item disabled" title="أول صفحة">
+                    <a href="#" class="page-link"><i class="mdi mdi-page-last"></i></a>
+                </li>
+            {% endif %}
+
+            {# زر السابق #}
+            {% if page_obj.has_previous %}
+                <li class="page-item" title="الصفحة السابقة">
+                    <a href="?page={{ page_obj.previous_page_number }}" class="page-link"><i class="mdi mdi-chevron-right"></i></a>
+                </li>
+            {% else %}
+                <li class="page-item disabled" title="الصفحة السابقة">
+                    <a href="#" class="page-link"><i class="mdi mdi-chevron-right"></i></a>
+                </li>
+            {% endif %}
+
+            {# أول صفحة دائماً #}
+            {% if page_obj.number > 3 %}
+                <li class="page-item"><a href="?page=1" class="page-link">1</a></li>
+                {% if page_obj.number > 4 %}
+                    <li class="page-item disabled"><a href="#" class="page-link">...</a></li>
+                {% endif %}
+            {% endif %}
+
+            {# نطاق الصفحات حول الصفحة الحالية #}
+            {% for i in page_obj.paginator.page_range %}
+                {% if i >= page_obj.number|add:'-2' and i <= page_obj.number|add:'2' %}
+                    {% if page_obj.number == i %}
+                        <li class="page-item active"><a href="#" class="page-link">{{ i }}</a></li>
+                    {% else %}
+                        <li class="page-item"><a href="?page={{ i }}" class="page-link">{{ i }}</a></li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+
+            {# آخر صفحة دائماً #}
+            {% if page_obj.number < page_obj.paginator.num_pages|add:'-2' %}
+                {% if page_obj.number < page_obj.paginator.num_pages|add:'-3' %}
+                    <li class="page-item disabled"><a href="#" class="page-link">...</a></li>
+                {% endif %}
+                <li class="page-item"><a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">{{ page_obj.paginator.num_pages }}</a></li>
+            {% endif %}
+
+            {# زر التالي #}
+            {% if page_obj.has_next %}
+                <li class="page-item" title="الصفحة التالية">
+                    <a href="?page={{ page_obj.next_page_number }}" class="page-link"><i class="mdi mdi-chevron-left"></i></a>
+                </li>
+            {% else %}
+                <li class="page-item disabled" title="الصفحة التالية">
+                    <a href="#" class="page-link"><i class="mdi mdi-chevron-left"></i></a>
+                </li>
+            {% endif %}
+
+            {# زر الذهاب لآخر صفحة #}
+            {% if page_obj.number < page_obj.paginator.num_pages %}
+                <li class="page-item" title="آخر صفحة">
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link"><i class="mdi mdi-page-first"></i></a>
+                </li>
+            {% else %}
+                <li class="page-item disabled" title="آخر صفحة">
+                    <a href="#" class="page-link"><i class="mdi mdi-page-first"></i></a>
+                </li>
+            {% endif %}
+
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,240 @@
+<div class="table-responsive scroll">
+  <table
+    class="table att_pag table-centered table-dark table-nowrap text-center"
+  >
+    <thead>
+      <tr>
+        <th>م</th>
+        <th>التاريخ</th>
+        <th>اليوم</th>
+        <th>عدد الساعات</th>
+        <th>المسؤول</th>
+          {% if request.user.is_superuser %}
+        <th><i class="fas fa-cogs"></i></th>
+          {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+        {% if workers %}
+          {% for x in workers %}
+          <tr style="text-align: center">
+              <td>{{forloop.counter}}</td>
+              <td>
+              <span class="badge badge-danger"
+                  ><i class="fas fa-calendar-alt"></i>
+                  {{x.date|date:'Y-m-d'}}</span
+              >
+              </td>
+              <td>
+               {{x.day}}
+              </td>
+              <td>
+               {{x.get_hour_count_display}}
+                  {% if x.hour_count != 5 %}
+                    ساعة
+                  {% endif %}
+              </td>
+              <td><i class="fas fa-user-tie"></i> {{x.admin}}</td>
+              {% if request.user.is_superuser %}
+              <td>
+{#              {% if x.id == last_attendance_id %}#}
+              <!--
+{#              <a#}
+{#                  href="{% url 'Workers:WorkerAttendancesUpdate' x.id %}"#}
+{#                  class="mr-3 text-warning"#}
+{#                  data-toggle="modal"#}
+{#                  data-target="#action_modal"#}
+{#                  data-original-title="Edit"#}
+{#                  ><i class="mdi mdi-pencil font-size-18"></i#}
+{#              ></a>#} -->
+              <a
+                  onclick="
+                          var result = confirm('هل أنت متأكد من الحذف؟');
+                            if (result) {
+                                WorkerAttendanceDelete('{{x.id}}')
+                            }
+                          "
+                  style="cursor: pointer"
+                  class="text-danger"
+                  ><i class="mdi mdi-close font-size-18"></i
+              ></a>
+{#              {% endif %}#}
+              </td>
+              {% endif %}
+              
+          </tr>
+          {% endfor %}
+        {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<div class="row text-center att_pagination">
+    <div class="col-md-12">
+        <button class="btn btn-dark att_prev">السابق</button>
+        <span class="att_page"></span>
+        <button class="btn btn-dark att_next">التالي</button>
+    </div>
+</div>
+<br>
+
+<div style="margin-top: 10px">
+  <div class="row">
+    <div class="col-lg-3 flex-center">
+      <div class="card mini-stats-wid mb-0">
+        <div class="card-body bg-danger">
+          <div class="d-flex flex-wrap">
+            <div class="">
+              <h5 class="mb-2 text-light">
+                اجمالي الايام
+              </h5>
+              <h4 class="mb-0 text-dark">
+                {{attendance_summary.count_days}} يوم
+              </h4>
+            </div>
+
+            <div class="avatar-sm ml-auto">
+              <div
+                class="avatar-title bg-light rounded-circle text-dark font-size-20"
+              >
+              <i class="fas fa-clock"></i>                
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 flex-center">
+        <div class="card mini-stats-wid mb-0">
+          <div class="card-body bg-danger">
+            <div class="d-flex flex-wrap">
+              <div class="">
+                <h5 class="mb-2 text-light">
+                  الغياب
+                </h5>
+                <h4 class="mb-0 text-dark">
+                    {{absence_summary.count_days}} يوم
+                </h4>
+              </div>
+
+              <div class="avatar-sm ml-auto">
+                <div
+                  class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                >
+                <i class="fas fa-clock"></i>
+                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <div class="col-lg-3 flex-center">
+        <div class="card mini-stats-wid mb-0">
+          <div class="card-body bg-danger">
+            <div class="d-flex flex-wrap">
+              <div class="">
+                <h5 class="mb-2 text-light">
+                  الحضور الفعلي
+                </h5>
+                <h4 class="mb-0 text-dark">
+                    {{attendance_real_summary.real_days}} يوم
+                    و
+                  {{attendance_real_summary.rest_hours}} ساعة
+                </h4>
+              </div>
+
+              <div class="avatar-sm ml-auto">
+                <div
+                  class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                >
+                <i class="fas fa-clock"></i>
+                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <div class="col-lg-3 flex-center">
+      <div class="card mini-stats-wid mb-0">
+        <div class="card-body bg-danger">
+          <div class="d-flex flex-wrap">
+            <div class="">
+              <h5 class="mb-2 text-light">
+                اجمالي الحساب
+              </h5>
+              <h4 class="mb-0 text-dark">
+                {{attendance_all_cost.sum_price|floatformat:2}} جنية
+              </h4>
+            </div>
+
+            <div class="avatar-sm ml-auto">
+              <div
+                class="avatar-title bg-light rounded-circle text-dark font-size-20"
+              >
+              <i class="fas fa-dollar-sign"></i>                 
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+    $(document).ready(function() {
+      var itemsPerPage = 10;
+      var currentPage = 1;
+
+      function showItems() {
+        var startIndex = (currentPage - 1) * itemsPerPage;
+        var endIndex = startIndex + itemsPerPage;
+
+        $('.att_pag tbody tr').hide();
+        $('.att_pag tbody tr').slice(startIndex, endIndex).show();
+        $('.att_page').empty();
+
+        var totalItems = $('.att_pag tbody tr').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        $('.att_prev').prop('disabled', currentPage === 1);
+        $('.att_next').prop('disabled', currentPage === totalPages);
+
+        for (var i = 1; i <= totalPages; i++) {
+          var pageButton = $('<button>').text(i);
+          pageButton.addClass('btn');
+          if (i === currentPage) {
+            pageButton.addClass('active bg-warning');
+          }
+          pageButton.click(function() {
+            currentPage = parseInt($(this).text());
+            showItems();
+          });
+          $('.att_page').append(pageButton);
+        }
+      }
+
+      $('.att_prev').click(function() {
+        if (currentPage > 1) {
+          currentPage--;
+          showItems();
+        }
+      });
+
+      $('.att_next').click(function() {
+        var totalItems = $('.att_pag tbody tr').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (currentPage < totalPages) {
+          currentPage++;
+          showItems();
+        }
+      });
+
+      showItems();
+    });
+  </script>

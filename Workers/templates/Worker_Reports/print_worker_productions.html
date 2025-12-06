@@ -1,0 +1,103 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>{{date|date:'Y-m-d'}} {{worker.name}}</title>
+    <meta name="description" content="Invoice demo sample">
+      <style>
+          body {
+              font-weight: bold;
+          }
+          table tr th {
+              font-size: larger;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+
+  <body>
+    <h1 style="margin-top: -50px">
+      
+      {% if system_info.logo %}
+       <img src="{{system_info.logo_base64}}" height="100px" width="100px">
+       {% else %}
+{#       <img src="/static/assets/images/new.png" height="100px" width="100px">#}
+          <img src="file://{{ default_icon }}" height="100px" width="100px">
+      {% endif %}
+        
+    </h1>
+
+    <dl id="informations" style="margin-top: -50px">
+        <h2 class="text-center">{{system_info.name}}</h2>
+        <h5 style="margin-top: -15px"><span> {{date|date:'Y-m-d'}} </span>تاريخ التقرير: </h5>
+        <h5 style="margin-top: -15px"><span> {{worker.name}} </span>انتاج العامل: </h5>
+    </dl><hr>
+
+    {% if from_date or to_date %}
+    <h5 style="text-align: center; text-decoration: underline">
+        فلترة: من
+        {% if from_date %}
+        {{ from_date }}
+        {% else %}
+        البداية
+        {% endif %}
+        الي
+        {% if to_date %}
+        {{ to_date }}
+        {% else %}
+        الآن
+        {% endif %}
+    </h5>
+    {% endif %}
+
+    <table>
+      <thead>
+        <tr>
+          <td>الإجمالي</td>
+          <td>فئة السعر</td>
+          <td>الكمية</td>
+          <td>الموديل</td>
+          <td>اليوم</td>
+          <td>التاريخ</td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for x in queryset %}
+          <tr>
+            <th>{{x.total|floatformat:2}}</th>
+            <th>{{x.price|floatformat:2}}</th>
+            <th>{{x.quantity|floatformat:0}}</th>
+            <th>{{x.product.name}}</th>
+            <th>{{x.day}}</th>
+            <th>{{x.date|date:'Y-m-d'}}</th>
+          </tr>
+        {% endfor %}
+        <tr>
+            <td>
+                {% if total_cost %}
+                {{total_cost|floatformat:2}}
+                {% else %}
+                0.00
+                {% endif %}
+            </td>
+            <td></td>
+            <td>
+                {% if total_productions %}
+                {{total_productions|floatformat:0}}
+                {% else %}
+                0
+                {% endif %}
+            </td>
+            <td>
+                {% if models_count %}
+                {{models_count|floatformat:0}}
+                {% else %}
+                0
+                {% endif %}
+            </td>
+            <td colspan="2">إجماليات</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

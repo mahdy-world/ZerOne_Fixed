@@ -1,0 +1,44 @@
+@font-face {
+    font-family: 'Amiri', "Times New Roman", serif;
+}
+
+body {
+    font-family: 'Amiri', "Times New Roman", serif;
+    /*font-family: "Times New Roman", Times, serif;*/
+    font-weight: bold;
+}
+
+table {
+    /*font-family: arial, sans-serif;*/
+	width: 100%;
+}
+
+.prods {
+	/*width: 127%;*/
+	width: 125%;
+	/*margin-left: -85px;*/
+	margin-left: -79px;
+	font-size: 20px;
+}
+
+td, th {
+    border: 1px solid green;
+    text-align: center;
+    padding: 5px;
+}
+
+.prods tr:nth-child(odd) {
+    background-color: white;
+    border: 1px solid green;
+}
+
+.prods tr:nth-child(even) {
+    background-color: white;
+    border: 1px solid green;
+}
+
+#shop_name {
+    transform: scale(1.8, 1.8);
+}
+
+

@@ -1,0 +1,342 @@
+<style>
+    li span{
+        font-weight: bold;
+        font-size: 16px;
+    }
+    li a{
+        font-weight: bold;
+    }
+</style>
+
+<!-- left sideBar  -->
+{% if not modules.stop_date or modules.stop_date and today < modules.stop_date %}
+<div class="vertical-menu " style="background-color: white">
+
+    <div data-simplebar class="h-100">
+
+        <!--- Sidemenu -->
+        <div id="sidebar-menu">
+            <!-- Left Menu Start -->
+            <ul class="metismenu list-styled" id="side-menu" style="margin-top: 8px">
+
+                <!-- الرئيسية   -->
+                <li>
+                    <a href="/" class=" waves-effect">
+                        <i class="bx bx-home bx-sm"></i>
+                        <span key="t-layouts">الرئيسية</span>
+                    </a>
+                   
+                </li>
+
+                    {% if request.user.is_superuser %}
+                    <li>
+                        <a href="/system_statistics/" key="t-products"><i class='bx bx-line-chart' ></i>
+                            <span>إحصائيات عامة</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a id="backup_btn2" href="/manual_backup/" key="t-products"><i class='bx bx-cloud-upload' ></i>
+                            <span>نسخ احتياطي للبيانات</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li>
+                        <a href="#" data-toggle="modal" class="waves-effects" data-target="#search_modal">
+                            <i class='bx bx-search-alt' ></i>
+                             <span> بحث ونتائج</span>
+                        </a>
+                    </li>
+
+                <li class="menu-title " key="t-menu"><hr></li>
+
+
+               {% if modules.factory_active %}
+                   <!-- المصانع  -->
+                    <li>
+                        <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                            <i class='bx bxs-factory bx-sm'></i>
+                            <span key="t-ecommerce"> المصانع</span>
+                        </a>
+                       
+                        <ul class="sub-menu bg-light" aria-expanded="false">
+
+                            <li><a href="{% url 'Factories:FactoryList' %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                            قائمة المصانع </a></li>
+
+                            <li><a href="{% url 'Factories:FactoryCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                            اضافة مصنع جديد</a></li>
+
+                            <li><a href="{% url 'Factories:FactoryTrachList' %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                                سلة المهملات</a></li>
+
+                        </ul>
+                    
+                    </li>
+               {% endif %}
+
+
+               {% if modules.product_active %}
+                   <!-- المنتجات  -->
+                    <li>
+                        <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                            <i class='bx bxs-t-shirt bx-sm'></i>
+                            <span key="t-ecommerce"> المنتجات</span>
+                        </a>
+                        <ul class="sub-menu bg-light" aria-expanded="false">
+                            
+
+                            <li><a href="{% url 'Products:ProductList' %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                            قائمة المنتجات </a></li>
+
+                            <li><a href="{% url 'Products:ProductCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                            اضافة منتج جديد</a></li>
+
+                            <li><a href="{% url 'Products:ProductTrachList' %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                                سلة المهملات</a></li>
+
+                        </ul>
+                    </li>
+               {% endif %}
+
+               {% if modules.seller_active %}
+                   <!-- التجار -->
+                    <li>
+                        <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                            <i class='bx bxs-user-voice bx-sm'></i>
+                            <span key="t-ecommerce"> التجار</span>
+                        </a>
+                       
+                        <ul class="sub-menu bg-light" aria-expanded="false">
+
+                            <li><a href="{% url 'Products:SellerList' %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                            قائمة التجار </a></li>
+
+                            <li><a href="{% url 'Products:SellerCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                            اضافة تاجر جديد</a></li>
+
+                            <li><a href="{% url 'Products:SellerTrashList' %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                                سلة المهملات</a></li>
+
+                        </ul>
+                            
+                    </li>
+               {% endif %}
+
+                {% if modules.invoice_active %}
+                <!-- الفواتير  -->
+                <li>
+                    <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                        <i class='bx bx-receipt bx-sm' ></i>
+                        <span key="t-ecommerce"> الفواتير</span>
+                    </a>
+                    <ul class="sub-menu bg-light" aria-expanded="false">
+
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class='bx bx-receipt bx-sm' ></i>
+                                <span key="t-ecommerce"> فواتير المبيعات</span>
+                            </a>
+                            <ul class="sub-menu bg-light" aria-expanded="false">
+
+                                <li><a href="{% url 'Invoices:InvoiceList' 1 %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                                قائمة الفواتير </a></li>
+
+                                <li><a href="{% url 'Invoices:InvoiceCreate' 1 %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                                اضافة فاتورة جديدة</a></li>
+<!--
+{#                                <li><a href="{% url 'Invoices:InvoiceReturn' %}" key="t-product-detail"> <i class='bx bxs-minus-square'></i>#}
+{#                                مرتجع جديد</a></li>#}
+-->
+                                <li><a href="{% url 'Invoices:InvoiceTrashList' 1 %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                                    سلة المهملات</a></li>
+
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class='bx bx-receipt bx-sm' ></i>
+                                <span key="t-ecommerce"> فواتير المرتجع</span>
+                            </a>
+                            <ul class="sub-menu bg-light" aria-expanded="false">
+
+                                <li><a href="{% url 'Invoices:InvoiceList' 2 %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                                قائمة الفواتير </a></li>
+
+                                <li><a href="{% url 'Invoices:InvoiceCreate' 2 %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                                اضافة فاتورة جديدة</a></li>
+
+                                <li><a href="{% url 'Invoices:InvoiceTrashList' 2 %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                                    سلة المهملات</a></li>
+
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class='bx bx-receipt bx-sm' ></i>
+                                <span key="t-ecommerce"> فواتير القطاعي</span>
+                            </a>
+                            <ul class="sub-menu bg-light" aria-expanded="false">
+
+                                <li><a href="{% url 'Invoices:InvoiceList' 3 %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                                قائمة الفواتير </a></li>
+
+                                <li><a href="{% url 'Invoices:InvoiceCreate' 3 %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                                اضافة فاتورة جديدة</a></li>
+
+                                <li><a href="{% url 'Invoices:InvoiceTrashList' 3 %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                                    سلة المهملات</a></li>
+
+                            </ul>
+                        </li>
+
+                    </ul>
+                </li>
+               {% endif %}
+
+
+               {% if modules.worker_active %}
+                   <!-- العمال  -->
+                    <li>
+                        <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                            <i class='bx bx-user'></i> <span key="t-ecommerce"> العمال</span>
+                        </a>
+                       
+                        <ul class="sub-menu bg-light" aria-expanded="false">
+
+                            <li><a href="{% url 'Workers:WorkerList' %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                            قائمة العمال </a></li>
+
+                            <li><a href="{% url 'Workers:WorkerCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                            اضافة عامل جديد</a></li>
+
+                            <li><a href="{% url 'Workers:WorkerTrachList' %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                                سلة المهملات</a></li>
+
+                        </ul>
+                           
+                    </li>
+               {% endif %}
+
+                {% if modules.supplier_active %}
+                <!-- الموردين  -->
+                <li>
+                    <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                        <i class='bx bx-male bx-sm' ></i>
+                        <span key="t-ecommerce"> التوريد</span>
+                    </a>
+                    <ul class="sub-menu bg-light" aria-expanded="false">
+
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class='bx bx-male bx-sm' ></i>
+                                <span key="t-ecommerce"> الموردين</span>
+                            </a>
+                            <ul class="sub-menu bg-light" aria-expanded="false">
+
+                                <li><a href="{% url 'Factories:SupplierList' 1 %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                                قائمة الموردين </a></li>
+
+                                <li><a href="{% url 'Factories:SupplierCreate' 1 %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                                اضافة مورد جديد</a></li>
+
+                                <li><a href="{% url 'Factories:SupplierTrashList' 1 %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                                    سلة المهملات</a></li>
+
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class='bx bx-male bx-sm' ></i>
+                                <span key="t-ecommerce"> المستوردين</span>
+                            </a>
+                            <ul class="sub-menu bg-light" aria-expanded="false">
+
+                                <li><a href="{% url 'Factories:SupplierList' 2 %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                                قائمة المستوردين </a></li>
+
+                                <li><a href="{% url 'Factories:SupplierCreate' 2 %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                                اضافة مستورد جديد</a></li>
+
+                                <li><a href="{% url 'Factories:SupplierTrashList' 2 %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                                    سلة المهملات</a></li>
+
+                            </ul>
+                        </li>
+
+                    </ul>
+                </li>
+               {% endif %}
+
+                {% if modules.wool_active %}
+                <!-- الخيط  -->
+                <li>
+                    <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                        <i class='bx bx-command'></i>
+                        <span key="t-ecommerce"> الخيط</span>
+                    </a>
+                    <ul class="sub-menu bg-light" aria-expanded="false">
+                        <li><a href="{% url 'Wool:WoolSupplierList'  %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                        قائمة موردين الخيط </a></li>
+
+                        <li><a href="{% url 'Wool:WoolSupplierCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                        اضافة مورد جديد</a></li>
+
+                        <li><a href="{% url 'Wool:WoolSupplierTrashList' %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                            سلة المهملات</a></li>
+                    </ul>
+                </li>
+               {% endif %}
+
+                {% if modules.treasury_active %}
+                <!-- الخزائن  -->
+                <li>
+                    <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                        <i class='bx bxs-bank'></i>
+                        <span key="t-ecommerce"> الخزائن</span>
+                    </a>
+                    <ul class="sub-menu bg-light" aria-expanded="false">
+                        <li><a href="{% url 'Treasury:TreasuryList'  %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                        قائمة الخزائن </a></li>
+
+                        <li><a href="{% url 'Treasury:TreasuryCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                        اضافة خزينة جديدة</a></li>
+
+                        <li><a href="{% url 'Treasury:TreasuryTrachList' %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                            سلة المهملات</a></li>
+                    </ul>
+                </li>
+               {% endif %}
+
+                
+                {% if request.user.is_superuser %}
+                    <li class="menu-title" key="t-menu"><hr></li>
+                    <!-- الاعددات   -->
+                    <li>
+                        <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                            <i class="bx bx-cog bx-sm" ></i>
+                            <span key="t-ecommerce"> اعدادات المستخدمين  </span>
+                        </a>
+                        <ul class="sub-menu bg-light" aria-expanded="false">
+                            
+                            <li><a href="{% url 'Auth:Users' %}"
+                                data-target="#sub_modal" data-toggle="modal"
+                                key="t-products"><i class='bx bx-list-ul' ></i>
+                                قائمة المستخدمين </a>
+                            </li>
+                                <li>
+                                    <a href="{% url 'Auth:create_user' %}" data-target="#sub_modal" data-toggle="modal">
+                                    <i class='bx bxs-add-to-queue'></i>
+                                    اضافة مستخدم جديد</a>
+                                </li>        
+                        </ul>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+        <!-- Sidebar -->
+    </div>
+</div>
+{% endif %}
+

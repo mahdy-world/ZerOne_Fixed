@@ -1,0 +1,103 @@
+{% load mathfilters %}
+<html>
+  <head>
+    <meta charset="utf-8">
+
+    <title>{{date|date:'Y-m-d'}} {{factory.name}}</title>
+    <meta name="description" content="Invoice demo sample">
+      <style>
+          body {
+              font-weight: bold;
+          }
+          table tr th {
+              font-size: larger;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+
+  <body>
+    <h1 style="margin-top: -50px">
+      {% if system_info.logo %}
+       <img src="{{system_info.logo_base64}}" height="100px" width="100px">
+       {% else %}
+{#       <img src="/static/assets/images/new.png" width="100px" height="100px">#}
+          <img src="file://{{ default_icon }}" height="100px" width="100px">
+      {% endif %}
+    </h1>
+
+    <dl id="informations" style="margin-top: -50px">
+        <h2 class="text-center">{{system_info.name}}</h2>
+        <h5 style="margin-top: -15px"><span> {{date|date:'Y-m-d'}} </span> تاريخ التقرير: </h5>
+        <h5 style="margin-top: -15px"><span> {{factory.name}} </span> كشف حساب المصنع: </h5>
+    </dl><hr>
+
+    <table>
+        <tr>
+            <th>
+            {{ sum_out_weight|floatformat:3 }} كيلو جرام
+            </th>
+            <th>اجمالي الوزن الخارج</th>
+        </tr>
+        <tr>
+            <th>
+            {{ sum_in_weight|floatformat:3 }} كيلو جرام
+            </th>
+            <th>اجمالي الوزن الداخل</th>
+        </tr>
+        <tr>
+            <th>
+            {{ sum_out_weight|sub:sum_in_weight|floatformat:3 }} كيلو جرام
+            </th>
+            <th>الوزن المتبقي</th>
+        </tr>
+        <tr>
+            <th>
+            {{ sum_hours|floatformat:0 }}
+            ساعة و
+            {{ sum_minutes|floatformat:0 }}
+            دقيقة
+            </th>
+            <th>اجمالي عدد الساعات</th>
+        </tr>
+        <tr>
+            <th>
+            {{ sum_product_count|floatformat:0 }} قطعة
+            </th>
+            <th>اجمالي عدد القطع</th>
+        </tr>
+        <tr>
+            <th>
+            {{ count_models|floatformat:0 }} موديل
+            </th>
+            <th>اجمالي عدد الموديلات</th>
+        </tr>
+        <tr>
+            <th>{{ sum_in_total|floatformat:2 }} جنيه</th>
+            <th>اجمالي الحساب</th>
+        </tr>
+        <tr>
+            <th>{{ sum_out_total|floatformat:2 }} جنيه</th>
+            <th>اجمالي المسحوبات</th>
+        </tr>
+        <tr>
+            <th>
+            {% if sum_in_total|sub:sum_out_total > 0 %}
+                {{ sum_in_total|sub:sum_out_total|floatformat:2 }} جنيه
+            {% elif sum_in_total|sub:sum_out_total < 0  %}
+                {{ sum_in_total|sub:sum_out_total|mul:-1|floatformat:2 }} جنيه
+            {% else %}
+                0.00 جنيه
+            {% endif %}
+            </th>
+            <th>الباقي
+            {% if sum_in_total|sub:sum_out_total > 0 %}
+                للمصنع
+            {% elif sum_in_total|sub:sum_out_total < 0  %}
+                علي المصنع
+            {% endif %}
+            </th>
+        </tr>
+    </table>
+  </body>
+</html>

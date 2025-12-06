@@ -1,0 +1,187 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+    
+<head>
+        
+        <meta charset="utf-8" />
+        <title>نظام ZERONE</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="ZERONE SYSTEM" name="description" />
+       
+       <!-- App favicon -->
+    <link rel="shortcut icon" href="/static/assets/images/1logo.png">
+
+   <!-- RTL -->
+            <!-- Bootstrap CSS -->
+            <link href="/static/assets/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet">
+            <!-- App Css-->
+            <link href="/static/assets/css/app-rtl.min.css" id="app-style" rel="stylesheet">
+        
+    
+        <!-- Icons Css -->
+        <link href="/static/assets/css/icons.min.css" rel="stylesheet">
+    
+        <link href="/static/assets/vendor/Zero.css" rel="stylesheet">
+    
+
+    </head>
+
+    <!--<body style="
+    background: url('/static/assets/images/gif.gif') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    ">-->
+
+    <body style="
+    background: url('/static/assets/images/login8.jpg') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
+    ">
+
+     <!-- Spinner -->
+     <div id="preloader" >
+        <div id="status" >
+            <div class="spinner-chase">
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+            </div>
+        </div>
+    </div>
+
+        <div class="account-pages  my-4 pt-sm-4">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 col-lg-6 col-xl-5">
+                        <div class="card overflow-hidden shadow-lg" style="background-color: snow">
+                            <div class="card-body pt-0 "> 
+
+
+                                <div class="row mt-5 ">
+                                    <div class="col-lg-12 d-flex justify-content-center">
+                                        <a href="#">
+                                            <div class=" d-flex justify-content-center">
+                                                <span class=>
+                                                    <img src="/static/assets/images/home.png" alt=""  height="60">
+                                                    <h4  class="typing-demo text-center font-weight-bold mt-3">نظام محاسبي متكامل ! </h4>
+                                            
+                                                    <style>
+                                                       
+                                                          .typing-demo {
+                                                            width: 22ch;
+                                                            animation: typing 2s steps(22), blink .5s step-end infinite alternate;
+                                                            white-space: nowrap;
+                                                            overflow: hidden;
+                                                            border-right: 3px solid;
+                                                            
+                                                          }
+                                                          
+                                                          @keyframes typing {
+                                                            from {
+                                                              width: 0
+                                                            }
+                                                          }
+                                                              
+                                                          @keyframes blink {
+                                                            50% {
+                                                              border-color: transparent
+                                                            }
+                                                          }
+                                                    </style>
+                                                </span>
+                                            </div>
+                                        </a>
+                                    
+                                    </div>
+
+
+                                    </div>
+
+                                   
+    
+                               
+                                
+                                <div class="p-2 mt-4">
+                                    <form class="form-horizontal" method="POST">
+                                            {% csrf_token %}
+                                            
+                                            {% if error %}
+                                                <div class="alert alert-danger">
+                                                    {{error}}
+                                                </div>
+                                            {% endif %}
+                                                
+                                        <div class="form-group">
+                                            <label for="username">اسم المستخدم</label>
+                                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+                                        </div>
+                
+                                        <div class="form-group">
+                                            <label for="userpassword">كلمة المرور</label>
+                                            <input type="password" class="form-control" id="userpassword" name=password  placeholder="Enter password">
+                                        </div>
+                
+                                      
+                                        <div class="mt-3">
+                                            <button class="btn btn-primary btn-block waves-effect waves-light" type="submit"> دخول</button>
+                                        </div>
+                                        
+                                        <div class="mt-5 text-center">
+                            
+                                            <div>
+                                                
+                                                <p>Trico System <i class="mdi mdi-heart text-danger"></i> by ZerOne Team</p>
+                                            </div>
+                                        </div>
+                                       
+
+                                        
+                                       
+                                    </form>
+                                </div>
+            
+                            </div>
+                        </div>
+                       
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         
+                <!-- JAVASCRIPT -->
+        <script src="/static/assets/libs/jquery/jquery.min.js"></script>
+        <script src="/static/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="/static/assets/libs/metismenu/metisMenu.min.js"></script>
+        <script src="/static/assets/libs/simplebar/simplebar.min.js"></script>
+        <script src="/static/assets/libs/node-waves/waves.min.js"></script>
+
+        <!-- apexcharts -->
+        {% comment %}<script src="/static/assets/libs/apexcharts/apexcharts.min.js"></script>
+
+        <script src="/static/assets/js/pages/dashboard.init.js"></script>
+        {% endcomment %}
+
+
+        <!-- App js -->
+        <script src="/static/assets/js/app.js"></script>
+        {% comment %}<script src="{% static 'js/main.js' %}"></script>{% endcomment %}
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'assets/vendor/Zero.js' %}"></script>
+        <script src="{% static 'js/all.js' %}"></script>
+
+    </body>
+
+<!-- Mirrored from themesbrand.com/skote-mvc/layouts/auth-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 13 Feb 2021 14:07:31 GMT -->
+</html>

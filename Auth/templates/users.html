@@ -1,0 +1,126 @@
+<!--<style>
+    .expand_modal {
+        max-width: 100%;
+        margin: 0;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100vh;
+        display: flex;
+        position: fixed;
+        z-index: 100000;
+    }
+</style>-->
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <b class="font-weight-bold text-center"> {{ title }}</b>
+            <span class="card-tools" style="float: left">
+            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize"
+            onclick="
+            if (document.getElementById('expand_modal').value === '0'){
+                document.getElementById('expand_modal').value = 1;
+                document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+            }
+            else {
+                document.getElementById('expand_modal').value = 0;
+                document.getElementById('action_modal2').className = 'modal-dialog';
+                document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+            }
+
+            "
+            >
+                <input type="number" value="0" id="expand_modal" hidden>
+                <i class="fas fa-expand"></i>
+            </button>-->
+            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                <i class="fas fa-times"></i>
+            </button>
+        </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-centered table-nowrap table-hover">
+                            <thead class="thead-light" style="text-align: center;">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">الاسم الاول</th>
+                                    <th scope="col">الاسم الاخير</th>
+                                    <th scope="col">اسم المستخدم</th>
+                                    <th scope="col">مسئول</th>
+                                    <th scope="col">نشط</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody style="text-align: center;">
+                                {% for x in object_list  %}
+                                <tr>
+                                    <td>
+                                       
+                                                {{forloop.counter}}                                          
+                                        
+                                    </td>
+                                    <td>
+                                        {{x.first_name}}
+                                    </td>
+                                    
+                                    <td>
+                                       {{x.last_name}}
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-danger font-size-12">
+                                            {{x.username}}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        
+                                        {% if x.is_superuser == True %}
+                                        <i class='bx bx-check-circle' style='color:#10bb3f' ></i>
+                                        {% else %}
+                                        <i class='bx bxs-x-circle' style='color:#db4e4e'  ></i>
+                                        {% endif %}
+                                            
+                                    </td>
+                                    <td>
+                                        {% if x.is_active == True %}
+                                        <i class='bx bx-check-circle' style='color:#10bb3f' ></i>
+                                        {% else %}
+                                        <i class='bx bxs-x-circle' style='color:#db4e4e'  ></i>
+                                        {% endif %}
+                                    </td>
+
+                                    
+                                    {% if request.user.is_superuser %}
+                                    <td>
+                                        <a href="{% url 'Auth:UsersUpdate' x.id %}" data-dismiss="modal" 
+                                        data-toggle="modal" data-target="#action_modal">
+
+                                            <i class='bx bx-edit bx-sm'  style='color:#2ca3b7' ></i>
+                                        </a>
+                                    </td>
+                                    {% endif %}
+                                        
+                                    
+                                    
+                                </tr>
+                                {% endfor %}
+                     
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+

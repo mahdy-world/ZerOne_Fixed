@@ -1,0 +1,333 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% block title %}
+<title>قائمة التجار</title>
+
+{% endblock title %}
+
+{% load products_tags %}
+
+{% block main %}
+    <div class="main-content">
+
+      <div class="page-content">
+          <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-12"> {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show text-center" role="alert">
+                            <i class="mdi mdi-check-all mr-2"></i>
+                            {{ message|safe }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        {% endfor %}
+
+
+                      {% endif %}
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+
+                            {% if type == "list" %}
+                                <h4 class="mb-0"> قائمة التجار
+                                    <a class="badge badge-success" style="font-size:small;" href="{% url 'Products:SellerCreate' %}" data-toggle="modal" data-target="#action_modal">
+                                            <i class="fas fa-plus-square fx-2"></i>
+                                    </a>
+
+                                    <a class="badge badge-info" style="font-size:small;" href="{% url 'Products:SellerList' %}">
+                                       <i class="fas fa-list-ul"></i>
+                                    </a>
+
+                                    <a  class="badge badge-danger" style="font-size:small;" href="{% url 'Products:SellerTrashList' %}">
+                                            <i class="fas fa-trash"></i>
+                                    </a>
+
+                                 </h4>
+
+                                {% else %}
+                                <h4 class="mb-0"> سلة مهملات التجار
+                                    <a class="badge badge-success" style="font-size:small;" href="{% url 'Products:SellerCreate' %}" data-toggle="modal" data-target="#action_modal">
+                                            <i class="fas fa-plus-square fx-2"></i>
+                                    </a>
+
+                                    <a class="badge badge-info" style="font-size:small;" href="{% url 'Products:SellerList' %}">
+                                       <i class="fas fa-list-ul"></i>
+                                    </a>
+
+                                    <a  class="badge badge-danger" style="font-size:small;" href="{% url 'Products:SellerTrashList' %}">
+                                            <i class="fas fa-trash"></i>
+                                    </a>
+
+                                 </h4>
+
+                            {% endif %}
+
+
+
+                                <span class="badge badge-dark font-size-15"> الاجمالي : {{count}} تاجر </span>
+
+
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
+
+                                    {% if type == "list" %}
+                                    <li class="breadcrumb-item active">قائمة التجار</li>
+                                    {% else %}
+                                    <li class="breadcrumb-item active">قائمة التجار المحذوفة</li>
+                                    {% endif %}
+                                </ol>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                {% if object_list %}
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-lg-3"></div>
+                            <div class="col-lg-3"></div>
+                            <div class="col-lg-3"></div>
+                            <div class="col-lg-3">
+                                {% if type == "list" %}
+                                <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:SellerSearch' %}">
+                                    <div class="position-relative" >
+
+                                        <input type="text" style="background-color: white" value="{{seller_serach}}" list="sel" autocomplete="off" class="form-control" name="seller" placeholder="بحث ... بإسم التاجر">
+                                        <span >
+                                            <button class="bx bx-search-alt btn btn-warning" type="submit">
+                                            </button>
+                                        </span>
+                                        <datalist id="sel" >
+                                            {% for pro in sellers %}
+                                                <option value="{{ pro.name }}">
+                                                    {{ pro.name }}
+                                                    </option>
+                                            {% endfor %}
+                                        </datalist>
+                                    </div>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    <div class="row">
+                    {% for x in object_list  %}
+                    {% sellers_debit x.id as sellers_debit_val %}
+                        <div class="col-xl-4 col-md-4 col-sm-6">
+                            <div class="card">
+                                <div class="">
+                                    <div class="product-img position-relative">
+                                        <img src="/static/assets/images/vector/seller2.png" width="180px" alt="" class="img mx-auto d-block">
+                                    </div>
+
+                                    <div class="text-center">
+                                        <h3 class="mb-3 text-truncate"><a href="{% url 'Products:SellerDetails' x.id %}" class="text-dark">{{x.name}}</a></h3>
+                                        <ul class="list-inline mb-0">
+                                            <li class="list-inline-item mr-1"><h5 class="my-0"><span class="text-muted mr-1">الهاتف:</span> <b>{{x.phone}}</b></h5></li><br>
+                                            <li class="list-inline-item mr-1"><h5 {% if sellers_debit_val < 0 %} class="my-0 text-danger" {% else %} class="my-0 text-success" {% endif %}><span class="text-muted mr-1">
+                                                {% if sellers_debit_val < 0 %}
+                                                عليه:
+                                                {% else %}
+                                                له:
+                                                {% endif %}
+                                            </span> <b>$
+                                                {% if sellers_debit_val < 0 %}
+                                                {{sellers_debit_val|mul:-1|floatformat:2}}
+                                                {% else %}
+                                                {{sellers_debit_val|floatformat:2}}
+                                                {% endif %}
+                                            </b></h5></li>
+                                        </ul>
+
+                                    </div>
+                                    <div class="card-footer bg-transparent">
+                                        <div class="contact-links d-flex justify-content-center font-size-20">
+                                            <div class="mr-3">
+                                               <a href="{% url 'Products:SellerDetails' x.id %}" data-original-title="Message">
+                                                   <span class="badge badge-primary"><i class='bx bx-area' ></i>تفاصيل التاجر</span>
+                                              </a>
+                                            </div>
+
+                                            <div class="mr-3">
+                                               <a data-toggle="modal" data-target="#RepoModal" style="cursor: pointer" data-placement="top" title="" data-original-title="Message"
+                                               onclick="document.getElementById('RepoForm').action='{% url 'Products:PrintSellerInvoicesDetails' x.id %}'"
+                                               >
+                                                   <span class="badge badge-secondary"><i class='bx bx-list-ul' ></i>كشف حساب</span>
+                                              </a>
+                                           </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent border-top">
+                                        <div class="contact-links d-flex justify-content-center font-size-20">
+                                          {% if request.user.is_superuser %}
+                                          {% if type == "list"  %}
+
+                                          <div class="mr-3">
+                                               <a href="{% url 'Products:SellerUpdate' x.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                                   <span class="badge badge-info"><i class='bx bx-edit' ></i>تعديل</span>
+                                              </a>
+                                           </div>
+
+                                          <div class="mr-3">
+                                              <a
+                                                  {% if sellers_debit_val == 0 %}
+                                                  href="{% url 'Products:SellerDelete' x.id %}" data-toggle="modal" data-target="#action_modal"
+                                                  {% else %}
+                                                  href="#"
+                                                  {% endif %}
+                                                  data-placement="top" title="" data-original-title="Profile">
+                                                  {% if sellers_debit_val == 0 %}
+                                                    <span class="badge badge-danger"><i class='bx bxs-trash'  ></i>حذف</span>
+                                                  {% else %}
+                                                    <span class="badge badge-danger" style="text-decoration: line-through;" data-placement="top" title="لايمكن الحذف .. التاجر لديه حسابات مالية لم تنتهي"><i class='bx bxs-trash' ></i>حذف</span>
+                                                  {% endif %}
+                                              </a>
+                                          </div>
+                                      {% else %}
+                                           <div class="mr-3">
+                                                  <a href="{% url 'Products:SellerRestore' x.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Message">
+                                                      <span class="badge badge-dark"><i class='bx bx-redo '></i> استرجاع
+                                                      </span>
+                                                  </a>
+                                          </div>
+
+                                          <div class="">
+                                              <a href="{% url 'Products:SellerSuperDelete' x.id %}" data-toggle="modal" data-target="#action_modal" data-placement="top" title="" data-original-title="Profile">
+                                                  <span class="badge badge-danger"><i class='bx bxs-trash '   ></i> حذف نهائي </span>
+
+                                              </a>
+                                          </div>
+                                      {% endif %}
+                                          {% endif %}
+
+                                          </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    {% endfor %}
+
+                    {% if is_paginated %}
+                    {% include "components/paginator.html" %}
+                    {% endif %}
+
+                </div>
+
+
+                </div>
+
+                <div class="modal fade" id="RepoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">كشف حساب</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+{#                        <form method="post" target="_blank" id="RepoForm">#}
+{#                        {% csrf_token %}#}
+                        <form method="get" id="RepoForm">
+                      <div class="modal-body">
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <input type="checkbox" id="check0" name="check0" value="check0" style="transform: scale(2)" checked>
+                                  <label for="check0" style="margin-right: 10px">الإجماليات</label>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <input type="checkbox" id="check1" name="check1" value="check1" style="transform: scale(2)">
+                                  <label for="check1" style="margin-right: 10px">فواتير المبيعات</label>
+                              </div>
+                              <div class="col-md-12">
+                                  <input type="checkbox" id="check2" name="check2" value="check2" style="transform: scale(2)">
+                                  <label for="check2" style="margin-right: 10px">فواتير مرتجع المبيعات</label>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <input type="checkbox" id="check3" name="check3" value="check3" style="transform: scale(2)">
+                                  <label for="check3" style="margin-right: 10px">المبالغ المستلمة من التاجر</label>
+                              </div>
+                              <div class="col-md-12">
+                                  <input type="checkbox" id="check4" name="check4" value="check4" style="transform: scale(2)">
+                                  <label for="check4" style="margin-right: 10px">المبالغ المسلمة الي التاجر</label>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="modal-footer">
+{#                        <button type="submit" class="btn btn-primary">كشف حساب</button>#}
+                          <button type="button" class="btn btn-success" onclick="submitRepoForm()">عرض التقرير</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">الغاء</button>
+                      </div>
+                        </form>
+                    </div>
+                  </div>
+                </div>
+
+                {% else %}
+
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <div class="text-center mb-5 mt-5">
+                            <h1 class="display-2 font-weight-medium">4<i class="bx bx-buoy bx-spin text-primary display-3"></i>4</h1>
+                            {% if type == "list" %}
+                            <h4 class="text-uppercase">لا توجد بيانات</h4>
+                            {% else %}
+                            <h4 class="text-uppercase">لا توجد بيانات محذوفة</h4>
+                            {% endif %}
+                            <div class="mt-3 text-center">
+
+                                {% if type == "list" %}
+                                    <a class="btn btn-primary waves-effect waves-light" href="{% url 'Products:SellerCreate' %}" data-toggle="modal" data-target="#action_modal">اضافة بيانات</a>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row d-flex justify-content-center">
+                    <div class="col-lg-12 d-flex justify-content-center ">
+
+                        <img src="/static/assets/images/error-img.png" width="400px" height="188px" alt="" class="img-fluid" >
+
+                    </div>
+                </div>
+
+                {% endif %}
+
+          </div>
+      </div>
+    </div>
+    </div>
+
+    <script>
+        function submitRepoForm() {
+            var form = document.getElementById('RepoForm');
+            var params = new URLSearchParams(new FormData(form)).toString();
+            var url = form.action + "?" + params;
+
+            // قفل مودال الفلترة
+            $('#RepoModal').modal('hide');
+
+            // افتح مودال الـ PDF
+            $('#pdfFrame').attr('src', url);
+            $('#pdfModal').modal('show');
+        }
+    </script>
+{% endblock main %}

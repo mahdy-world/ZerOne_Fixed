@@ -1,0 +1,404 @@
+{% load crispy_forms_tags %}
+<div class="card">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="tab-pane" id="processing" role="tabpanel">
+            <div class="row">
+              <div class="col-lg-12">
+                {% if obj.deleted == 0 %}
+                <div class="table-responsive" id="order_list">
+                  <table class="table table-nowrap table-borderless">
+                    <thead>
+                      <form>
+                        <tr>
+                          <th
+                            class="col-lg-2 col-xl-2 col-md-2"
+                            style="width: 15%"
+                          >
+                            {{production_form.date|as_crispy_field}}
+                          </th>
+
+                            <th
+                            class="col-lg-2 col-xl-2 col-md-2"
+                            style="width: 15%"
+                          >
+                            {{production_form.day|as_crispy_field}}
+                          </th>
+
+                          <th
+                            class="col-lg-2 col-xl-2 col-md-2"
+                            style="width: 20%"
+                          >
+                            {{production_form.quantity|as_crispy_field}}
+                          </th>
+
+                          <th
+                            class="col-lg-2 col-xl-2 col-md-2"
+                            style="width: 30%"
+                          >
+                            {{production_form.product|as_crispy_field}}
+                          </th>
+
+                            <th
+                            class="col-lg-2 col-xl-2 col-md-2"
+                            style="width: 20%"
+                          >
+                            {{production_form.price|as_crispy_field}}
+                          </th>
+
+                            <th
+                            class="col-lg-2 col-xl-2 col-md-2"
+                            style="width: 20%"
+                          >
+                            {{production_form.total|as_crispy_field}}
+                          </th>
+                          
+                          <th class="col-lg-2 col-xl-2 col-md-2">
+                            <a
+                              style="width: 100%"
+                              onclick="workProductionCreate()"
+                              class="btn btn-success"
+                            >
+                            <i class="fas fa-plus-circle"></i>
+                              اضافة
+                            </a>
+                          </th>
+                        
+                        </tr>
+                      </form>
+                    </thead>
+                  </table>
+                </div>
+                {% endif %}
+                <style>
+                  /*.table-responsive {
+                    max-height: 500px;
+                  }
+                  .table-responsive::-webkit-scrollbar {
+                    display: none;
+                  }*/
+                </style>
+
+                <div class="table-responsive">
+                    <table class="table table-centered table-dark table-nowrap text-center">
+                        <thead>
+                            <tr>
+                                <td style="width: 60%" class="in_sell">
+                                    <select class="form-control" id="in_specific_product" style="width: 100%" onchange="InProductFilter(this)">
+                                        <option disabled selected value="">عرض كميات منتج معين؟</option>
+                                        <option value=" ">كل المنتجات</option>
+                                        {% for product in products %}
+                                        <option value="{{ product.id }}">{{ product.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td style="width: 40%">
+                                    <input type="date" class="form-control" id="in_specific_date" style="width: 100%" onchange="InDateFilter(this)">
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <div id="production_worker">
+                  <div class="table-responsive scroll">
+                    <table
+                      class="table pag table-centered table-dark table-nowrap text-center"
+                    >
+                      <thead>
+                        <tr>
+                          <th>م</th>
+                          <th>التاريخ</th>
+                          <th>اليوم</th>
+                          <th>الكمية بالقطعة</th>
+                          <th>المنتج</th>
+                          <th>فئة السعر</th>
+                          <th>الإجمالي</th>
+                          <th>المسؤول</th>
+                            {% if request.user.is_superuser %}
+                          <th><i class="fas fa-cogs"></i></th>
+                            {% endif %}
+                        </tr>
+                      </thead>
+                      <tbody>
+                          {% if production %}
+                            {% for x in production %}
+                            <tr style="text-align: center">
+                                <td>{{forloop.counter}}</td>
+                                <td>
+                                <span class="badge badge-danger"
+                                    >
+                                    {{x.date|date:'Y-m-d'}}</span
+                                >
+                                </td>
+                                <td>
+                                 {{x.day}}
+                                </td>
+                                <td>
+                                 {{x.quantity|floatformat:0}}
+                                </td>
+                                <td>
+                                {% if x.product %}
+                                 {{x.product}}
+                                {% else %}
+                                    -
+                                {% endif %}
+                                </td>
+                                <td>
+                                 {{x.price|floatformat:2}}
+                                </td>
+                                <td>
+                                 {{x.total|floatformat:2}}
+                                </td>
+                                <td>{{x.admin}}</td>
+                                {% if request.user.is_superuser %}
+                                <td>
+{#                                {% if x.id == last_production_id %}#}
+                                <!--
+{#                                <a#}
+{#                                    href="{% url 'Workers:WorkerProductionUpdate' x.id %}"#}
+{#                                    class="mr-3 text-warning"#}
+{#                                    data-toggle="modal"#}
+{#                                    data-target="#action_modal"#}
+{#                                    data-original-title="Edit"#}
+{#                                    ><i class="mdi mdi-pencil font-size-18"></i#}
+{#                                ></a>#} -->
+                                <a
+                                    onclick="
+                                            var result = confirm('هل أنت متأكد من الحذف؟');
+                                            if (result) {
+                                                WorkerProductionDelete('{{x.id}}')
+                                            }
+                                            "
+                                    style="cursor: pointer"
+                                    class="text-danger"
+                                    ><i class="mdi mdi-close font-size-18"></i
+                                ></a>
+{#                                {% endif %}#}
+                                </td>
+                                {% endif %}
+                                
+                            </tr>
+                            {% endfor %}
+                          {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+
+                    <div class="row text-center pagination">
+                        <div class="col-md-12">
+                            <button class="btn btn-dark prev">السابق</button>
+                            <span class="page"></span>
+                            <button class="btn btn-dark next">التالي</button>
+                        </div>
+                    </div>
+                    <br>
+
+                  <div style="margin-top: 10px">
+                    <div class="row">
+                     
+                      <div class="col-lg-6 flex-center">
+                        <div class="card mini-stats-wid mb-0">
+                          <div class="card-body bg-danger">
+                            <div class="d-flex flex-wrap">
+                              <div class="">
+                                <h5 class="mb-2 text-light">
+                                  اجمالي الإنتاج 
+                                </h5>
+                                <h3 class="mb-0 text-dark">
+                                  
+                                  {% if production_total %}
+                                  {{production_total|floatformat:0}} قطعة
+                                  {% else %}
+                                  0 قطعة
+                                  {% endif %}
+                                
+                                </h3>
+                              </div>
+
+                              <div class="avatar-sm ml-auto">
+                                <div
+                                  class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                                >
+                                <i class="fas fa-calculator"></i>               
+                                 </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      
+
+                      <div class="col-lg-6 flex-center">
+                        <div class="card mini-stats-wid mb-0">
+                          <div class="card-body bg-danger">
+                            <div class="d-flex flex-wrap">
+                              <div class="">
+                                <h5 class="mb-2 text-light">
+                                  اجمالي الحساب المستحق
+                                </h5>
+                                <h3 class="mb-0 text-dark">
+                                  
+                                  {% if production_cost %}
+                                    {{production_cost|floatformat:2}} جنية
+                                  {% else %} 
+                                    0.00 جنية
+                                  {% endif %}
+  
+                                </h3>
+                              </div>
+
+                              <div class="avatar-sm ml-auto">
+                                <div
+                                  class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                                >
+                                <i class="fas fa-dollar-sign"></i>                
+                                 </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  
+                    </div>
+                  </div>
+                </div>
+                <script src="/static/assets/libs/jquery/jquery.min.js"></script>
+                <script>
+                    $(document).ready(function() {
+                        $('#worker_production').select2({
+                            width: '100%'
+                        });
+                        $('#in_specific_product').select2();
+                    });
+
+                    $( document ).ready(function() {
+                        const weekday = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+                        const date = $('#production_date').val();
+                        const d = new Date(date);
+                        let day = weekday[d.getDay()];
+                        $('#production_day').val(day);
+                    });
+                    $('#production_date').on('keyup change', function (){
+                        const weekday = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+                        const date = $('#production_date').val();
+                        const d = new Date(date);
+                        let day = weekday[d.getDay()];
+                        $('#production_day').val(day);
+                   });
+                </script>
+
+                <script>
+                    $('#worker_quantity').on('keyup change', function (){
+                        const worker_price = $('#worker_price').val();
+                        const worker_quantity = $('#worker_quantity').val();
+                        let worker_total = (worker_price * worker_quantity);
+                        $('#worker_total').val(worker_total.toFixed(1));
+                   });
+
+                    $('#worker_price').on('keyup change', function (){
+                        const worker_price = $('#worker_price').val();
+                        const worker_quantity = $('#worker_quantity').val();
+                        let worker_total = (worker_price * worker_quantity);
+                        $('#worker_total').val(worker_total.toFixed(1));
+                   });
+
+                    $("#worker_quantity").attr({
+                       "value" : '',
+                    });
+                  function workProductionCreate() {
+                    $.ajax({
+                      type: "POST",
+                      url: "{% url 'Workers:WorkerProductionCreate'  %}",
+                      data: {
+                        id: "{{object.id}}",
+                        date: $("#production_date").val(),
+                        day: $("#production_day").val(),
+                        worker_quantity: $("#worker_quantity").val(),
+                        worker_price: $("#worker_price").val(),
+                        worker_total: $("#worker_total").val(),
+                        worker_product: $("#worker_production").val(),
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                        dataType: "json",
+                      },
+                      success: function (response) {
+                        /* response message */
+                        if (response.msg == 1) {
+                          $("#worker_quantity").val("");
+                          $("#worker_total").val("");
+                          $("#worker_production").val("").trigger('change');
+                          $("#production_worker").html("&nbsp;").load("{% url 'Workers:WorkerProductions_div' object.id %}");
+                          alert("تم الاضافة بنجاح");
+                          $("#paymnet").html("&nbsp;").load("{% url 'Workers:WorkerPayment_div' object.id %}");
+                          $("#attendance").html("&nbsp;").load("{% url 'Workers:WorkerAttendance_div' object.id %}");
+                        } else {
+                          alert("حاول مرة اخري / خطأ في البيانات");
+                        }
+                      },
+
+                      failure: function () {},
+                    });
+                  }
+
+                  function WorkerProductionDelete(proid) {
+                    $.ajax({
+                      type: "POST",
+                      url: "{% url 'Workers:WorkerProductionDelete' %}",
+                      data: {
+                        worker_Production_id: proid,
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                        dataType: "json",
+                      },
+                      success: function (data) {
+                        /* response message */
+                        $("#production_worker").html("&nbsp;").load("{% url 'Workers:WorkerProductions_div' object.id %}");
+                        alert("تم الحذف بنجاح");
+                        $("#paymnet").html("&nbsp;").load("{% url 'Workers:WorkerPayment_div' object.id %}");
+                        $("#attendance").html("&nbsp;").load("{% url 'Workers:WorkerAttendance_div' object.id %}");
+                      },
+
+                      failure: function () {},
+                    });
+                  }
+                </script>
+                <script>
+                    function InProductFilter(val) {
+                        if (val.value && val.value!= ' '){
+                            $( '.in_sell' ).find('.select2-container').find('.select2-selection--single').css("background-color","lightgreen");
+                        }
+                        else {
+                            $( '.in_sell' ).find('.select2-container').find('.select2-selection--single').css("background-color","");
+                        }
+
+                        $( '#in_specific_date' ).css("background-color","");
+                        $( '#in_specific_date' ).val('');
+
+                        product_id = val.value;
+                        $( '#production_worker' ).html( '&nbsp;' ).load( "{% url 'Workers:WorkerProductions_div' object.id %}?product_id=" + product_id );
+                    };
+                    function InDateFilter(val) {
+                        if (val.value){
+                            val.style.backgroundColor = 'lightgreen';
+                        }
+                        else {
+                            val.style.backgroundColor = '';
+                        }
+
+                        $('#in_specific_product').select2('destroy');
+                        $('#in_specific_product').val('').select2();
+
+                        date_val = val.value;
+                        $( '#production_worker' ).html( '&nbsp;' ).load( "{% url 'Workers:WorkerProductions_div' object.id %}?date_val=" + date_val );
+                    };
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

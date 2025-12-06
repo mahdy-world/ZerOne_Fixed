@@ -1,0 +1,242 @@
+
+{% block main %}
+    {% load bootstrap4 %}
+    <form method="post" action="{{ action_url }}" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <b class="font-weight-bold text-center"> {{ title }}</b>
+                            <span class="card-tools" style="float: left">
+                                <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% if message == 'delete' %}
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            <h5 class="font-weight-bold text-center">هل انت متأكد من نقل العنصر
+                                "{{ object.name }}"
+                                الي سلة المهملات
+                                ؟
+                            </h5>
+                        {% elif message == 'deletee' %}
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            <h5 class="font-weight-bold text-center">هل انت متأكد من نقل العنصر
+                                "فاتورة {{ object.id }}"
+                                الي سلة المهملات
+                                ؟
+                            </h5>
+                        {% elif message == 'inv_back' %}
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            <h5 class="font-weight-bold text-center">فتح الفاتورة مرة اخري؟
+                            </h5>
+                        {% elif message == 'close' %}
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            <h5 class="font-weight-bold text-center">حفظ نهائي للفاتورة؟
+                            </h5>
+                        {% elif message == 'restore' %}
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            <h5 class="font-weight-bold text-center">هل انت متأكد من ارجاع العنصر
+                                "{{ object.name }}"
+                                الى القائمة النشطة مرة اخري
+                                ؟
+                            </h5>
+                        {% elif message == 'restoree' %}
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            <h5 class="font-weight-bold text-center">هل انت متأكد من ارجاع العنصر
+                                "{{ object.id }}"
+                                الى القائمة النشطة مرة اخري
+                                ؟
+                            </h5>
+                        {% elif message == 'super_deletee' %}
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            <h5 class="font-weight-bold text-center">هل انت متأكد من حذف العنصر
+                                "{{ object.id }}"
+                                بشكل نهائي
+                                ؟
+                            </h5>
+                        {% elif message == 'super_delete' %}
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            <h5 class="font-weight-bold text-center">هل انت متأكد من حذف العنصر
+                                
+                                {% if object.name %}
+                                "{{ object.name }}"
+                                {% elif object.invoice %}
+                                "{{object.item.name}}"
+                                {% else %}
+                                "{{ object.id }}"
+                                {% endif %}
+                                    
+                                بشكل نهائي
+                                ؟
+                                {% if seller_del %}
+                                <br><br>
+                                سيتم حذف فواتير المبيعات ومرتجع المبيعات الخاصة بالتاجر
+                                {% endif %}
+                            </h5>
+                        {% elif message == 'operation' %} 
+                            {% csrf_token %}
+                            {% bootstrap_form form %}
+                            <h5 class="font-weight-bold text-center"> تأكيد العملية !</h5>   
+                        {% elif message == 'info' %}   
+{#                        <img src="{{info_obj.logo.url}}" width="200px" height="200px"> #}
+                        
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+
+                        {% elif message == 'change' %}
+                        {% csrf_token %}
+                       
+                                <label for="old_pass"> كلمة المرور القديمة </label>
+                                <input class="form-control mb-2" id="old_pass"
+                                placeholder="ادخل كلمة المرور القديمة..." 
+                                type="password" name="old_password" required>
+                            
+                        {% bootstrap_form form %}
+                        {% else %}
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                      
+                            
+                        <input name="url" type="hidden" class="url_input">
+                        <input name="instance" type="hidden"  value="{{ request.user.instance.id }}">
+                        {% endif %}
+                    </div>
+                    <div class="card-footer text-center">
+                        {% if message == 'delete' or message == 'super_delete' or message == 'super_deletee' or message == 'deletee' %}
+                           <button type="submit" class="btn btn-danger">
+                                <i class="fa fa-save"></i>
+                                 نعم
+                               
+                        </button>
+                        {% elif message == 'restore' or message == 'restoree' %}
+                           <button type="submit" class="btn btn-info ">
+                                <i class="fa fa-save"></i>
+                                 نعم
+                               
+                        </button>
+                        {% elif message == 'update' %}
+                            <button type="submit" class="btn btn-info font-weight-bold text-center">
+                            <i class="fa fa-save"></i>
+                            تعديل
+                        </button>
+                        {% elif message == 'operation' %} 
+                        <button type="submit" class="btn btn-info ">
+                            <i class="fa fa-save"></i>
+                             نعم
+                        </button>
+                        {% elif message == 'inv_back' or message == 'close' %}
+                        <button type="submit" class="btn btn-info ">
+                            <i class="fa fa-save"></i>
+                             نعم
+                        </button>
+                         {% else %}
+                            <button type="submit" class="btn btn-success">
+                                                            
+                            <i class="fa fa-save"></i>
+                            حفظ
+                        </button>
+                        {% endif %}
+                        <button style="margin-right: 10px" type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times"></i>
+                            الغاء
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+
+{% block js %}
+
+    <script>
+        function get_url() {
+            var url_input = $('.url_input');
+            url_input.each(function (i) {
+                $(this).val(window.location.href);
+            });
+            return url_input;
+        }
+
+        get_url();
+    </script>
+
+
+
+<script>
+    $(document).ready(function() {
+        $('#seller_s2').select2();
+    });
+</script>
+
+<script>
+    $( document ).ready(function() {
+        const formElements = document.querySelectorAll('input[required], select[required]');
+        formElements.forEach(function(element) {
+          const label = document.querySelector(`label[for="${element.id}"]`);
+          if (label && !label.querySelector('span')) {
+              const asterisk = document.createElement('span');
+              asterisk.textContent = ' *';
+              asterisk.style.color = 'red';
+              label.appendChild(asterisk);
+          }
+        });
+    });
+</script>
+
+<script>
+    $( document ).ready(function() {
+        // جعل جميع حقول الملفات disabled
+        const fileInputs = document.querySelectorAll('form input[type="file"]');
+        fileInputs.forEach(function(input) {
+            if (input.id !== 'id_logo') {
+                input.disabled = true;
+            }
+        });
+    });
+</script>
+
+{#<script>#}
+{#function updateTextView(_obj){#}
+{#  var num = getNumber(_obj.val());#}
+{#  if(num==0){#}
+{#    _obj.val('');#}
+{#  }else{#}
+{#    _obj.val(num.toLocaleString());#}
+{#  }#}
+{#}#}
+{#function getNumber(_str){#}
+{#  var arr = _str.split('');#}
+{#  var out = new Array();#}
+{#  for(var cnt=0;cnt<arr.length;cnt++){#}
+{#    if(isNaN(arr[cnt])==false){#}
+{#      out.push(arr[cnt]);#}
+{#    }#}
+{#  }#}
+{#  return Number(out.join(''));#}
+{#}#}
+{#$(document).ready(function(){#}
+{#  $('input[type=number]').on('keyup',function(){#}
+{#      this.type = 'text';#}
+{#      updateTextView($(this));#}
+{#  });#}
+{#});#}
+{#</script>#}
+
+{% endblock %} 
+

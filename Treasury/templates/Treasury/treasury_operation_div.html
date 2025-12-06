@@ -1,0 +1,123 @@
+{% load humanize %}
+<div class="table-responsive scroll">
+    <table class="table op_pag table-centered table-dark table-nowrap text-center">
+        <thead>
+            <tr>
+                <th>م</th>
+                <th>التاريخ</th>
+                <th>نوع العملية</th>
+                <th>قيمة العملية</th>
+                <th>وصف العملية</th>
+                <th>المسئول</th>
+                {% if treasury.deleted == 0 %}
+                <th><i class="fas fa-cogs"></i></th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for w in treasury_operation_obj %}
+            <tr style="text-align: center;">
+                <td>{{forloop.counter}}</td>
+                <td><span>{{w.operation_date | date:'Y-m-d'}}</span></td>
+                <td>
+                    <span>
+                        {% if w.operation_type == 1 %}
+                        <i class='bx bx-chevrons-down' style="color: rgba(12, 186, 44, 0.827);"></i>
+                        {% else %}
+                        <i class='bx bx-chevrons-up' style="color: rgba(201, 12, 60, 0.827);"></i>
+                        {% endif %}
+                        "{{w.get_operation_type_display}}"
+                    </span>
+                </td>
+                <td><span>{{w.operation_value|floatformat:2|intcomma}} جنية</span></td>
+                <td>
+                    <span>
+                        {% if w.operation_description %}
+                        "{{w.operation_description}}"
+                        {% else %}
+                        "---"
+                        {% endif %}
+                    </span>
+                </td>
+                <td><i class="fas fa-user-tie"></i> {{w.operation_user}} </td>
+                {% if treasury.deleted == 0 %}
+                {% if request.user.is_superuser %}
+                <td>
+{#                    {% if w.id == last_op.id %}#}
+                    <a href="{% url 'Treasury:OperationSuperDelete' w.id %}" class="mr-3 text-warning"
+                        data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i
+                            class="mdi mdi-close font-size-18" style="cursor: pointer;"></i></a>
+{#                    {% endif %}#}
+                </td>
+                {% endif %}
+                {% endif %}
+
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="row text-center op_pagination">
+    <div class="col-md-12">
+        <button class="btn btn-dark op_prev">السابق</button>
+        <span class="op_page"></span>
+        <button class="btn btn-dark op_next">التالي</button>
+    </div>
+</div>
+<br>
+
+<script>
+    $(document).ready(function() {
+      var itemsPerPage = 10;
+      var currentPage = 1;
+
+      function showItems() {
+        var startIndex = (currentPage - 1) * itemsPerPage;
+        var endIndex = startIndex + itemsPerPage;
+
+        $('.op_pag tbody tr').hide();
+        $('.op_pag tbody tr').slice(startIndex, endIndex).show();
+        $('.op_page').empty();
+
+        var totalItems = $('.op_pag tbody tr').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        $('.op_prev').prop('disabled', currentPage === 1);
+        $('.op_next').prop('disabled', currentPage === totalPages);
+
+        for (var i = 1; i <= totalPages; i++) {
+          var pageButton = $('<button>').text(i);
+          pageButton.addClass('btn');
+          if (i === currentPage) {
+            pageButton.addClass('active bg-warning');
+          }
+          pageButton.click(function() {
+            currentPage = parseInt($(this).text());
+            showItems();
+          });
+          $('.op_page').append(pageButton);
+        }
+      }
+
+      $('.op_prev').click(function() {
+        if (currentPage > 1) {
+          currentPage--;
+          showItems();
+        }
+      });
+
+      $('.op_next').click(function() {
+        var totalItems = $('.op_pag tbody tr').length;
+        var totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        if (currentPage < totalPages) {
+          currentPage++;
+          showItems();
+        }
+      });
+
+      showItems();
+    });
+  </script>

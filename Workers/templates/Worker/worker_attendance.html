@@ -1,0 +1,397 @@
+{% load crispy_forms_tags %}
+<div class="card">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <!-- مسحوبات المصنع -->
+          <div class="tab-pane" id="processing" role="tabpanel">
+            <div class="row">
+              <div class="col-lg-12">
+                {% if obj.deleted == 0 %}
+                <div class="table-responsive" id="order_list">
+                  <table class="table table-nowrap table-borderless">
+                    <thead>
+                      <form>
+                        <tr>
+                          <th
+                            class="col-lg-2 col-xl-2 col-md-1"
+                            style="width: 20%"
+                          >
+                            {{attendance_form.date|as_crispy_field}}
+                          </th>
+                            <th
+                            class="col-lg-2 col-xl-2 col-md-1"
+                            style="width: 20%"
+                          >
+                            {{attendance_form.day|as_crispy_field}}
+                          </th>
+                          <th
+                            class="col-lg-2 col-xl-2 col-md-1"
+                            style="width: 30%"
+                          >
+                            {{attendance_form.hour_count|as_crispy_field}}
+                          </th>
+                        
+                          
+                          <th class="col-lg-2 col-xl-2 col-md-2">
+                            <a
+                              style="width: 100%"
+                              onclick="attenCreate()"
+                              class="btn btn-success"
+                            >
+                            <i class="fas fa-plus-circle"></i>
+                              حضور
+                            </a>
+                          </th>
+                         
+                        </tr>
+                      </form>
+                    </thead>
+                  </table>
+                </div>
+                {% endif %}
+                <style>
+                  /*.table-responsive {
+                    max-height: 500px;
+                  }
+                  .table-responsive::-webkit-scrollbar {
+                    display: none;
+                  }*/
+                </style>
+
+                <div class="table-responsive">
+                    <table class="table table-centered table-dark table-nowrap text-center">
+                        <thead>
+                            <tr>
+                                <td style="width: 60%" class="att_sell">
+                                    <select class="form-control" id="att_specific_time" style="width: 100%" onchange="AttTimeFilter(this)">
+                                        <option disabled selected value="">عرض أوقات معينة؟</option>
+                                        <option value=" ">كل الأوقات</option>
+                                        <option value="1">6 ساعات</option>
+                                        <option value="2">8 ساعات</option>
+                                        <option value="3">12 ساعة</option>
+                                        <option value="4">18 ساعة</option>
+                                        <option value="5">غياب</option>
+                                    </select>
+                                </td>
+                                <td style="width: 40%">
+                                    <input type="date" class="form-control" id="att_specific_date" style="width: 100%" onchange="AttDateFilter(this)">
+                                </td>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
+                <div id="attendance">
+                  <div class="table-responsive scroll">
+                    <table
+                      class="table pag table-centered table-dark table-nowrap text-center"
+                    >
+                      <thead>
+                        <tr>
+                          <th>م</th>
+                          <th>التاريخ</th>
+                          <th>اليوم</th>
+                          <th>عدد الساعات</th>
+                          <th>المسؤول</th>
+                            {% if request.user.is_superuser %}
+                          <th><i class="fas fa-cogs"></i></th>
+                            {% endif %}
+                        </tr>
+                      </thead>
+                      <tbody>
+                          {% if workers %}
+                            {% for x in workers %}
+                            <tr style="text-align: center">
+                                <td>{{forloop.counter}}</td>
+                                <td>
+                                <span class="badge badge-danger"
+                                    ><i class="fas fa-calendar-alt"></i>
+                                    {{x.date|date:'Y-m-d'}}</span
+                                >
+                                </td>
+                                <td>
+                                 {{x.day}}
+                                </td>
+                                <td>
+                                 {{x.get_hour_count_display}}
+                                    {% if x.hour_count != 5 %}
+                                    ساعة
+                                    {% endif %}
+                                </td>
+                                <td><i class="fas fa-user-tie"></i> {{x.admin}}</td>
+                                {% if request.user.is_superuser %}
+                                <td>
+{#                                {% if x.id == last_attendance_id %}#}
+                                <!--
+{#                                <a#}
+{#                                    href="{% url 'Workers:WorkerAttendancesUpdate' x.id %}"#}
+{#                                    class="mr-3 text-warning"#}
+{#                                    data-toggle="modal"#}
+{#                                    data-target="#action_modal"#}
+{#                                    data-original-title="Edit"#}
+{#                                    ><i class="mdi mdi-pencil font-size-18"></i#}
+{#                                ></a>#} -->
+                                <a
+                                    onclick="
+                                            var result = confirm('هل أنت متأكد من الحذف؟');
+                                            if (result) {
+                                                WorkerAttendanceDelete('{{x.id}}')
+                                            }
+                                            "
+                                    style="cursor: pointer"
+                                    class="text-danger"
+                                    ><i class="mdi mdi-close font-size-18"></i
+                                ></a>
+{#                                {% endif %}#}
+                                </td>
+                                {% endif %}
+                                
+                            </tr>
+                            {% endfor %}
+                          {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+
+                    <div class="row text-center pagination">
+                        <div class="col-md-12">
+                            <button class="btn btn-dark prev">السابق</button>
+                            <span class="page"></span>
+                            <button class="btn btn-dark next">التالي</button>
+                        </div>
+                    </div>
+                    <br>
+
+                  <div style="margin-top: 10px">
+                    <div class="row">
+                      <div class="col-lg-3 flex-center">
+                        <div class="card mini-stats-wid mb-0">
+                          <div class="card-body bg-danger">
+                            <div class="d-flex flex-wrap">
+                              <div class="">
+                                <h5 class="mb-2 text-light">
+                                  اجمالي الايام
+                                </h5>
+                                <h4 class="mb-0 text-dark">
+                                  {{attendance_summary.count_days}} يوم
+                                </h4>
+                              </div>
+
+                              <div class="avatar-sm ml-auto">
+                                <div
+                                  class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                                >
+                                <i class="fas fa-clock"></i>                
+                                 </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-lg-3 flex-center">
+                        <div class="card mini-stats-wid mb-0">
+                          <div class="card-body bg-danger">
+                            <div class="d-flex flex-wrap">
+                              <div class="">
+                                <h5 class="mb-2 text-light">
+                                  الغياب
+                                </h5>
+                                <h4 class="mb-0 text-dark">
+                                  {{absence_summary.count_days}} يوم
+                                </h4>
+                              </div>
+
+                              <div class="avatar-sm ml-auto">
+                                <div
+                                  class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                                >
+                                <i class="fas fa-clock"></i>
+                                 </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-lg-3 flex-center">
+                        <div class="card mini-stats-wid mb-0">
+                          <div class="card-body bg-danger">
+                            <div class="d-flex flex-wrap">
+                              <div class="">
+                                <h5 class="mb-2 text-light">
+                                  الحضور الفعلي
+                                </h5>
+                                <h4 class="mb-0 text-dark">
+                                  {{attendance_real_summary.real_days}} يوم
+                                    و
+                                  {{attendance_real_summary.rest_hours}} ساعة
+                                </h4>
+                              </div>
+
+                              <div class="avatar-sm ml-auto">
+                                <div
+                                  class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                                >
+                                <i class="fas fa-clock"></i>
+                                 </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-lg-3 flex-center">
+                        <div class="card mini-stats-wid mb-0">
+                          <div class="card-body bg-danger">
+                            <div class="d-flex flex-wrap">
+                              <div class="">
+                                <h5 class="mb-2 text-light">
+                                  اجمالي الحساب
+                                </h5>
+                                <h4 class="mb-0 text-dark">
+                                  {{attendance_all_cost.sum_price|floatformat:2}} جنية
+                                </h4>
+                              </div>
+
+                              <div class="avatar-sm ml-auto">
+                                <div
+                                  class="avatar-title bg-light rounded-circle text-dark font-size-20"
+                                >
+                                <i class="fas fa-dollar-sign"></i>                
+                                 </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <script src="/static/assets/libs/jquery/jquery.min.js"></script>
+                <script>
+                    $(document).ready(function() {
+                        $('#att_specific_time').select2();
+                    });
+
+                    $( document ).ready(function() {
+                        const weekday = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+                        const date = $('#date_att').val();
+                        const d = new Date(date);
+                        let day = weekday[d.getDay()];
+                        $('#day_att').val(day);
+                    });
+                    $('#date_att').on('keyup change', function (){
+                        const weekday = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+                        const date = $('#date_att').val();
+                        const d = new Date(date);
+                        let day = weekday[d.getDay()];
+                        $('#day_att').val(day);
+                   });
+                </script>
+
+                <script>
+
+                  function closeModal(){
+                    $('#sub_modal').modal('hide')
+                    
+                  }
+                  
+                  function attenCreate() {
+                    $.ajax({
+                      type: "POST",
+                      url: "{% url 'Workers:WorkerAttendanceCreate'  %}",
+                      data: {
+                        id: "{{object.id}}",
+                        date: $("#date_att").val(),
+                        day: $("#day_att").val(),
+                        hour_count: $("#hours_count").val(),
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                        dataType: "json",
+                      },
+                      success: function (response) {
+                        /* response message */
+                        if (response.msg == 1) {
+                          $("#attendance").html("&nbsp;").load("{% url 'Workers:WorkerAttendance_div' object.id %}");
+                          alert("تم الاضافة بنجاح");
+                          $("#paymnet").html("&nbsp;").load("{% url 'Workers:WorkerPayment_div' object.id %}");
+                          $("#production_worker").html("&nbsp;").load("{% url 'Workers:WorkerProductions_div' object.id %}");
+                        }
+                        else if (response.msg == -1) {
+                            alert("تكرار! تم تسجيل هذا اليوم سابقا");
+                        }
+                        else {
+                            alert("حاول مرة اخري / خطأ في البيانات");
+                        }
+                      },
+
+                      failure: function () {},
+                    });
+                  }
+
+                  function WorkerAttendanceDelete(attendance_id) {
+                    $.ajax({
+                      type: "POST",
+                      url: "{% url 'Workers:WorkerAttendanceDelete' %}",
+                      data: {
+                        attendance_id: attendance_id,
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                        dataType: "json",
+                      },
+                      success: function (data) {
+                        /* response message */
+                        $("#attendance")
+                          .html("&nbsp;")
+                          .load(
+                            "{% url 'Workers:WorkerAttendance_div' object.id %}"
+                          );
+                        alert("تم الحذف بنجاح");
+                        $("#paymnet").html("&nbsp;").load("{% url 'Workers:WorkerPayment_div' object.id %}");
+                        $("#production_worker").html("&nbsp;").load("{% url 'Workers:WorkerProductions_div' object.id %}");
+                      },
+
+                      failure: function () {},
+                    });
+                  }
+                </script>
+                <script>
+                    function AttTimeFilter(val) {
+                        if (val.value && val.value!= ' '){
+                            $( '.att_sell' ).find('.select2-container').find('.select2-selection--single').css("background-color","lightgreen");
+                        }
+                        else {
+                            $( '.att_sell' ).find('.select2-container').find('.select2-selection--single').css("background-color","");
+                        }
+
+                        $( '#att_specific_date' ).css("background-color","");
+                        $( '#att_specific_date' ).val('');
+
+                        time_val = val.value;
+                        $( '#attendance' ).html( '&nbsp;' ).load( "{% url 'Workers:WorkerAttendance_div' object.id %}?time_val=" + time_val );
+                    };
+                    function AttDateFilter(val) {
+                        if (val.value){
+                            val.style.backgroundColor = 'lightgreen';
+                        }
+                        else {
+                            val.style.backgroundColor = '';
+                        }
+
+                        $('#att_specific_time').select2('destroy');
+                        $('#att_specific_time').val('').select2();
+
+                        date_val = val.value;
+                        $( '#attendance' ).html( '&nbsp;' ).load( "{% url 'Workers:WorkerAttendance_div' object.id %}?date_val=" + date_val );
+                    };
+                </script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

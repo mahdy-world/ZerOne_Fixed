@@ -1,0 +1,236 @@
+
+<header id="page-topbar">
+    <div class="navbar-header">
+        <div class="d-flex">
+            <!-- LOGO -->
+            <div class="navbar-brand-box" style="background-color: #eaedef">
+                <a href="/" class="logo logo-dark">
+                    <span class="logo-sm">
+                        <img src="/static/assets/images/new2.png" alt="" height="30">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="/static/assets/images/main_logo2.png" alt="" height="30">
+                    </span>
+                </a>
+
+                <a href="/" class="logo logo-light">
+                    <span class="logo-sm">
+                        <img src="/static/assets/images/1logo2.png" alt="" height="30">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="/static/assets/images/main_logo2.png" alt="" height="30">
+                    </span>
+                </a>
+            </div>
+
+            <button type="button" class="btn btn-sm px-3 font-size-16 header-item waves-effect" id="vertical-menu-btn">
+                <i class="fa fa-fw fa-bars"></i>
+            </button>
+
+            <button style="cursor: auto" type="button" class="btn btn-sm px-3 font-size-20 header-item">
+                <i style="display: none" class="fa fa-fw fa-bars"></i>
+            </button>
+
+            <button onclick="history.back()" type="button" class="btn btn-sm px-3 font-size-20 header-item">
+                <i class="fas fa-arrow-alt-circle-right"></i>
+                للخلف
+            </button>
+
+            <button onclick="location.reload()" type="button" class="btn btn-sm px-3 font-size-20 header-item">
+                <i class="fas fa-sync"></i>
+                إعادة تحميل
+            </button>
+
+            <button onclick="history.forward()" type="button" class="btn btn-sm px-3 font-size-20 header-item">
+                <i class="fas fa-arrow-alt-circle-left"></i>
+                للأمام
+            </button>
+
+        </div>
+
+        <div class="d-flex">
+
+            {% if not modules.stop_date or modules.stop_date and today < modules.stop_date %}
+
+            {% if request.user.is_superuser %}
+            <!-- Backup -->
+            <div class="dropdown d-none d-lg-inline-block ml-1">
+                <a id="backup_btn" href="{% url 'Core:manual_backup' %}">
+                    <button type="button" class="btn header-item noti-icon waves-effect" title="نسخ احتياطي للبيانات">
+                        <i class="bx bx-cloud-upload"></i>
+                    </button>
+                </a>
+            </div>
+            {% endif %}
+
+           <!-- Search -->
+            <div class="dropdown d-none d-lg-inline-block ml-1">
+                <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="modal" data-target="#search_modal">
+                    <i class="bx bx-search-alt"></i>                
+                </button>
+            </div>
+
+            <!-- full screen -->
+            <div class="dropdown d-none d-lg-inline-block ml-1">
+                <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
+                    <i class="bx bx-fullscreen"></i>
+                </button>
+            </div>
+
+            <!-- notifeaction item -->
+            <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-notifications-dropdown"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    
+                    
+                    {% if notification_count %}
+                        <i class="bx bx-bell bx-tada"></i>
+                        <span class="badge badge-danger badge-pill">{{notification_count}}</span>
+                    {% else %}
+                        <i class="bx bx-bell "></i>    
+                    {% endif %}
+                        
+                   
+                </button>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
+                    aria-labelledby="page-header-notifications-dropdown">
+
+                    <!--<div data-simplebar style="max-height: 230px;">-->
+                    {% if modules.invoice_active %}
+                    {% if invoices_notify.count > 0 %}
+                    <div class="p-3">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h6 class="m-0" key="t-notifications"> فواتير مفتوحة </h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-simplebar style="max-height: 200px;">
+                        
+                        {% for x in invoices_notify %}
+                            <a href="{% url 'Invoices:InvoiceDetail' x.id %}" class="text-reset notification-item">
+                                <div class="media">
+                                    <div class="avatar-xs mr-3">
+                                        <span class="avatar-title bg-primary rounded-circle font-size-16">
+                                            <i class='bx bx-bell bx-tada bx-sm'></i>
+                                        </span>
+                                    </div>
+                                    <div class="media-body">
+                                        <h6 class="mt-0 mb-1" key="t-your-order">
+                                            {% if x.invoice_type == 1 %}
+                                            فاتورة مبيعات
+                                            {% elif x.invoice_type == 2 %}
+                                            فاتورة مرتجع مبيعات
+                                            {% else %}
+                                            فاتورة قطاعي
+                                            {% endif %}
+                                            لم يتم حفظها بشكل مؤقت او بشكل نهائي
+                                        </h6>
+                                        <div class="font-size-12 text-muted">
+                                            <p
+                                            class="mb-1 badge badge-danger font-size-12" key="t-grammer">
+                                            فاتورة رقم {{ x.id }}
+                                            <p class="mb-1 badge badge-primary font-size-12"> <span key="t-min-ago">{{x.date|date:'Y-m-d'}}</span></p>
+                                        </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                        
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if modules.product_active %}
+                    {% if products_notify.count > 0 %}
+                    <div class="p-3">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h6 class="m-0" key="t-notifications"> منتجات سعر البيع أقل من التكلفة </h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-simplebar style="max-height: 200px;">
+
+                        {% for x in products_notify %}
+                            <a href="{% url 'Products:ProductUpdate' x.id %}" data-toggle="modal" data-target="#action_modal" class="text-reset notification-item">
+                                <div class="media">
+                                    <div class="avatar-xs mr-3">
+                                        <span class="avatar-title bg-primary rounded-circle font-size-16">
+                                            <i class='bx bx-bell bx-tada bx-sm'></i>
+                                        </span>
+                                    </div>
+                                    <div class="media-body">
+                                        <h6 class="mt-0 mb-1" key="t-your-order">
+                                            موديل {{ x.name }}
+                                             تخسر في بيعه
+                                        </h6>
+                                        <div class="font-size-12 text-muted">
+                                            <p
+                                            class="mb-1 badge badge-danger font-size-12" key="t-grammer">
+                                            سعر البيع {{ x.price }}
+                                            <p class="mb-1 badge badge-primary font-size-12"><span key="t-min-ago">سعر التكلفة {{ x.cost }}</span></p>
+                                        </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                    <!--</div>-->
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- user item -->
+            <div class="dropdown d-inline-block">
+                <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img class="rounded-circle header-profile-user" src="/static/assets/images/user.png"
+                        alt="Header Avatar">
+                    <span class="d-none d-xl-inline-block ml-1" key="t-henry">{{request.user}}</span>
+                    <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <!-- item-->
+
+                    {% if request.user.is_superuser %}
+                    {% if info %}
+                        {% for x in info %}
+                            <a class="dropdown-item" data-toggle="modal" data-target="#action_modal" 
+                            href="{% url 'Core:SystemInfoUpdate' x.id %}">
+                                
+                            <i class='bx bx-info-circle font-size-16 align-middle mr-1' ></i>
+                                <span key="t-profile">بيانات النظام</span>
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <a class="dropdown-item" data-toggle="modal" data-target="#action_modal" 
+                        href="{% url 'Core:SystemInfoCreate'%}">
+                            <i class="bx bx-user font-size-16 align-middle mr-1"></i> 
+                            <span key="t-profile">بيانات النظام</span>
+                        </a>
+                    {% endif %}
+                    {% endif %}
+
+                    
+                    <a class="dropdown-item d-block" href="{% url 'Auth:ChangePassword' %}" data-target="#action_modal" data-toggle="modal">
+                        <i class="bx bx-wrench font-size-16 align-middle mr-1"></i>
+                        <span key="t-settings">تغير كلمة المرور</span>
+                    </a>
+
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item text-danger" href="{% url 'Auth:logout'%}"><i class="bx bx-power-off font-size-16 align-middle mr-1 text-danger"></i> <span key="t-logout">تسجيل الخروج</span></a>
+                </div>
+            </div>
+
+           
+
+        </div>
+    </div>
+</header>
