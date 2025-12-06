@@ -34,12 +34,6 @@
                             <span>إحصائيات عامة</span>
                         </a>
                     </li>
-
-                    <li>
-                        <a id="backup_btn2" href="/manual_backup/" key="t-products"><i class='bx bx-cloud-upload' ></i>
-                            <span>نسخ احتياطي للبيانات</span>
-                        </a>
-                    </li>
                     {% endif %}
 
                     <li>
@@ -47,6 +41,54 @@
                             <i class='bx bx-search-alt' ></i>
                              <span> بحث ونتائج</span>
                         </a>
+                    </li>
+
+               
+                    <li>
+                        <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                            <i class='bx bx-palette'></i>
+                            <span key="t-ecommerce">الوان النظام</span>
+                        </a>
+                       
+                        <ul class="sub-menu bg-light" aria-expanded="false">
+
+                            <li><a href="{% url 'Core:ColorList' %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                            قائمة الالوان </a></li>
+
+                            <li><a href="{% url 'Core:ColorCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                            اضافة لون جديد</a></li>
+                        </ul>
+                    
+                    </li>
+
+                    <li>
+                        <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                            <i class='bx bx-pencil'></i>
+                            <span key="t-ecommerce">بنود المصروفات</span>
+                        </a>
+
+                        <ul class="sub-menu bg-light" aria-expanded="false">
+
+                            <li><a href="{% url 'Core:ExpensessTypeList' %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                            قائمة البنود </a></li>
+
+                            <li><a href="{% url 'Core:ExpensessTypeCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                            اضافة بند جديد</a></li>
+                        </ul>
+
+                    </li>
+                    <li>
+                            <a href="javascript: void(0);"  class="has-arrow waves-effect">
+                                <i class='bx bx-pencil'></i>
+                                <span key="t-ecommerce">المصروفات</span>
+                            </a>
+
+                            <ul class="sub-menu bg-light" aria-expanded="false">
+
+                                <li><a href="{% url 'Core:ExpensessDetail' %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                                قائمة المصروفات </a></li>
+                            </ul>
+
                     </li>
 
                 <li class="menu-title " key="t-menu"><hr></li>
@@ -271,20 +313,48 @@
 
                 {% if modules.wool_active %}
                 <!-- الخيط  -->
+
                 <li>
                     <a href="javascript: void(0);"  class="has-arrow waves-effect">
                         <i class='bx bx-command'></i>
-                        <span key="t-ecommerce"> الخيط</span>
+                        <span key="t-ecommerce"> الخامات</span>
                     </a>
                     <ul class="sub-menu bg-light" aria-expanded="false">
-                        <li><a href="{% url 'Wool:WoolSupplierList'  %}"  key="t-products"><i class='bx bx-list-ul' ></i>
-                        قائمة موردين الخيط </a></li>
 
-                        <li><a href="{% url 'Wool:WoolSupplierCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
-                        اضافة مورد جديد</a></li>
+                        
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class='bx bx-command'></i>
+                                <span key="t-ecommerce">الخامات</span>
+                            </a>
+                            <ul class="sub-menu bg-light" aria-expanded="false">
 
-                        <li><a href="{% url 'Wool:WoolSupplierTrashList' %}" key="t-product-detail"> <i class='bx bx-trash'></i>
-                            سلة المهملات</a></li>
+                                <li><a href="{% url 'Wool:WoolList' %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                                قائمة الخامات </a></li>
+
+                                <li><a href="{% url 'Wool:WoolCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                                اضافة خامة جديدة</a></li>
+
+                            </ul>
+                        </li>
+
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class='bx bx-male bx-sm' ></i>
+                                <span key="t-ecommerce"> تجار الخامات</span>
+                            </a>
+                            <ul class="sub-menu bg-light" aria-expanded="false">
+                                <li><a href="{% url 'Wool:WoolSupplierList'  %}"  key="t-products"><i class='bx bx-list-ul' ></i>
+                                قائمة تجار الخامات </a></li>
+        
+                                <li><a href="{% url 'Wool:WoolSupplierCreate' %}" data-target="#sub_modal" data-toggle="modal"  key="t-product-detail"> <i class='bx bxs-add-to-queue'></i>
+                                اضافة تاجر خامة جديد</a></li>
+        
+                                <li><a href="{% url 'Wool:WoolSupplierTrashList' %}" key="t-product-detail"> <i class='bx bx-trash'></i>
+                                    سلة المهملات</a></li>
+                            </ul>
+                        </li>
+
                     </ul>
                 </li>
                {% endif %}

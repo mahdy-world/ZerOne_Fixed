@@ -1,8 +1,8 @@
 from datetime import date
-
+from Wool.models import Wool
 from django.db import models
 from Auth.models import User
-
+from Core.models import Color
 from Products.models import Product
 
 # Create your models here.
@@ -32,6 +32,21 @@ class Payment(models.Model):
     def __str__(self):
         return self.factory.name
     
+    
+class FactoryReturned(models.Model):
+    created = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الاضافة")
+    item_count = models.FloatField(verbose_name="العدد")
+    factory = models.ForeignKey(Factory, on_delete=models.CASCADE, verbose_name="المصنع")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="الموديل")
+    item_price = models.FloatField(verbose_name="سعر القطعة")
+    total_price = models.FloatField(verbose_name="اجمالي السعر")
+    admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="المسئول")
+    date = models.DateField(null=True, verbose_name="التاريخ", default=date.today)
+    returned_details = models.TextField(null=True, blank=True, verbose_name='التفاصيل')
+    
+    def __str__(self):
+        return self.factory.name
+    
 WOOL_TYPE = (
     (1,"قطن"),
     (2,"صوف"),
@@ -49,9 +64,10 @@ class FactoryOutSide(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ العملية")
     date = models.DateField(null=True, verbose_name="التاريخ", default=date.today)
     factory = models.ForeignKey(Factory, on_delete=models.CASCADE, verbose_name="المصنع")
+    wool = models.ForeignKey('Wool.Wool', on_delete=models.SET_NULL, null=True, verbose_name="الخامة")
+    wool_count_item = models.FloatField(verbose_name="عدد الشكاير")
+    color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True, verbose_name="اللون")
     weight = models.FloatField(null=True, verbose_name="الوزن بالكيلو")
-    wool_type = models.IntegerField(choices=WOOL_TYPE, null=True, blank=True, verbose_name="نوع الخامة")
-    color = models.CharField(null=True, max_length=50, blank=True, verbose_name="اللون")
     percent_loss = models.FloatField(null=True, verbose_name="الهالك (نسبة مؤية)")
     weight_after_loss = models.FloatField(null=True, verbose_name="الوزن بعد الهالك")
     admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="المسئول")
@@ -61,6 +77,7 @@ class FactoryOutSide(models.Model):
 
 
 PRODUCT_TYPE = (
+    
     (1,"صدر"),
     (2,"ضهر"),
     (3,"كم"),
@@ -71,7 +88,7 @@ class FactoryInSide(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ العملية")
     date = models.DateField(null=True, verbose_name="التاريخ", default=date.today)
     factory = models.ForeignKey(Factory, on_delete=models.CASCADE, verbose_name="المصنع")
-    color = models.CharField(null=True, max_length=50, blank=True, verbose_name="اللون")
+    color = models.ForeignKey(Color, null=True, on_delete=models.SET_NULL, verbose_name="اللون")
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, verbose_name="الموديل")
     weight = models.FloatField(null=True, verbose_name="الوزن بالكيلو")
     product_weight = models.FloatField(null=True, verbose_name="وزن الموديل جرام")
@@ -96,7 +113,7 @@ Fact_Type = (
 
 class Supplier(models.Model):
     created = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ الاضافة")
-    name = models.CharField(max_length=50, verbose_name="إسم المصنع")
+    name = models.CharField(max_length=50, verbose_name="الاسم")
     phone = models.CharField(max_length=11, null=True, blank=True, verbose_name='رقم الهاتف')
     address = models.CharField(max_length=250, verbose_name='العنوان', null=True, blank=True)
     type = models.IntegerField(choices=Fact_Type, default=0, verbose_name="نوع المصنع")
@@ -129,4 +146,32 @@ class SupplierPayment(models.Model):
     admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="المسؤل")
 
     def __str__(self):
-        return self.supplier.name
+        return self.supplier.name   
+    
+
+class ProductQuantityInside(models.Model):
+    date = models.DateField(null=True, verbose_name="التاريخ", default=date.today)
+    product_item = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, verbose_name="الموديل")
+    factory_item = models.ForeignKey(Factory, on_delete=models.SET_NULL, null=True, verbose_name='المصنع')
+    product_count = models.IntegerField(null=True, blank=True, verbose_name='الكمية')
+    product_color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True, verbose_name='اللون')
+    created_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name='المستخدم')
+    
+    def __str__(self):
+        return self.product_item.name
+    
+
+# class FactoryReturnedWool(models.Model):
+#     created = models.DateTimeField(auto_now_add=True, verbose_name="تاريخ العملية")
+#     date = models.DateField(null=True, verbose_name="التاريخ", default=date.today)
+#     factory = models.ForeignKey(Factory, on_delete=models.CASCADE, verbose_name="المصنع")
+#     wool = models.ForeignKey(Wool, on_delete=models.SET_NULL, null=True, verbose_name="الخامة")
+#     wool_count_item = models.FloatField(verbose_name="عدد الشكاير")
+#     color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True, verbose_name="اللون")
+#     weight = models.FloatField(null=True, verbose_name="الوزن بالكيلو")
+#     percent_loss = models.FloatField(null=True, verbose_name="الهالك (نسبة مؤية)")
+#     weight_after_loss = models.FloatField(null=True, verbose_name="الوزن بعد الهالك")
+#     admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="المسئول")
+    
+#     def __str__(self):
+#         return self.factory.name

@@ -3,6 +3,15 @@ from .views import *
 
 app_name ="Wool"
 urlpatterns = [
+    path('WoolList/', WoolList.as_view(), name="WoolList"),
+    path('WoolCreate/', WoolCreate.as_view(), name="WoolCreate"),
+    path('WoolUpdate/<int:pk>/', WoolUpdate.as_view(), name="WoolUpdate"),
+    path('WoolSuperDelete/<int:pk>/', WoolSuperDelete.as_view(), name="WoolSuperDelete"),
+    path('WoolDetails/<int:pk>/', WoolDetails, name="WoolDetails"),
+    path('WoolQuantity/<int:pk>/', AddWoolQuantity, name="AddWoolQuantity"),
+    path('DelWoolQuantity/<int:pk>/', DelWoolQuantity, name="DelWoolQuantity"),
+    
+    
     path('WoolSupplierList/', WoolSupplierList.as_view(), name="WoolSupplierList"),
     path('WoolSupplierTrashList/', WoolSupplierTrashList.as_view(), name="WoolSupplierTrashList"),
     path('WoolSupplierCreate/', WoolSupplierCreate.as_view(), name="WoolSupplierCreate"),

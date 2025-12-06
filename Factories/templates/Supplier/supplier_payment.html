@@ -215,11 +215,11 @@ table.dataTable thead .sorting_desc_disabled {
                                                                         {% if request.user.is_superuser %}
                                                                         {% if not supplier.deleted %}
                                                                         <td>
-{#                                                                            {% if forloop.last %}#}
+                                                                            {% if forloop.last %}
                                                                             <a href="#" class="text-danger" data-toggle="modal" data-target="#DelModal" title="" data-original-title="Delete"><i class="mdi mdi-close font-size-18"
                                                                             onclick="document.getElementById('del_clck').href='{% url 'Factories:DelSupplierPayment' x.id %}'"
                                                                             ></i></a>
-{#                                                                            {% endif %}#}
+                                                                            {% endif %}
                                                                         </td>
                                                                         {% endif %}
                                                                         {% endif %}
@@ -386,7 +386,7 @@ $(document).ready(function () {
                     },
                     messageBottom: function () {
                         {% if system_info.logo %}
-                            var img = '<img src="{{system_info.logo_base64}}" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
+                            var img = '<img src="{{system_info.logo.url}}" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
                         {% else %}
                             var img = '<img src="/static/assets/images/new.png" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
                         {% endif %}

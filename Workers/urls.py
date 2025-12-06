@@ -27,4 +27,5 @@ urlpatterns = [
     path('create/workerProdduction', WorkerProductionCreate, name="WorkerProductionCreate"),
     path('delete/worker_production', WorkerProductionDelete, name="WorkerProductionDelete"),
     path('productions/print/<int:pk>/', PrintWorkerproductions, name="PrintWorkerproductions"),
+    path('worker/price/<int:pk>/', WorkerPrice, name="WorkerPrice"),
 ]

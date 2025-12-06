@@ -11,7 +11,7 @@
     <div class="main-content">
 
       <div class="page-content">
-          <div class="container-fluid">
+          <div class="container-fuild">
            
                 <div class="row">
                     <div class="col-12"> {% if messages %}
@@ -97,7 +97,25 @@
                         <div class="row">
                             <div class="col-lg-3"></div>
                             <div class="col-lg-3"></div>
-                            <div class="col-lg-3"></div>
+                            <div class="col-lg-3">
+                                <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:ProductSearch_size' %}">
+                                    <div class="position-relative" >
+
+                                        <input style="background-color: white" type="text" value="{{product_serach_size}}" list="produ_size" autocomplete="off" class="form-control" name="product_size" placeholder="بحث ... بالمقاس ">
+                                        <span >
+                                            <button class="bx bx-search-alt btn btn-warning" type="submit">
+                                            </button>
+                                        </span>
+                                        <datalist id="produ_size" >
+                                            {% for pro in products %}
+                                                <option value="{{ pro.size }}">
+                                                    {{ pro.size }}
+                                                </option>
+                                            {% endfor %}
+                                        </datalist>
+                                    </div>
+                                </form>
+                            </div>
                             <div class="col-lg-3">
                                 {% if type == "list" %}
                                 <form class="app-search d-none d-lg-block" method="get" action="{% url 'Core:ProductSearch' %}">
@@ -116,44 +134,32 @@
                                             {% endfor %}
                                         </datalist>
                                     </div>
-                                </form>
+
                                 {% endif %}
                             </div>
                         </div>
                     <div class="row">
                     {% for x in object_list  %}
                         {% product_12_quantity x.id as product_12_quantity %}
-                        <div class="col-xl-4 col-md-4 col-sm-6">
+                        <div class="col-xl-2 col-md-2 col-sm-3">
                             <div class="card">
                                 <div class="">
                                     <div class="product-img position-relative">
-                                    <!--
-{#                                        <div class="avatar-sm product-ribbon">#}
-{#                                            <span class="avatar-title rounded-circle bg-secondary">#}
-{#                                                {% if x.quantity %}#}
-{#                                                {{x.quantity}}#}
-{#                                                {% else %}#}
-{#                                                0#}
-{#                                                {% endif %}#}
-{#                                                ق#}
-{#                                            </span>#}
-{#                                        </div>#}
-{##}
-{##}
-{#                                        {% if x.quantity >= 12 %}#}
-{#                                        <div class="avatar-sm product-ribbon" style="margin-right: 80%">#}
-{#                                            <span class="avatar-title rounded-circle bg-primary">#}
-{#                                                {{product_12_quantity}}#}
-{#                                                د#}
-{#                                            </span>#}
-{#                                        </div>#}
-{#                                        {% endif %}#}-->
-
+                                        <div class="avatar-sm product-ribbon">
+                                            <span class="avatar-title rounded-circle bg-secondary">
+                                                {% if product_12_quantity %}
+                                                {{product_12_quantity}}
+                                                {% else %}
+                                                0
+                                                {% endif %}
+                                                ق
+                                           </span>
+                                      </div>
 
                                         {% if x.image %}
-                                        <img src="{{x.image.url}}" width="250px" height="250px" alt="" class="img mx-auto d-block">
+                                        <img src="{{x.image.url}}" width="250px" height="250px" alt="" class="img mx-auto d-block mt-2">
                                         {% else %}
-                                        <img src="/static/assets/images/product/img-2.png" width="250px" height="250px" alt="" class="img mx-auto d-block">
+                                        <img src="/static/assets/images/product/img-2.png" width="250px" height="250px" alt="" class="img mx-auto d-block  mt-2">
                                         {% endif %}
                                        
                                     </div>
@@ -161,8 +167,7 @@
                                     <div class="text-center">
                                         <h3 class="mb-3 text-truncate"><a href="{% url 'Products:ProductDetails' x.id %}" class="text-dark">{{x.name}}</a></h3>
                                         <ul class="list-inline mb-0">
-                                            <li class="list-inline-item mr-1"><h5 class="my-0"><span class="text-muted mr-1">السعر:</span> <b>${{x.price|floatformat:2}}</b></h5></li>
-                                            <li class="list-inline-item mr-1"><h5 class="my-0"><span class="text-muted mr-1">الوزن:</span> <b>{{x.weight}} جرام</b></h5></li>
+                                            <li class="list-inline-item mr-1"><h5 class="my-0"><span class="text-muted mr-1">المقاس:</span><b>{{x.get_size_display}}</b></h5></li>
                                         </ul>
                                         
                                     </div>

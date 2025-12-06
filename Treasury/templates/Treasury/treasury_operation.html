@@ -74,9 +74,9 @@
                                                    {% if request.user.is_superuser %}
                                                     {% if treasury.deleted == 0 %}
                                                    <td>
-{#                                                   {% if w.id == last_op.id %}#}
+                                                   {% if w.id == last_op.id %}
                                                     <a href="{% url 'Treasury:OperationSuperDelete' w.id %}" class="mr-3 text-warning"data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i class="mdi mdi-close font-size-18" style="cursor: pointer;"></i></a>
-{#                                                   {% endif %}#}
+                                                   {% endif %}
                                                     </td>
                                                    {% endif %}
                                                    {% endif %}

@@ -1,6 +1,5 @@
 from django import forms
 from .models import *
-from datetime import date
 
 class WorkerForm(forms.ModelForm):
     class Meta:
@@ -35,12 +34,6 @@ class WorkerPaymentForm(forms.ModelForm):
             'placeholder':'المبلغ...', 'id':'price'}),
             'description': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'وصف...', 'id': 'description'}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.instance.pk:
-            self.fields['date'].initial = date.today()
-
         
 class WorkerPaymentReportForm(forms.Form):
     from_date = forms.DateField(required=False ,widget=forms.DateInput(attrs={
@@ -74,14 +67,9 @@ class WorkerAttendanceForm(forms.ModelForm):
             'hour_count' : forms.Select(attrs={'class':'form-control',
             'placeholder':'عدد الساعات...', 'id':'hours_count'}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.instance.pk:
-            self.fields['date'].initial = date.today()
-
-
-
+        
+ 
+ 
 class WorkerProductionForm(forms.ModelForm):
     class Meta:
         fields = ['date', 'day', 'quantity', 'price', 'total', 'product']
@@ -99,8 +87,3 @@ class WorkerProductionForm(forms.ModelForm):
                                               'id': 'worker_total', 'readonly':'readonly'}),
             'product': forms.Select(attrs={'class': 'form-control', 'placeholder': ' المنتج...', 'id': 'worker_production'}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not self.instance.pk:
-            self.fields['date'].initial = date.today()

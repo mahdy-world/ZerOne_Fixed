@@ -12,10 +12,6 @@ from Core.models import SystemInformation
 from datetime import datetime
 from django.http import HttpResponse
 from django.db.models.aggregates import Sum
-import base64
-import os
-from django.conf import settings
-# Create your views here.
 
 
 class TreasuryList(LoginRequiredMixin, ListView):
@@ -192,8 +188,9 @@ class TreasuryDetails(LoginRequiredMixin, DetailView):
         tr = TreasuryOperation.objects.filter(treasury=self.object)
         context['treasury_operation_obj'] = tr.order_by('-operation_date', '-id')
         context['last_op'] = tr.last()
-        context['total_deposit'] = tr.filter(operation_type=1).aggregate(sum=Sum('operation_value')).get('sum')
-        context['total_withdrawals'] = tr.filter(operation_type=2).aggregate(sum=Sum('operation_value')).get('sum')
+        context['total_deposit'] = TreasuryOperation.objects.filter(operation_type=1, treasury=self.object).aggregate(sum=Sum('operation_value')).get('sum')
+        context['total_withdrawals'] = TreasuryOperation.objects.filter(operation_type=2, treasury=self.object).aggregate(sum=Sum('operation_value')).get('sum')
+
         return context
 
 
@@ -349,21 +346,8 @@ def TreasuryReport(request, pk):
     system_info = SystemInformation.objects.all()
     if system_info.count() > 0:
         system_info = system_info.last()
-        # تحويل الصورة إلى base64
-        if system_info.logo:
-            logo_path = os.path.join(settings.MEDIA_ROOT, str(system_info.logo))
-            try:
-                with open(logo_path, 'rb') as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                    system_info.logo_base64 = f"data:image/{logo_path.split('.')[-1]};base64,{encoded_string}"
-            except:
-                system_info.logo_base64 = None
-        else:
-            system_info.logo_base64 = None
     else:
         system_info = None
-
-    default_icon = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'new.png')
 
     context = {
         'system_info': system_info,
@@ -372,15 +356,9 @@ def TreasuryReport(request, pk):
         'treasury': treasury,
         'treasury_operations_in': treasury_operations_in,
         'treasury_operations_out': treasury_operations_out,
-        'default_icon': default_icon,
     }
     html_string = render_to_string('Treasury/treasury_report.html', context)
     html = weasyprint.HTML(string=html_string, base_url=request.build_absolute_uri())
-    # pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
-    css_path = os.path.join(settings.BASE_DIR, 'static', 'assets', 'css', 'invoice_pdf.css')
-    pdf = html.write_pdf(stylesheets=[weasyprint.CSS(css_path)], presentational_hints=True)
+    pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
     response = HttpResponse(pdf, content_type='application/pdf')
-    # modal
-    response['Content-Disposition'] = 'inline; filename="treasury_report.pdf"'
-    response['X-Frame-Options'] = 'SAMEORIGIN'
     return response

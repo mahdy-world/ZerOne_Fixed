@@ -82,7 +82,6 @@ class InvoiceDeleteForm(forms.ModelForm):
             'deleted': forms.HiddenInput(),
         }
 
-
 class InvoiceCloseForm(forms.ModelForm):
     class Meta:
         model = Invoice
@@ -90,7 +89,6 @@ class InvoiceCloseForm(forms.ModelForm):
         widgets = {
             'close': forms.HiddenInput(),
         }
-
 
 class InvoiceProductsForm(forms.ModelForm):
     class Meta:

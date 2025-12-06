@@ -1,0 +1,10 @@
+1- When Python is installed, you have to install GTK. Download the latest GTK3 installer and launch it.
+ If you don’t know what some options mean, you can safely keep the default options selected.
+
+2- System variables set path: C:\Program Files\GTK3-Runtime Win64\bin , and make it above all pathes
+
+3- python3 -m venv venv
+venv\Scripts\activate.bat
+pip install weasyprint
+weasyprint --info
+

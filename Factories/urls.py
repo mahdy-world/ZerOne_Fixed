@@ -13,11 +13,17 @@ urlpatterns = [
     path('superDelete/<int:pk>', FactorySuperDelete.as_view(), name="FactorySuperDelete"),
     path('all/print/<int:pk>/', PrintAll, name="PrintAll"),
     path('get_product_weight_time/', get_product_weight_time, name="get_product_weight_time"),
+    path('FactoryOutSide_color_filter/', FactoryOutSide_color_filter, name="FactoryOutSide_color_filter"),
 
     path('detail/payment/<int:pk>/div/', FactoryPayment_div.as_view(), name="FactoryPayment_div"),
     path('payment/create/', FactoryPaymentCreate, name="FactoryPaymentCreate"),
     path('payment/delete/', FactoryPaymentDelete, name="FactoryPaymentDelete"),
     path('payment/print/<int:pk>/', PrintPayment, name="PrintPayment"),
+    
+    path('detail/returned/<int:pk>/div/', FactoryReturned_div.as_view(), name="FactoryReturned_div"),
+    path('returned/create/', FactoryReturnedCreate, name="FactoryReturnedCreate"),
+    path('returned/delete/', ReturnedDelete, name="ReturnedDelete"),
+    path('returned/print/<int:pk>/', PrintReturned, name="PrintReturned"),
 
     path('outside/<int:pk>/div/', FactoryOutSide_div.as_view(), name="FactoryOutSide_div"),
     path('outside/create/', FactoryOutSideCreate, name="FactoryOutSideCreate"),
@@ -44,9 +50,17 @@ urlpatterns = [
     path('SupplierQuantity/<int:pk>/', SupplierQuantityDetail, name="SupplierQuantity"),
     path('AddSupplierQuantity/<int:pk>/', AddSupplierQuantity, name="AddSupplierQuantity"),
     path('DelSupplierQuantity/<int:pk>/', DelSupplierQuantity, name="DelSupplierQuantity"),
+   
 
     path('SupplierPayment/<int:pk>/', SupplierPaymentDetail, name="SupplierPayment"),
     path('AddSupplierPayment/<int:pk>/', AddSupplierPayment, name="AddSupplierPayment"),
     path('DelSupplierPayment/<int:pk>/', DelSupplierPayment, name="DelSupplierPayment"),
     path('supplier/all/print/<int:pk>/', PrintSupplierAll , name="PrintSupplierAll"),
+    
+    path('ProductQuantityInsideCreate/<int:pk>/', ProductQuantityInsideCreate, name="ProductQuantityInsideCreate"),
+    path('DelProductQuantity/<int:pk>/', DelProductQuantity, name="DelProductQuantity"),
+    
+    path('return_wool/create/', ReturnWoolCreate, name="ReturnWoolCreate"),
+    path('return_wool/delete/', ReturnWoolDelete, name="ReturnWoolDelete"), 
+    path('return_wool/print/<int:pk>/', PrintWoolReturned, name="PrintWoolReturned"),
 ]

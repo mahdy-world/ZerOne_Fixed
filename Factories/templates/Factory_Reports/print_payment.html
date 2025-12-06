@@ -18,10 +18,9 @@
   <body>
     <h1 style="margin-top: -50px">
       {% if system_info.logo %}
-       <img src="{{system_info.logo_base64}}" height="100px" width="100px">
+       <img src={{system_info.logo.url}} height="100px" width="100px">
        {% else %}
-{#       <img src="/static/assets/images/new.png" width="100px" height="100px">#}
-          <img src="file://{{ default_icon }}" height="100px" width="100px">
+       <img src="/static/assets/images/new.png" width="100px" height="100px">
       {% endif %}
     </h1>
 

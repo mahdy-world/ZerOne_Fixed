@@ -1,4 +1,6 @@
 from django import forms
+
+from Wool.models import WoolReturn
 from .models import *
 
 class FactoryForm(forms.ModelForm):
@@ -36,6 +38,24 @@ class FactoryPaymentForm(forms.ModelForm):
             'recipient' : forms.TextInput(attrs={'class':'form-control',  'placeholder':'المستلم...', 'id':'recipient'}),
         }
         
+# factory returned form 
+class RefundForm(forms.ModelForm):
+    class Meta:
+        fields = ['date', 'item_count', 'admin', 'product', 'item_price', 'total_price', 'returned_details']
+        model = FactoryReturned
+        widgets = {
+            'date' : forms.TextInput(attrs={'type':'date', 'class':'form-control',  'placeholder':'تاريخ السحب...', 'id':'date'}),
+            'item_count' : forms.NumberInput(attrs={ 'class':'form-control', 'placeholder':'عدد القطع...', 'id':'item_count'}),
+            'admin' : forms.Select(attrs={'class':'form-control',  'placeholder':'المسئول...', 'id':'admin'}),
+            'returned_details' : forms.TextInput(attrs={'class':'form-control',  'placeholder':'التفاصيل...', 'id':'returned_details'}),
+            'product' : forms.Select(attrs={'class':'form-control',  'placeholder':'الموديل...', 'id':'returned_product'}),
+            'item_price' : forms.NumberInput(attrs={ 'class':'form-control', 'placeholder':'سعر القطعة...', 'id':'item_price'}),
+            'total_price' : forms.NumberInput(attrs={ 'class':'form-control', 'placeholder':'اجمالي السعر...', 'id':'total_price'}),
+
+        }
+
+
+
 class FactoryPaymentReportForm(forms.Form):
     from_date = forms.DateField(required=False, widget=forms.DateInput(attrs={
         'type':'date',
@@ -60,13 +80,14 @@ class FactoryPaymentReportForm(forms.Form):
         
 class FactoryOutSideForm(forms.ModelForm):
     class Meta:
-        fields = ['date', 'weight', 'color', 'percent_loss', 'weight_after_loss', 'wool_type' ]
+        fields = ['date', 'weight','wool', 'wool_count_item',  'percent_loss', 'weight_after_loss' ]
         model = FactoryOutSide
         widgets = {
             'date' : forms.TextInput(attrs={'type':'date', 'class':'form-control',  'placeholder':'تاريخ الخروج...', 'id':'datee'}),
+            'wool' : forms.Select(attrs={'class':'form-control',  'placeholder':'الخامة...', 'id':'wool'}),
+            'wool_count_item' : forms.NumberInput(attrs={'class':'form-control', 'min':'1', 'placeholder':'عددالشكاير...', 'id':'wool_count_item'}),
             'weight' : forms.NumberInput(attrs={'class':'form-control', 'min':'1', 'placeholder':'الوزن...', 'id':'weight'}),
-            'color' : forms.TextInput(attrs={'class':'form-control', 'min':'1', 'placeholder':'اللون...', 'id':'color'}),
-            'wool_type' : forms.Select(attrs={'class':'form-control',  'placeholder':'نوع الخامة...', 'id':'wool_type'}),
+            # 'color' : forms.Select(attrs={'class':'form-control', 'placeholder':'اللون...', 'id':'color'}),
             'percent_loss' : forms.NumberInput(attrs={'class':'form-control', 'min':'1', 'placeholder':'نسبة الهالك...', 'id':'percent_loss'}),
             'weight_after_loss' : forms.NumberInput(attrs={'class':'form-control', 'min':'1', 'placeholder':'الوزن بعدالهالك...', 'id':'weight_after_loss'}),
         }
@@ -81,7 +102,7 @@ class FactoryInSideForm(forms.ModelForm):
         widgets = {
             'date' : forms.TextInput(attrs={'type':'date', 'class':'form-control',  'placeholder':'تاريخ الاستلام...', 'id':'date_inside'}),
             'weight' : forms.NumberInput(attrs={ 'class':'form-control', 'min':'1', 'placeholder':'الوزن المستلم...', 'id':'weight_inside'}),
-            'color' : forms.TextInput(attrs={ 'class':'form-control', 'placeholder':' اللون...', 'id':'color_inside'}),
+            'color' : forms.Select(attrs={ 'class':'form-control', 'placeholder':' اللون...', 'id':'color_inside'}),
             'wool_type' : forms.Select(attrs={'class':'form-control',  'placeholder':'نوع الخامة...', 'id':'wool_type_inside'}),
             'product' : forms.Select(attrs={ 'class':'form-control', 'placeholder':' المنتج...', 'id':'product'}),
             'product_weight' : forms.NumberInput(attrs={ 'class':'form-control', 'min':'1', 'placeholder':' وزن القطعة...', 'id':'product_weight'}),
@@ -137,3 +158,27 @@ class SupplierPaymentForm(forms.ModelForm):
             'value': forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'id': 'value'}),
             'reason': forms.TextInput(attrs={'class': 'form-control', 'id': 'reason'}),
         }
+
+class ProductQuantityInsideForm(forms.ModelForm):
+    class Meta:
+        model = ProductQuantityInside
+        fields = ['date', 'factory_item', 'product_count', 'product_color']
+        widgets = {
+            'date' : forms.TextInput(attrs={'type':'date', 'class':'form-control',  'placeholder':'التاريخ...', 'id':'date'}),
+            'factory_item': forms.Select(attrs={'class':'form-control', 'id':'factory_item'}),
+            'product_count': forms.NumberInput(attrs={'class':'form-control', 'min': '1', 'id': 'product_count'}),
+            'product_color': forms.Select(attrs={'class':'form-control', 'id': 'product_color'}),
+        }
+
+
+class FactoryReturnWool(forms.ModelForm):
+    class Meta:
+        fields = ['date', 'wool_name', 'wool_retuern_color', 'wool_return_weight']
+        model = WoolReturn
+        widgets = {
+            'date' : forms.TextInput(attrs={'type':'date', 'class':'form-control',  'placeholder':'تاريخ الخروج...', 'id':'wool_date'}),
+            'wool_name' : forms.TextInput(attrs={'class':'form-control',  'placeholder':'الخامة...', 'id':'wool_name'}),
+            'wool_retuern_color' : forms.Select(attrs={'class':'form-control',  'placeholder':'اللون...', 'id':'wool_color'}),
+            'wool_return_weight' : forms.NumberInput(attrs={'class':'form-control', 'min':'1', 'placeholder':'الوزن...', 'id':'wool_weight'}),
+        }
+        

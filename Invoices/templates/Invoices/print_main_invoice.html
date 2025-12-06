@@ -5,16 +5,7 @@
 <meta charset="UTF-8">
 <title>طباعة فاتورة مبيعات
 </title>
-<style>
-@page {
-    font-size: 20px;
-    font-family: 'Amiri', "Times New Roman", serif;
-    @bottom-right {
-        content: counter(page) ' / ' counter(pages);
-    } @bottom-left {
-        content: "{{ user }} {{ date|date:'d-m-Y h:i a' }}";
-    }
-}
+<style> @page { @bottom-right { content: ' ( ' counter(page) ' / ' counter(pages) ' ) ';font-size: 25px; } @bottom-left { content: "{{ user }} {{ date|date:'d-m-Y H:i' }}";font-size: 25px; } }
 </style>
 </head>
 
@@ -23,53 +14,41 @@
 <div style="margin-top: -100px">
     <table class="headname">
         <tr>
-            <td style="border: none; padding-top: 25px">
-                <h2 style="margin-top: 60px; margin-left:-70px; color: indianred"> إدارة: {{ shop_setting.manage }} </h2>
-                <h3 style="margin-top: -20px; margin-left:-60px; color: #1e347b">{{ shop_setting.phone }}
-                    <img src="file://{{ telephone_icon }}" style="margin-left: 5px" width="15px" height="15px">
-{#                    <img src="{% static 'assets/images/telephone-call.png' %}" style="margin-left: 5px" width="15px" height="15px">#}
-                </h3>
+            <td style="border: none">
+                <h2 style="margin-top: 50px; margin-left:-70px"> إدارة : أ/ {{ shop_setting.manage }} </h2>
+                <h3 style="margin-top: -20px; margin-left:-70px">{{ shop_setting.phone }} <img src="{% static 'assets/images/phone_call.png' %}" style="margin-left: 5px" width="15px" height="15px"> </h3>
                 {% if shop_setting.phone2 %}
-                <h3 style="margin-top: -20px; margin-left:-60px; color: #1e347b">{{ shop_setting.phone2 }}
-                    <img src="file://{{ telephone_icon }}" style="margin-left: 5px" width="15px" height="15px">
-{#                    <img src="{% static 'assets/images/telephone-call.png' %}" style="margin-left: 5px" width="15px" height="15px">#}
-                </h3>
+                <h3 style="margin-top: -20px; margin-left:-70px">{{ shop_setting.phone2 }} <img src="{% static 'assets/images/phone_call.png' %}" style="margin-left: 5px" width="15px" height="15px"> </h3>
                 {% endif %}
             </td>
-            <td style="border: none; padding-top: 25px">
-                <h2 style="border: 2px solid green; border-radius: 10px; padding: 5px; background-color: white; margin-top: 65px;">
+            <td style="border: none">
+                <h2 style="border: 1px solid #6495ED; border-radius: 10px; padding: 5px; background-color: white; margin-top: 65px;">
                 {% if invoice.invoice_type == 1 or invoice.invoice_type == 3 %}
                 فاتورة مبيعات
                 {% elif invoice.invoice_type == 2 %}
                 فاتورة مرتجع مبيعات
                 {% endif %}
                 <br>
-                No: <span style="color: green">{{ invoice.id }}</span>
+                No: {{ invoice.id }}
                 </h2>
             </td>
-            <td style="border: none; padding-top: 25px">
-                <h2 style="margin-right:-70px; color: darkred" id="shop_name">{{ shop_setting.name }}</h2>
-                <h2 style="margin-top: -5px; margin-right:-70px; color: indianred">{{ shop_setting.type }}</h2>
-                <h2 style="margin-top: -30px; margin-right:-70px">
-                    <span style="color: #1e347b">ـــــــــــــ</span>
-                    <span style="margin-left: -7px; color: indianred">ـــــــــــــ</span>
-                </h2>
-                <h3 style="margin-top: -25px; margin-right:-70px; color: #1e347b">{{ shop_setting.address }}
-                    <img src="file://{{ gps_icon }}" style="margin-left: 5px; margin-bottom: -2px" width="22px" height="22px">
-{#                    <img src="{% static 'assets/images/gps.png' %}" style="margin-left: 5px; margin-bottom: -2px" width="22px" height="22px"> #}
-                </h3>
+            <td style="border: none">
+                <h4 style="margin-right:-10px" id="shop_name">{{ shop_setting.name }}</h4>
+                <h2 style="margin-top: -5px; margin-right:-70px">{{ shop_setting.type }}</h2>
+                <h2 style="margin-top: -30px; margin-right:-70px">ـــــــــــــــــــــــــــ</h2>
+                <h2 style="margin-top: -25px; margin-right:-70px">{{ shop_setting.address }} <img src="{% static 'assets/images/geo.png' %}" style="margin-left: 5px" width="25px" height="25px"> </h2>
             </td>
         </tr>
     </table>
 </div>
-<div style="width: 100%; height: 20px; border-bottom: 2px solid black; text-align: center; margin-top: -15px">
+<div style="width: 100%; height: 20px; border-bottom: 1px solid black; text-align: center; margin-top: -15px">
   <span style="font-size: 40px; margin-right: 100%">
     <img style = "width: 65px; height: 65px; margin-top: -12px" src = "data:image/png;base64,{% qrcode shop_setting.geo_site %}">
   </span>
 </div>
 <br>
 <div>
-<div style="text-align: right; margin-right: -50px; margin-bottom: 20px; font-size: 20px">
+<div style="text-align: right; margin-right: -70px; font-size: 20px">
     <span>
     تحريرا في/
         {{ invoice.date|date:'d-m-Y' }}
@@ -78,7 +57,7 @@
     <span>
         المطلوب من
         {% if invoice.seller %}
-        التاجر
+        السيد
         {% else %}
         العميل
         {% endif %}
@@ -89,7 +68,7 @@
         {{ invoice.customer }}
         {% endif %}
     </span>
-</div>
+</div><br>
 
 <table class="prods">
 <thead>
@@ -130,8 +109,8 @@
 <tr>
     <td style="border: none"></td>
     <td style="border: none"></td>
-    <td colspan="2" style="border: 2px dashed green">{{ quantity|floatformat:0 }} قطعة </td>
-    <td style="border: 2px dashed green">{{ count_product|floatformat:0 }} صنف </td>
+    <td colspan="2" style="border: 1px dashed #6495ED">{{ quantity|floatformat:0 }} قطعة </td>
+    <td style="border: 1px dashed #6495ED">{{ count_product|floatformat:0 }} صنف </td>
     <td style="border: none"></td>
 </tr>
 </tbody>
@@ -238,8 +217,8 @@
 {% endif %}
 
 <tr style="background-color:transparent">
-<td style="background-color:white; padding: 10px; color: black; border-left: none; border-bottom: none; border-right: none">
-    <span style="background-color: green; padding: 5px; color: white">
+<td style="background-color:white; color: black; border-left: none; border-bottom: none; border-right: none">
+    <span style="background-color: black; padding: 5px; color: white">
 {#        {% profit_decimal invoice.overall as num %}#}
         {% if invoice.overall < 0 %}
 {#        {{ num|mul:-1 }} للتاجر#}
@@ -254,7 +233,7 @@
     </span>
     &nbsp;&nbsp;&nbsp;
 </td>
-<td style="background-color:white; padding: 10px; color: black; border-left: none; border-bottom: none; border-right: none">
+<td style="background-color:white; color: black; border-left: none; border-bottom: none; border-right: none">
     الحساب الحالي
 </td>
 </tr>

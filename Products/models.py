@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import datetime
 from Auth.models import User
+from Core.models import Color
 
 # Create your models here.
 # class Color(models.Model):
@@ -22,11 +23,14 @@ CATEGORY= (
 
 SIZE= (
     ('', "------------"),
-    (1, "S"),
-    (2, "M"),
-    (3, "L"),
-    (3, "XL"),
-    (3, "XXL"),
+
+    (1, "40"),
+    (2, "45"),
+    (3, "50"),
+    (4, "55"),
+    (5, "60"),
+    (6, "65"),
+    (7, "70")
     )
 
 class Product(models.Model):
@@ -88,3 +92,4 @@ class SellerPayments(models.Model):
 
     def __str__(self):
         return self.seller
+    

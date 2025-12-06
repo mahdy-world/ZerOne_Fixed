@@ -13,11 +13,9 @@ from django.template.loader import render_to_string
 from Invoices.models import *
 from Factories.models import *
 from django.db.models import F
-import base64
-import os
-from django.conf import settings
-# Create your views here.
+from Factories.forms import ProductQuantityInsideForm
 
+# Create your views here.
 
 class ProductList(LoginRequiredMixin, ListView):
     login_url = '/auth/login/'
@@ -238,11 +236,14 @@ class ProductDetails(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         product = Product.objects.get(id=int(self.kwargs['pk']))
         context = super().get_context_data(**kwargs)
+        context['action_url'] = reverse_lazy('Factories:ProductQuantityInsideCreate', kwargs={'pk': product.id})
+        context['ProductQuantityInsideForm'] = ProductQuantityInsideForm
         context['title'] = 'إنتاج ومبيعات الموديل: ' + str(product.name)
         context['type'] = 'list'
-        context['factory_in'] = FactoryInSide.objects.filter(product=product).order_by('-date', '-id')
-        context['factory_in_sum'] = FactoryInSide.objects.filter(product=product).order_by('-date', '-id').aggregate(sum=Sum('product_count')).get('sum')
+        context['factory_in'] = ProductQuantityInside.objects.filter(product_item=product).order_by('-date', '-id')
+        context['factory_in_sum'] = ProductQuantityInside.objects.filter(product_item=product).order_by('-date', '-id').aggregate(sum=Sum('product_count')).get('sum')
 
+        context['factory_object'] = Factory.objects.all()
         context['invoices'] = InvoiceItem.objects.filter(item=product, invoice__invoice_type__in=[1, 3], invoice__saved=True).order_by('-date', '-id')
         context['invoices_sum'] = InvoiceItem.objects.filter(item=product, invoice__invoice_type__in=[1, 3], invoice__saved=True).order_by('-date', '-id').aggregate(sum=Sum(F('quantity') * F('unit'))).get('sum')
         context['r_invoices'] = InvoiceItem.objects.filter(item=product, invoice__invoice_type=2, invoice__saved=True).order_by('-date', '-id')
@@ -282,9 +283,19 @@ class ProductDetails(LoginRequiredMixin, ListView):
             product_quantity = product.quantity
         else:
             product_quantity = 0
+        
+        context['total'] =  context['factory_in_sum'] + product_quantity - (context['invoices_sum'] - context['r_invoices_sum']) - (context['importer_sum'] - context['supplier_sum'])
 
-        context['total'] = context['factory_in_sum'] + product_quantity - (context['invoices_sum'] - context['r_invoices_sum']) - (context['importer_sum'] - context['supplier_sum'])
-
+            
+        system_info = SystemInformation.objects.all()
+        if system_info.count() > 0:
+            system_info = system_info.last()
+        else:
+            system_info = None
+            
+        context['system_info'] = system_info
+        context['date'] = datetime.now()
+        context['user'] = self.request.user
         context['product'] = product
         return context
 
@@ -389,7 +400,6 @@ class PaidSellerValue(LoginRequiredMixin, CreateView):
         myform.seller = seller
         myform.paid_value = form.cleaned_data.get("paid_value")
         myform.paid_reason = form.cleaned_data.get("paid_reason")
-        myform.date = form.cleaned_data.get("date")
         myform.paid_type = 1
         myform.op = True
         myform.save()
@@ -422,7 +432,6 @@ class PaidSellerValue2(LoginRequiredMixin, CreateView):
         myform.seller = seller
         myform.paid_value = form.cleaned_data.get("paid_value")
         myform.paid_reason = form.cleaned_data.get("paid_reason")
-        myform.date = form.cleaned_data.get("date")
         myform.paid_type = 2
         myform.op = True
         myform.save()
@@ -566,31 +575,15 @@ def SellerPaymentDelete(request, id):
 
 
 def PrintSellerInvoicesDetails(request, pk):
-    # check0 = request.POST.get('check0')
-    # check1 = request.POST.get('check1')
-    # check2 = request.POST.get('check2')
-    # check3 = request.POST.get('check3')
-    # check4 = request.POST.get('check4')
-    check0 = request.GET.get('check0')
-    check1 = request.GET.get('check1')
-    check2 = request.GET.get('check2')
-    check3 = request.GET.get('check3')
-    check4 = request.GET.get('check4')
+    check0 = request.POST.get('check0')
+    check1 = request.POST.get('check1')
+    check2 = request.POST.get('check2')
+    check3 = request.POST.get('check3')
+    check4 = request.POST.get('check4')
     seller = ProductSellers.objects.get(id=pk)
     system_info = SystemInformation.objects.all()
     if system_info.count() > 0:
         system_info = system_info.last()
-        # تحويل الصورة إلى base64
-        if system_info.logo:
-            logo_path = os.path.join(settings.MEDIA_ROOT, str(system_info.logo))
-            try:
-                with open(logo_path, 'rb') as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                    system_info.logo_base64 = f"data:image/{logo_path.split('.')[-1]};base64,{encoded_string}"
-            except:
-                system_info.logo_base64 = None
-        else:
-            system_info.logo_base64 = None
     else:
         system_info = None
 
@@ -667,8 +660,6 @@ def PrintSellerInvoicesDetails(request, pk):
 
     all_invoices_items = invoices_items_sum - r_invoices_items_sum
 
-    default_icon = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'new.png')
-
     context = {
         'system_info': system_info,
         'date': datetime.now(),
@@ -695,15 +686,9 @@ def PrintSellerInvoicesDetails(request, pk):
         'check2': check2,
         'check3': check3,
         'check4': check4,
-        'default_icon': default_icon,
     }
     html_string = render_to_string('Products/print_seller_invoices_details.html', context)
     html = weasyprint.HTML(string=html_string, base_url=request.build_absolute_uri())
-    # pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
-    css_path = os.path.join(settings.BASE_DIR, 'static', 'assets', 'css', 'invoice_pdf.css')
-    pdf = html.write_pdf(stylesheets=[weasyprint.CSS(css_path)], presentational_hints=True)
+    pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
     response = HttpResponse(pdf, content_type='application/pdf')
-    # modal
-    response['Content-Disposition'] = 'inline; filename="treasury_report.pdf"'
-    response['X-Frame-Options'] = 'SAMEORIGIN'
     return response

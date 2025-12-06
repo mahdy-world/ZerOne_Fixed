@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-as!gjsn87_y_!jp9*5j$^x1g)4h%nuy4uux!lb(1)9a8i5m)hl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -92,13 +92,11 @@ WSGI_APPLICATION = 'ZerOne.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db/db.sqlite3',
+        'NAME': BASE_DIR / 'db/db1',
     }
 }
 
-SESSION_COOKIE_AGE = 60 * 15        # الجلسة تنتهي بعد 15 دقيقة من آخر تفاعل
-SESSION_SAVE_EVERY_REQUEST = True   # يتم إعادة حساب العدّاد مع كل طلب جديد
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # الجلسة تنتهي بمجرد غلق البرنامج/المتصفح
+SESSION_COOKIE_AGE = 60 * 15  # 15 minutes in seconds
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -133,11 +131,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = '/'  # أو الصفحة التي تريد توجيه المستخدم إليها بعد تسجيل الدخول
-LOGOUT_REDIRECT_URL = 'login'  # إعادة التوجيه لصفحة تسجيل الدخول بعد تسجيل الخروج
-
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -151,8 +144,6 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = (
     os.path.join(BASE_DIR, 'media')
 )
-
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

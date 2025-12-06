@@ -40,89 +40,30 @@
             }
         </style>
         <style>
-            ::-webkit-scrollbar-track
-            {
-                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-                background-color: #F5F5F5;
-                border-radius: 6px;
-            }
+        ::-webkit-scrollbar-track
+        {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: #F5F5F5;
+            border-radius: 6px;
+        }
 
-            ::-webkit-scrollbar
-            {
-                width: 6px;
-                background-color: #F5F5F5;
-            }
+        ::-webkit-scrollbar
+        {
+            width: 6px;
+            background-color: #F5F5F5;
+        }
 
-            ::-webkit-scrollbar-thumb
-            {
-                border-radius: 6px;
-                background-image: -webkit-gradient(linear,
-                                                   left bottom,
-                                                   left top,
-                                                   color-stop(0.44, rgb(122,153,217)),
-                                                   color-stop(0.72, rgb(73,125,189)),
-                                                   color-stop(0.86, rgb(28,58,148)));
-            }
-        </style>
-
-        <style>
-            body {
-                zoom: 88%;
-            }
-
-            .modal-backdrop {
-                zoom: 100% !important;   /* رجعه لحجمه الطبيعي */
-                position: fixed !important;
-                inset: 0 !important;  /* يغطي كامل الشاشة */
-                width: 100% !important;
-                height: 100% !important;
-            }
-        </style>
-
-        <style>
-            #pageOverlay {
-                display: none;
-                position: fixed;
-                top: 0; left: 0; right: 0; bottom: 0;
-                background: rgba(255, 255, 255, 0.8);
-                z-index: 9999;
-                text-align: center;
-                padding-top: 20%;
-                font-size: 1.5em;
-                color: black;
-                font-weight: bolder;
-            }
-        </style>
-
-        <style>
-            #pdfModal .modal-dialog {
-              position: fixed;
-              top: 0;
-              right: 0;
-              left: 0;
-              bottom: 0;
-              margin: 0;
-              width: 100%;
-              height: 100%;
-              max-width: 100%;
-            }
-
-            #pdfModal .modal-content {
-              height: 100%;
-              border-radius: 0;
-              border: none;
-            }
-
-            #pdfModal .modal-body {
-              height: calc(100vh - 56px); /* لضبط الارتفاع مع الـ header */
-              overflow: hidden;
-            }
-
-            #pdfModal iframe {
-              width: 100%;
-              height: 100%;
-            }
-        </style>
+        ::-webkit-scrollbar-thumb
+        {
+            border-radius: 6px;
+            background-image: -webkit-gradient(linear,
+                                               left bottom,
+                                               left top,
+                                               color-stop(0.44, rgb(122,153,217)),
+                                               color-stop(0.72, rgb(73,125,189)),
+                                               color-stop(0.86, rgb(28,58,148)));
+        }
+    </style>
         {% block css %}
           
         {% endblock css %}
@@ -132,7 +73,9 @@
 
 
 
-    <body data-sidebar="" style="background-color:#eaedef" class="sidebar-enable">
+    <body data-sidebar="" style="background-color:#eaedef;
+    background-image: url('/static/assets/images/main.jpg');
+    background-size: cover;"  class="sidebar-enable">
 
         <!-- Spinner -->
         <!-- <div id="preloader" >
@@ -156,6 +99,7 @@
             {% include "components/leftSidebar.html" %}
 
             {% block main %}
+
 
             {% endblock main %}
 
@@ -206,7 +150,7 @@
                                                         <img class="image" src="/static/assets/images/vector/list.png">
                                                       </div>
                                                       <div class="contentBx">
-                                                        <h2 style="font-size: large">قائمة المستخدمين</h2>
+                                                        <h2>قائمة المستخدمين</h2>
                                                       </div>
                                                     </div>
                                                   </div>
@@ -222,7 +166,7 @@
                                                         <img class="image" src="/static/assets/images/vector/add.png">
                                                       </div>
                                                       <div class="contentBx">
-                                                        <h2 style="font-size: large">اضافة مستخدم جديد</h2>
+                                                        <h2>اضافة مستخدم جديد</h2>
                                                       </div>
                                                     </div>
                                                   </div>
@@ -279,7 +223,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Factories:FactoryList' %}">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -287,7 +231,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة المصانع</h2>
+                                                            <h2>قائمة المصانع</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -295,7 +239,7 @@
                                             </div>
 
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Factories:FactoryCreate' %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -303,14 +247,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة مصنع جديد</h2>
+                                                            <h2>اضافة مصنع جديد</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Factories:FactoryTrachList' %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -318,7 +262,7 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -373,7 +317,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Invoices:InvoiceList' 1 %}">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -381,7 +325,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة الفواتير</h2>
+                                                            <h2>قائمة الفواتير</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -389,7 +333,7 @@
                                             </div>
 
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Invoices:InvoiceCreate' 1 %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -397,14 +341,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة فاتورة جديدة</h2>
+                                                            <h2>اضافة فاتورة جديدة</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Invoices:InvoiceTrashList' 1 %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -412,7 +356,7 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -465,7 +409,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Invoices:InvoiceList' 2 %}">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -473,7 +417,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة الفواتير</h2>
+                                                            <h2>قائمة الفواتير</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -481,7 +425,7 @@
                                             </div>
 
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Invoices:InvoiceCreate' 2 %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -489,14 +433,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة فاتورة جديدة</h2>
+                                                            <h2>اضافة فاتورة جديدة</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Invoices:InvoiceTrashList' 2 %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -504,7 +448,7 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -557,7 +501,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Invoices:InvoiceList' 3 %}">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -565,7 +509,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة الفواتير</h2>
+                                                            <h2>قائمة الفواتير</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -573,7 +517,7 @@
                                             </div>
 
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Invoices:InvoiceCreate' 3 %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -581,14 +525,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة فاتورة جديدة</h2>
+                                                            <h2>اضافة فاتورة جديدة</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Invoices:InvoiceTrashList' 3 %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -596,7 +540,7 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -652,7 +596,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Products:ProductList' %}">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -660,7 +604,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة المنتجات</h2>
+                                                            <h2>قائمة المنتجات</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -668,7 +612,7 @@
                                             </div>
 
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Products:ProductCreate' %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -676,14 +620,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة منتج جديد</h2>
+                                                            <h2>اضافة منتج جديد</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Products:ProductTrachList' %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -691,7 +635,7 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -747,7 +691,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Workers:WorkerList' %}">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -755,7 +699,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة العمال</h2>
+                                                            <h2>قائمة العمال</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -763,7 +707,7 @@
                                             </div>
 
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Workers:WorkerCreate' %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -771,14 +715,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة عامل جديد</h2>
+                                                            <h2>اضافة عامل جديد</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Workers:WorkerTrachList' %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -786,7 +730,7 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -842,7 +786,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Products:SellerList' %}"> 
                                                     <div class="container_new">
                                                         <div class="card">
@@ -850,7 +794,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة التجار</h2>
+                                                            <h2>قائمة التجار</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -858,7 +802,7 @@
                                             </div>
                             
                             
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Products:SellerCreate' %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -866,14 +810,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة تاجر جديد</h2>
+                                                            <h2>اضافة تاجر جديد</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a> 
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Products:SellerTrashList' %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -881,7 +825,7 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -936,7 +880,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Factories:SupplierList' 1 %}">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -944,7 +888,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة الموردين</h2>
+                                                            <h2>قائمة الموردين</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -952,7 +896,7 @@
                                             </div>
 
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Factories:SupplierCreate' 1 %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -960,14 +904,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة مورد جديد</h2>
+                                                            <h2>اضافة مورد جديد</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Factories:SupplierTrashList' 1 %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -975,7 +919,7 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -1028,7 +972,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Factories:SupplierList' 2 %}">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -1036,7 +980,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة المستوردين</h2>
+                                                            <h2>قائمة المستوردين</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -1044,7 +988,7 @@
                                             </div>
 
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Factories:SupplierCreate' 2 %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -1052,14 +996,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة مستورد جديد</h2>
+                                                            <h2>اضافة مستورد جديد</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Factories:SupplierTrashList' 2 %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -1067,7 +1011,7 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -1123,7 +1067,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Treasury:TreasuryList' %}">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -1131,7 +1075,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة الخزائن</h2>
+                                                            <h2>قائمة الخزائن</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -1139,7 +1083,7 @@
                                             </div>
 
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Treasury:TreasuryCreate'  %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -1147,14 +1091,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة خزينة جديدة</h2>
+                                                            <h2>اضافة خزينة جديدة</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Treasury:TreasuryTrachList' %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -1162,7 +1106,7 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -1181,7 +1125,7 @@
             {% endif %}
 
             {% if modules.wool_active %}
-            <div class="modal fade"  data-backdrop="static" id="wool_modal">
+            <div class="modal fade"  data-backdrop="static" id="wool_modal_supplier">
                 <div class="modal-dialog modal-xl" style="background: #fefefa;">
                     <div class="modal-content" style="background: #fefefa;">
                         <div class="row">
@@ -1189,7 +1133,7 @@
                                 <div class="card" style="background: #fefefa;">
                                     <div class="card-header">
                                         <div class="card-title">
-                                            <b class="font-weight-bold text-center">اقسام الخيط</b>
+                                            <b class="font-weight-bold text-center">اقسام تجار الخامات</b>
                                             <span class="card-tools" style="float: left">
                                             <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
                                                     if (document.getElementById('expand_modal').value === '0'){
@@ -1217,7 +1161,7 @@
 
                                     <div class="card-body" style="background: #fefefa;">
                                         <div class="row">
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a href="{% url 'Wool:WoolSupplierList' %}">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -1225,7 +1169,7 @@
                                                             <img class="image" src="/static/assets/images/vector/list.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">قائمة موردين الخيط</h2>
+                                                            <h2>قائمة تجار الخام</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -1233,7 +1177,7 @@
                                             </div>
 
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Wool:WoolSupplierCreate'  %}" data-target="#sub_modal" data-toggle="modal">
                                                     <div class="container_new">
                                                         <div class="card">
@@ -1241,14 +1185,14 @@
                                                             <img class="image" src="/static/assets/images/vector/add.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">اضافة مورد جديد</h2>
+                                                            <h2>اضافة تاجر جديد</h2>
                                                         </div>
                                                         </div>
                                                     </div>
                                                 </a>
                                             </div>
 
-                                            <div class="col-xl-4 col-lg-4 col-md-4">
+                                            <div class="col-xl-4 col-lg-6 col-md-6">
                                                 <a  href="{% url 'Wool:WoolSupplierTrashList' %}" >
                                                     <div class="container_new">
                                                         <div class="card">
@@ -1256,7 +1200,84 @@
                                                             <img class="image" src="/static/assets/images/vector/delete.png">
                                                         </div>
                                                         <div class="contentBx">
-                                                            <h2 style="font-size: large">سلة المهملات </h2>
+                                                            <h2>سلة المهملات </h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade"  data-backdrop="static" id="wool_modal">
+                <div class="modal-dialog modal-xl" style="background: #fefefa;">
+                    <div class="modal-content" style="background: #fefefa;">
+                        <div class="row">
+                            <div class="col-lg-12" >
+                                <div class="card" style="background: #fefefa;">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            <b class="font-weight-bold text-center">اقسام الخامات</b>
+                                            <span class="card-tools" style="float: left">
+                                            <!--<button type="button" class="btn btn-tool" data-card-widget="maximize" onclick="
+                                                    if (document.getElementById('expand_modal').value === '0'){
+                                                        document.getElementById('expand_modal').value = 1;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog expand_modal';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg expand_modal';
+                                                    }
+                                                    else {
+                                                        document.getElementById('expand_modal').value = 0;
+                                                        document.getElementById('action_modal2').className = 'modal-dialog';
+                                                        document.getElementById('sub_modal2').className = 'modal-dialog modal-lg';
+                                                    }
+
+                                                    ">
+                                                <input type="number" value="0" id="expand_modal" hidden />
+                                                <i class="fas fa-expand"></i>
+                                            </button>-->
+                                            <button type="button" class="btn btn-tool" data-dismiss="modal">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="card-body" style="background: #fefefa;">
+                                        <div class="row">
+                                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                                <a href="{% url 'Wool:WoolList' %}">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/list.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2>قائمة الخامات</h2>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+
+
+                                            <div class="col-xl-6 col-lg-6 col-md-6">
+                                                <a  href="{% url 'Wool:WoolCreate'  %}" data-target="#sub_modal" data-toggle="modal">
+                                                    <div class="container_new">
+                                                        <div class="card">
+                                                        <div class="imgBx">
+                                                            <img class="image" src="/static/assets/images/vector/add.png">
+                                                        </div>
+                                                        <div class="contentBx">
+                                                            <h2>اضافة خامة جديدة</h2>
                                                         </div>
                                                         </div>
                                                     </div>
@@ -1300,9 +1321,9 @@
             
             <!-- search -->
             <div class="modal fade" data-backdrop="static" id="search_modal">
-                <div class="modal-dialog modal-xl" >
+                <div class="modal-dialog modal-lg" >
                     <div class="modal-content" >
-
+                           
                             <div class="row">
                                 <div class="col-lg-12">
                                     <div class="card">
@@ -1578,34 +1599,6 @@
             </div>
             <!-- end action modal -->
 
-            <div class="modal fade" data-backdrop="static" id="pdfModal" tabindex="-1" role="dialog" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title">عرض التقرير</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="إغلاق">
-                      <span aria-hidden="true" style="font-size: medium">&times; إغلاق التقرير &times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body p-0">
-                    <div id="pdfLoader" class="p-3 text-center">
-                      <div class="progress" style="height: 25px;">
-                        <div id="pdfProgressBar" class="progress-bar bg-success"
-                             role="progressbar" style="width: 0%">
-                          0%
-                        </div>
-                      </div>
-                      <small class="text-muted">جاري تحميل التقرير...</small>
-                    </div>
-
-                    <iframe id="pdfFrame" src="" width="100%" height="100%" style="border:none; display:none;"></iframe>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div id="pageOverlay">جاري النسخ، الرجاء الانتظار...</div>
-
             <!-- footer -->
             <footer class="footer">
             <div class="container-fluid">
@@ -1656,8 +1649,6 @@
         <!-- select2 -->
         <script src="/static/assets/select2/dist/js/select2.min.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <!--
 {#        <script>#}
 {#            var arabicNumbers = ['۰', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];#}
@@ -1704,70 +1695,6 @@
 
             // Start the initial timer
             resetTimer();
-        </script>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const backup_btn = document.getElementById('backup_btn');
-                const backup_btn2 = document.getElementById('backup_btn2');
-
-                if (backup_btn) {
-                    backup_btn.addEventListener('click', function() {
-                        backup_btn.disabled = true;
-                        backup_btn.value = "جاري النسخ...";
-                        document.getElementById('pageOverlay').style.display = 'block';
-                    });
-                }
-
-                if (backup_btn2) {
-                    backup_btn2.addEventListener('click', function() {
-                        backup_btn2.disabled = true;
-                        backup_btn2.value = "جاري النسخ...";
-                        document.getElementById('pageOverlay').style.display = 'block';
-                    });
-                }
-            });
-        </script>
-
-        <script>
-            let progressInterval;
-
-            $('#pdfModal').on('show.bs.modal', function (e) {
-                var button = $(e.relatedTarget);
-                var url = button.data('url');
-
-                // reset
-                $('#pdfLoader').show();
-                $('#pdfFrame').hide();
-                $('#pdfProgressBar').css('width', '0%').text('0%');
-
-                // progress bar fill (وهمي)
-                let progress = 0;
-                progressInterval = setInterval(function() {
-                    if (progress < 90) {   // نخليها توصل لـ 90% بس
-                        progress += 5;
-                        $('#pdfProgressBar').css('width', progress + '%').text(progress + '%');
-                    }
-                }, 300); // كل 0.3 ثانية
-
-                // تحميل التقرير
-                $('#pdfFrame').attr('src', url);
-            });
-
-            $('#pdfModal').on('hidden.bs.modal', function () {
-                $('#pdfFrame').attr('src', '');
-                clearInterval(progressInterval);
-            });
-
-            // ✅ عند انتهاء تحميل التقرير
-            $('#pdfFrame').on('load', function () {
-                clearInterval(progressInterval);
-                $('#pdfProgressBar').css('width', '100%').text('100%');
-                setTimeout(function() {
-                    $('#pdfLoader').hide();
-                    $('#pdfFrame').show();
-                }, 500); // نخليها تستنى نص ثانية علشان يبان انها خلصت
-            });
         </script>
 
         {% block js %}

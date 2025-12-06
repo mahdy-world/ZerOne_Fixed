@@ -4,3 +4,4 @@ from .models import *
 
 admin.site.register(SystemInformation)
 admin.site.register(Modules)
+admin.site.register(Color)

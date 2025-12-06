@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% block title %}
-<title>
-قائمة الموردين
-</title>
+<title>قائمة تجار الخامات</title>
 
 {% endblock title %}
 
@@ -10,7 +8,7 @@
     <div class="main-content">
 
       <div class="page-content">
-          <div class="container-fluid">
+          <div class="container-fuild">
            
                 <div class="row">
                     <div class="col-12"> {% if messages %}
@@ -36,7 +34,7 @@
                             
                             {% if message == "active" %}
                                 <h4 class="mb-0">
-                                    قائمة موردين الخيط
+                                    قائمة تجار الخامات
                                     <a class="badge badge-success" style="font-size:small;" href="{% url 'Wool:WoolSupplierCreate' %}" data-toggle="modal" data-target="#action_modal">
                                             <i class="fas fa-plus-square fx-2"></i>
                                     </a>
@@ -52,7 +50,7 @@
                                  </h4>
                                 
                             {% else %}
-                                <h4 class="mb-0"> سلة مهملات موردين الخيط
+                                <h4 class="mb-0"> سلة مهملات تجار الخامات
                                     <a class="badge badge-success" style="font-size:small;" href="{% url 'Wool:WoolSupplierCreate' %}" data-toggle="modal" data-target="#action_modal">
                                             <i class="fas fa-plus-square fx-2"></i>
                                     </a>
@@ -70,7 +68,7 @@
                             {% endif %}
 
                             <span class="badge badge-dark font-size-15"> الاجمالي : {{count}}
-                            مورد
+                            تاجر
                             </span>
 
                             <div class="page-title-right">
@@ -78,9 +76,9 @@
                                     <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
 
                                     {% if message == "active" %}
-                                    <li class="breadcrumb-item active">قائمة موردين الخيط</li>
+                                    <li class="breadcrumb-item active">قائمة تجار الخامات</li>
                                     {% else %}
-                                    <li class="breadcrumb-item active">قائمة موردين الخيط المحذوفة</li>
+                                    <li class="breadcrumb-item active">قائمة قائمة تجار الخامات</li>
                                     {% endif %}
                                 </ol>
                             </div>
@@ -100,7 +98,7 @@
                             <div class="position-relative" >
 
                                 <input type="text" style="background-color: white" value="{{wool_supplier_search}}" list="wool_supp" autocomplete="off" class="form-control" name="wool_supplier"
-                                       placeholder="بحث ... بإسم المورد"
+                                       placeholder="بحث ... بإسم التاجر"
                                 >
                                 <span >
                                     <button class="bx bx-search-alt btn btn-warning" type="submit">
@@ -120,7 +118,7 @@
                 </div>
                 <div class="row">
                 {% for x in object_list  %}
-                <div class="col-xl-4 col-md-4 col-sm-6">
+                <div class="col-xl-3 col-md-4 col-sm-6">
                   <div class="card text-center">
                       <div class="card-body">
                           <div class="avatar-sm mx-auto mb-4 mt-5">
@@ -159,8 +157,7 @@
 
                                     <li class="list-inline-item mr-1">
                                         <div>
-{#                                            <a href="{% url 'Wool:PrintWoolSupplierAll' x.id %}" target="_blank">#}
-                                            <a href="javascript:void(0)" data-toggle="modal" data-target="#pdfModal" data-url="{% url 'Wool:PrintWoolSupplierAll' x.id %}">
+                                            <a  href="{% url 'Wool:PrintWoolSupplierAll' x.id %}" target="_blank">
                                                 <span class="badge  badge-secondary" style="padding: 5px;"><i class="fas fa-print"></i> كشف حساب</span>
                                             </a>
                                         </div>

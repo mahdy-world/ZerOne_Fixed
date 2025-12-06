@@ -1,10 +1,8 @@
 @font-face {
-  font-family: 'Amiri', "Times New Roman", serif;
-  /*font-family: "Times New Roman", Times, serif;*/
+  font-family: "Times New Roman", Times, serif;
 }
   @page {
-    font-family: 'Amiri', "Times New Roman", serif;
-    /*font-family: "Times New Roman", Times, serif;*/
+    font-family: "Times New Roman", Times, serif;
     font-size: 16px;
     margin: 3cm;
     @bottom-left {
@@ -12,22 +10,20 @@
       content: '♥ شكراً لتعاملكم معنا!';
     }
     @bottom-right {
-      color: #403F40;
-      content: 'نظام زيرو وان لإدارة مصانع التريكو';
-      font-size: 12pt;
+      color: rgb(64, 63, 64);
+      content: 'تم طباعة الفاتورة بواسطة ZerOne System';
+      font-size: 9pt;
     }
   }
   
   html {
     color: #14213d;
-    font-family: 'Amiri', "Times New Roman", serif;
-    /*font-family: "Times New Roman", Times, serif;*/
+    font-family: "Times New Roman", Times, serif;
     font-size: 11pt;
     line-height: 1.6;
   }
   body {
-    font-family: 'Amiri', "Times New Roman", serif;
-    /*font-family: "Times New Roman", Times, serif;*/
+    font-family: "Times New Roman", Times, serif;
     font-weight: bold;
     margin: 0;
   }
@@ -35,7 +31,6 @@
   h1 {
     font-size: 40pt;
     margin: 0;
-    width: 60%;
   }
   
   aside {
@@ -60,18 +55,17 @@
     text-align: right;
     top: 0;
     margin-bottom: 10px;
-    width: 40%;
   }
-  /*dl span{*/
-  /*  color: rgb(99, 99, 99);*/
-  /*}*/
+  dl span{
+    color: rgb(99, 99, 99);
+  }
   dl p {
     color: #a9a;
   }
  
   
   table {
-    /*font-family: arial, sans-serif;*/
+    font-family: arial, sans-serif;
     border-collapse: collapse;
     width: 100%;
    

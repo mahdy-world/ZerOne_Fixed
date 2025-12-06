@@ -2,6 +2,7 @@ from django import template
 from django.db.models import Sum
 
 register = template.Library()
+from Factories.models import ProductQuantityInside, SupplierQuantity
 from Invoices.models import *
 from django.db.models import F
 
@@ -62,12 +63,42 @@ def sellers_debit(seller_id):
 @register.simple_tag(name='product_12_quantity')
 def product_12_quantity(product_id):
     prod = Product.objects.get(id=product_id)
-    if prod.quantity:
-        quant = prod.quantity / 12
-        if prod.quantity % 12 == 0:
-            quant = int(quant)
-        else:
-            quant = '＋' + str(int(quant))
+    factory_in_sum = ProductQuantityInside.objects.filter(product_item=prod).order_by('-date', '-id').aggregate(sum=Sum('product_count')).get('sum')
+    if factory_in_sum:
+        factory_in_sum = factory_in_sum
     else:
-        quant = 0
-    return quant
+        factory_in_sum = 0
+        
+    if prod.quantity:
+        product_quantity = prod.quantity    
+    else:
+        product_quantity = 0
+
+    
+    invoices_sum = InvoiceItem.objects.filter(item=prod, invoice__invoice_type__in=[1, 3], invoice__saved=True).order_by('-date', '-id').aggregate(sum=Sum(F('quantity') * F('unit'))).get('sum')
+    if invoices_sum:
+        invoices_sum = invoices_sum
+    else:
+        invoices_sum = 0
+    
+    r_invoices_sum = InvoiceItem.objects.filter(item=prod, invoice__invoice_type=2, invoice__saved=True).order_by('-date', '-id').aggregate(sum=Sum(F('quantity') * F('unit'))).get('sum')
+    if r_invoices_sum:
+        r_invoices_sum = r_invoices_sum
+    else:
+        r_invoices_sum = 0
+    
+    importer_sum = SupplierQuantity.objects.filter(product=prod, supplier__type=2).order_by('-date', '-id').aggregate(sum=Sum('product_count')).get('sum')
+    if importer_sum:
+        importer_sum = importer_sum
+    else:
+        importer_sum = 0
+    
+    supplier_sum = SupplierQuantity.objects.filter(product=prod, supplier__type=1).order_by('-date', '-id').aggregate(sum=Sum('product_count')).get('sum')
+    if supplier_sum:
+        supplier_sum = supplier_sum 
+    else:
+        supplier_sum= 0
+    
+    quant = factory_in_sum + product_quantity - (invoices_sum - r_invoices_sum) - (importer_sum - supplier_sum)
+    
+    return int(quant)

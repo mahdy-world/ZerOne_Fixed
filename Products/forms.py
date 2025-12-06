@@ -119,13 +119,9 @@ class ProductSellerDeleteForm(forms.ModelForm):
 class ProductSellerPaymentForm(forms.ModelForm):
     class Meta:
         model = SellerPayments
-        fields = ['date', 'paid_value', 'paid_reason']
+        fields = ['paid_value', 'paid_reason']
         widgets = {
-            'date': forms.TextInput(attrs={'type': 'date', 'class': 'form-control', 'placeholder': 'تاريخ العملية...'}),
             'paid_value': forms.NumberInput(attrs={'class': 'form-control', 'min':1}),
             'paid_reason': forms.TextInput(attrs={'class': 'form-control', 'id': 'paid_reason'}),
         }
-
-    def __init__(self, *args, **kwargs):
-        super(ProductSellerPaymentForm, self).__init__(*args, **kwargs)
-        self.fields['date'].initial = datetime.now().date()
+        

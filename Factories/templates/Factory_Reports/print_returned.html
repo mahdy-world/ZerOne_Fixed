@@ -1,0 +1,101 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>{{date|date:'Y-m-d'}} {{factory.name}}</title>
+    <meta name="description" content="Invoice demo sample">
+      <style>
+          body {
+              font-weight: bold;
+          }
+          table tr th {
+              font-size: larger;
+              font-weight: bold;
+          }
+      </style>
+  </head>
+
+  <body>
+    <h1 style="margin-top: -50px">
+      {% if system_info.logo %}
+       <img src={{system_info.logo.url}} height="100px" width="100px">
+       {% else %}
+       <img src="/static/assets/images/new.png" width="100px" height="100px">
+      {% endif %}
+    </h1>
+
+    <dl id="informations" style="margin-top: -50px">
+        <h2 class="text-center">{{system_info.name}}</h2>
+        <h5 style="margin-top: -15px"><span>{{date|date:'Y-m-d'}}</span>تاريخ التقرير :</h5>
+        <h5 style="margin-top: -15px"><span>{{factory.name}}</span>مرتجع مصنع: </h5>
+    </dl><hr>
+
+    {% if from_date or to_date %}
+    <h5 style="text-align: center; text-decoration: underline">
+        فلترة: من
+        {% if from_date %}
+        {{ from_date }}
+        {% else %}
+        البداية
+        {% endif %}
+        الي
+        {% if to_date %}
+        {{ to_date }}
+        {% else %}
+        الآن
+        {% endif %}
+    </h5>
+    {% endif %}
+
+    <table>
+      <thead>
+        <tr>
+          <td>اجمالي السعر</td>
+          <td>سعر القطعة</td>
+          <td>عدد القطع</td>
+          <td>الموديل</td>
+          <td>التاريخ</td>
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for x in queryset %}
+          <tr>
+
+            <th>{{x.total_price|floatformat:2}}</th>
+            <th>{{x.item_price|floatformat:2}}</th>
+            <th>{{x.item_count}}</th>
+            <th>{{x.product}}</th>
+            <th>{{x.date|date:'Y-m-d'}} </th>
+          </tr>
+        {% endfor %}
+        <tr>
+            <td>
+              {% if count_returned %}
+              {{count_returned|floatformat:2}}
+              {% else %}
+              0.00
+              {% endif %}
+          </td>
+          
+          <td>
+            {% if price_item %}
+            {{price_item|floatformat:2}}
+            {% else %}
+            0.00
+            {% endif %}
+        </td>
+            <td>
+              {% if item_count %}
+              {{item_count|floatformat:2}}
+              {% else %}
+              0.00
+              {% endif %}
+          </td>
+          <td></td>
+            <td >إجماليات</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

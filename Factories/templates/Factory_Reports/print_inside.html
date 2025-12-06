@@ -16,16 +16,15 @@
   </head>
 
   <body>
-    <h1 style="margin-top: -50px">
+    <h1 style="margin-top: -90px">
       {% if system_info.logo %}
-       <img src="{{system_info.logo_base64}}" height="100px" width="100px">
+       <img src={{system_info.logo.url}} height="100px" width="100px">
        {% else %}
-{#       <img src="/static/assets/images/new.png" width="100px" height="100px">#}
-          <img src="file://{{ default_icon }}" height="100px" width="100px">
+       <img src="/static/assets/images/new.png" width="100px" height="100px">
       {% endif %}
     </h1>
 
-    <dl id="informations" style="margin-top: -50px">
+    <dl id="informations" style="margin-top: -90px">
         <h2 class="text-center">{{system_info.name}}</h2>
         <h5 style="margin-top: -15px"><span>{{date|date:'Y-m-d'}}</span>تاريخ التقرير :</h5>
         <h5 style="margin-top: -15px"><span>{{factory.name}}</span>داخل مصنع: </h5>

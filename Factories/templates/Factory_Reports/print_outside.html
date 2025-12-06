@@ -17,11 +17,10 @@
 
   <body>
     <h1 style="margin-top: -50px">
-      {% if system_info.logo %}
-       <img src="{{system_info.logo_base64}}" height="100px" width="100px">
+      {% if system_info.logo%}
+       <img src="{{system_info.logo.url}}" width="100px" height="100px">
        {% else %}
-{#       <img src="/static/assets/images/new.png" width="100px" height="100px">#}
-          <img src="file://{{ default_icon }}" height="100px" width="100px">
+       <img src="/static/assets/images/new.png" width="100px" height="100px">
       {% endif %}
     </h1>
 
@@ -29,7 +28,8 @@
         <h2 class="text-center">{{system_info.name}}</h2>
         <h5 style="margin-top: -15px"><span>{{date|date:'Y-m-d'}}</span>تاريخ التقرير :</h5>
         <h5 style="margin-top: -15px"><span>{{factory.name}}</span>خارج مصنع: </h5>
-    </dl><hr>
+    </dl>
+    <hr>
 
     {% if from_date or to_date %}
     <h5 style="text-align: center; text-decoration: underline">
@@ -53,9 +53,10 @@
         <tr>
           <td>الوزن بعد الهالك</td>
           <td>نسبة الهالك</td>
-          <td>نوع الخامة</td>
-          <td>اللون</td>
           <td>الوزن</td>
+          <td>عدد الشكاير</td>
+          <td>اللون</td>
+          <td>الخامة</td>
           <td>التاريخ</td>
         </tr>
       </thead>
@@ -64,9 +65,10 @@
           <tr>
             <th>{{x.weight_after_loss|floatformat:3}}</th>
             <th>%{{x.percent_loss|floatformat:1}}</th>
-            <th>{% if x.wool_type %}{{x.get_wool_type_display}} {% endif %}</th>
-            <th>{{x.color}}</th>
             <th>{{x.weight|floatformat:3}}</th>
+            <th>{{x.wool_count_item}}</th>
+            <th>{{x.color}}</th>
+            <th>{{x.wool}}</th>
             <th>{{x.date|date:'Y-m-d'}}</th>
           </tr>
         {% endfor %}
@@ -78,7 +80,7 @@
                 0.000
                 {% endif %}
             </td>
-            <td colspan="3"></td>
+            <td colspan="1"></td>
             <td>
                 {% if sum_all_weight %}
                 {{sum_all_weight|floatformat:3}}
@@ -86,6 +88,15 @@
                 0.000
                 {% endif %}
             </td>
+            <td>
+                {% if sum_all_wool_items %}
+                {{sum_all_wool_items}}
+                {% else %}
+                0.000
+                {% endif %}
+            </td>
+            <td></td>
+            <td></td>
           <td>
               إجماليات
           </td>

@@ -1,5 +1,7 @@
-from datetime import timedelta, date
+from audioop import reverse
+from datetime import timedelta
 from dateutil.relativedelta import relativedelta
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F
 from django.shortcuts import redirect, render
@@ -7,81 +9,173 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import *
 from django.contrib import messages
-from Core.forms import SystemInfoForm
+from Core.forms import ColorForm, ExpensessTypeCreateForm, SystemInfoForm, ExpensessForm
 from Core.models import SystemInformation
 from Products.models import *
 from Factories.models import Factory, Supplier
 from Treasury.models import Treasury, TreasuryOperation
-from Wool.models import WoolSupplier
+from Wool.models import Wool, WoolSupplier
 from Workers.models import Worker
 from Invoices.models import Invoice, InvoiceItem
 from Core.models import *
+
 from PIL import Image
 from io import BytesIO
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.contrib.admin.views.decorators import staff_member_required
-import subprocess
-import os
 # Create your views here.
-
-
-@staff_member_required
-def manual_backup_to_drive(request):
-    '''
-    # احصل على المسار الجذر للمشروع (بجانب manage.py)
-    project_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    script_path = os.path.join(project_dir, "backup_to_drive.py")
-
-    # for host
-    # python_path = '/home/AymanMousaFactory/myvenv/bin/python'
-    # result = subprocess.run(
-    #     [python_path, script_path],
-    #     capture_output=True,
-    #     text=True
-    # )
-
-    # for local
-    result = subprocess.run(
-        ["python", script_path],
-        capture_output=True,
-        text=True
-    )
-
-    # افحص المخرجات
-    if result.returncode == 0 and "تم رفع النسخة الاحتياطية" in result.stdout:
-        backups = Backup.objects.all()
-        if backups.count() > 0:
-            backup = backups.last()
-        else:
-            backup = Backup()
-        backup.backup_date = date.today()
-        backup.save()
-        messages.success(request, "تم النسخ الاحتياطي بنجاح.", extra_tags="success")
-    else:
-        messages.error(request, "حدث خطأ أثناء النسخ الاحتياطي.", extra_tags="danger")
-        print(result)
-    '''
-    pass
-
-    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 @login_required(login_url='Auth:login')
 def Index(request):
     modules = Modules.objects.all().last()
     today = datetime.now().date()
-
-    backups = Backup.objects.all()
-    if backups.count() > 0:
-        backup = backups.last()
-        if backup.backup_date != date.today():
-            manual_backup_to_drive(request)
-    else:
-        manual_backup_to_drive(request)
-
     return render(request, 'core/index.html', {'modules':modules, 'today': today})
 
+class ExpensessTypeList(LoginRequiredMixin, ListView):
+    login_url = '/auth/login/'
+    model = ExpnsessType
+    paginate_by = 12
+    template_name = 'Core/expensses_type_list.html'
+    
+    def get_queryset(self):
+        qureyset = self.model.objects.all().order_by('-id')
+        return qureyset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['type'] = 'list'
+        context['title'] = 'قائمة البنود'
+        context['icons'] = '<i class="fas fa-shapes"></i>'
+        context['page'] = 'active'
+        context['count'] = self.model.objects.all().count()
+        return context
+    
+class ExpensessTypeCreate(LoginRequiredMixin, CreateView):
+    login_url = ' /auth/login/'
+    model = ExpnsessType
+    template_name = 'forms/form_template.html'
+    form_class = ExpensessTypeCreateForm
+    success_url = reverse_lazy('Core:ExpensessTypeList')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'اضافة نوع جديد'
+        context['message'] = 'info'
+        context['action_url'] = reverse_lazy('Core:ExpensessTypeCreate')
+        return context
+    
+    def get_success_url(self):
+        messages.success(self.request, "تم إضافة بند جديد  ", extra_tags="success")
 
+        if self.request.POST.get('url'):
+            return self.request.POST.get('url')
+        else:
+            return self.success_url
+
+
+class ExpensessTypeDelete(LoginRequiredMixin, UpdateView):
+    login_url = '/auth/login/'
+    model = ExpnsessType
+    form_class = ExpensessTypeCreateForm
+    template_name = 'forms/form_template.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'حذف البند : ' + str(self.object.name)
+        context['message'] = 'super_delete'
+        context['action_url'] = reverse_lazy('Core:ExpensessTypeDelete', kwargs={'pk': self.object.id})
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, " تم حذف البند " +  " نهائيا بنجاح ", extra_tags="success")
+        my_form = ExpnsessType.objects.get(id=self.kwargs['pk'])
+        my_form.delete()
+        return redirect('Core:ExpensessTypeList')
+
+
+class ColorList(LoginRequiredMixin, ListView):
+    login_url = '/auth/login/'
+    model = Color
+    paginate_by = 12
+    template_name = 'Core/color_list.html'
+    
+    def get_queryset(self):
+        qureyset = self.model.objects.all().order_by('-id')
+        return qureyset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['type'] = 'list'
+        context['title'] = 'قائمة الالوان'
+        context['icons'] = '<i class="fas fa-shapes"></i>'
+        context['page'] = 'active'
+        context['count'] = self.model.objects.all().count()
+        return context
+    
+class ColorCreate(LoginRequiredMixin, CreateView):
+    login_url = ' /auth/login/'
+    model = Color
+    template_name = 'forms/form_template.html'
+    form_class = ColorForm
+    success_url = reverse_lazy('Core:ColorList')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'اضافة لون في النظام'
+        context['message'] = 'info'
+        context['action_url'] = reverse_lazy('Core:ColorCreate')
+        return context
+    
+    def get_success_url(self):
+        messages.success(self.request, "تم إضافة بيانات للنظام بنجاح", extra_tags="success")
+
+        if self.request.POST.get('url'):
+            return self.request.POST.get('url')
+        else:
+            return self.success_url
+        
+        
+class ColorUpdate(LoginRequiredMixin, UpdateView):
+    login_url = '/auth/login/'
+    model = Color
+    form_class = ColorForm
+    template_name = 'forms/form_template.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'تعديل اللون: ' + str(self.object)
+        context['message'] = 'update'
+        context['action_url'] = reverse_lazy('Core:ColorUpdate', kwargs={'pk': self.object.id})
+        return context
+    
+    def get_success_url(self):
+        messages.success(self.request,  "تم تعديل اللون " + str(self.object) + " بنجاح ", extra_tags="success")
+        if self.request.POST.get('url'):
+            return self.request.POST.get('url')
+        else:
+            return self.success_url
+    
+
+class ColorDelete(LoginRequiredMixin, UpdateView):
+    login_url = '/auth/login/'
+    model = Color
+    form_class = ColorForm
+    template_name = 'forms/form_template.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'حذف اللون : ' + str(self.object.color_name)
+        context['message'] = 'super_delete'
+        context['action_url'] = reverse_lazy('Core:ColorDelete', kwargs={'pk': self.object.id})
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, " تم حذف اللون " + str(self.object) + " نهائيا بنجاح ", extra_tags="success")
+        my_form = Color.objects.get(id=self.kwargs['pk'])
+        my_form.delete()
+        return redirect('Core:ColorList')
+    
+        
 class SystemInfoCreate(LoginRequiredMixin, CreateView):
     login_url = '/auth/login/'
     model = SystemInformation
@@ -96,16 +190,8 @@ class SystemInfoCreate(LoginRequiredMixin, CreateView):
         context['action_url'] = reverse_lazy('Core:SystemInfoCreate')
         return context
     
-    def get_success_url(self):
-        messages.success(self.request, "  تم إضافة بيانات للنظام بنجاح", extra_tags="success")
-
-        # if self.request.POST.get('url'):
-        #     return self.request.POST.get('url')
-        # else:
-        #     return self.success_url
         # return reverse('Core:index')
-        return self.request.META.get('HTTP_REFERER', '/')
-
+        
     def form_valid(self, form):
         form.save()
         obj = form.save(commit=False)
@@ -149,12 +235,11 @@ class SystemInfoUpdate(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         messages.success(self.request, " تم تعديل بيانات النظام بنجاح", extra_tags="success")
 
-        # if self.request.POST.get('url'):
-        #     return self.request.POST.get('url')
-        # else:
-        #     return self.success_url
+        if self.request.POST.get('url'):
+            return self.request.POST.get('url')
+        else:
+            return self.success_url
         # return reverse('Core:index')
-        return self.request.META.get('HTTP_REFERER', '/')
 
     def form_valid(self, form):
         form.save()
@@ -218,6 +303,25 @@ class ProductSearch(LoginRequiredMixin, ListView):
     def get_queryset(self):
         product_serach = self.request.GET.get("product")  
         queryset = self.model.objects.filter(name__icontains=product_serach, deleted=False)
+        return queryset
+    
+class ProductSearch_size(LoginRequiredMixin, ListView):
+    login_url = '/auth/login/'
+    model = Product
+    template_name = 'Products/product_list.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['message'] = 'active'
+        context['page'] = 'active'
+        context['product_serach_size'] = self.request.GET.get("product_size")
+        context['type'] = 'list'
+        context['count'] = self.model.objects.filter(deleted=False).count()
+        return context
+    
+    def get_queryset(self):
+        product_serach = self.request.GET.get("product_size")  
+        queryset = self.model.objects.filter(size=int(product_serach), deleted=False)
         return queryset
 
 
@@ -420,10 +524,28 @@ class WoolSupplierSearch(LoginRequiredMixin, ListView):
     def get_queryset(self):
         search = self.request.GET.get("wool_supplier")
         queryset = self.model.objects.filter(name=search, deleted=False)
+        
+        return queryset
+    
+class WoolSearch(LoginRequiredMixin, ListView):
+    login_url = '/auth/login/'
+    model = Wool
+    template_name = 'Wool/wool_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['message'] = 'active'
+        context['wool_search'] = self.request.GET.get("wool")
+        context['count'] = Wool.objects.all().count()
+        return context
+
+    def get_queryset(self):
+        search = self.request.GET.get("wool")
+        queryset = self.model.objects.filter(wool_name=search)
         if queryset:
             queryset = queryset
         else:
-            queryset = self.model.objects.filter(deleted=False)
+            queryset = Wool.objects.all()
         return queryset
 
 
@@ -548,3 +670,60 @@ def SystemStatistics(request):
         'inv3_dict': inv3_dict,
         'treasuries_dict': treasuries_dict,
     })
+
+
+def ExpensessDetail(request):
+
+    form = ExpensessForm()
+    expensess_type = ExpnsessType.objects.all()
+    object_list = Expnsess.objects.all().order_by('-id')
+    action_url = reverse_lazy('Core:ExpensessCreate')
+    system_info = SystemInformation.objects.all()
+    if system_info.count() > 0:
+        system_info = system_info.last()
+    else:
+        system_info = None
+
+    context = {
+        'form': form,
+        'action_url': action_url,
+        'system_info': system_info,
+        'date': datetime.now().date(),
+        'expensess_type': expensess_type,
+        'object_list': object_list
+    }
+    return render(request, 'Core/expensses_list.html', context)
+
+
+def ExpensessCreate(request):
+    express_type = ExpnsessType.objects.get(id=request.POST.get('expnsess_type'))
+    form = ExpensessForm(request.POST or None)
+    if form.is_valid():
+        obj = form.save(commit=False)
+        obj.admin = request.user 
+        obj.expnsess_type= express_type
+        obj.save()
+        messages.success(request, " تم اضافة مصروف جديد ", extra_tags="success")
+    else:
+        messages.error(request, " حدث خطأ أثناء اضافة المصروف ", extra_tags="danger")
+    return redirect('Core:ExpensessDetail')
+
+
+class ExpensessDelete(LoginRequiredMixin, UpdateView):
+    login_url = '/auth/login/'
+    model = Expnsess
+    form_class = ExpensessForm
+    template_name = 'forms/form_template.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'حذف البند : '
+        context['message'] = 'super_delete'
+        context['action_url'] = reverse_lazy('Core:ExpensessDelete', kwargs={'pk': self.object.id})
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, " تم حذف البند " +  " نهائيا بنجاح ", extra_tags="success")
+        my_form = Expnsess.objects.get(id=self.kwargs['pk'])
+        my_form.delete()
+        return redirect('Core:ExpensessDetail')

@@ -110,7 +110,7 @@ class="table pag table-centered table-dark table-nowrap text-center"
 <td><i class="fas fa-user-tie"></i> {{x.admin}}</td>
 {% if request.user.is_superuser %}
 <td>
-{#{% if x.id == last_payment_id %}#}
+
 <!--
 {#                            <a#}
 {#                              href="{% url 'Factories:FactoryPaymentUpdate' x.id %}"#}
@@ -122,30 +122,15 @@ class="table pag table-centered table-dark table-nowrap text-center"
 {#                            ></a>#}-->
 <a
   onclick="
-          /*
           var result = confirm('هل أنت متأكد من الحذف؟');
             if (result) {
                 PaymentDelete('{{x.id}}')
             }
-          */
-          Swal.fire({
-              title: 'انتبه!',
-              text: 'هل أنت متأكد من الحذف؟',
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'نعم، احذف',
-              cancelButtonText: 'الغاء'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                PaymentDelete('{{x.id}}')
-              }
-            });
           "
   style="cursor: pointer"
   class="text-danger"
   ><i class="mdi mdi-close font-size-18"></i
 ></a>
-{#{% endif %}#}
 </td>
 {% endif %}
 
@@ -272,24 +257,13 @@ if (response.msg == 1) {
 $("#price").val("");
 $("#recipient").val("");
 $("#paymnet").html("&nbsp;").load("{% url 'Factories:FactoryPayment_div' object.id %}");
-//alert("تم الاضافة بنجاح");
-Swal.fire({
-  title: 'نجاح!',
-  text: 'تمت الاضافة بنجاح',
-  icon: 'success',
-  confirmButtonText: 'تم'
-});
+alert("تم الاضافة بنجاح");
 $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}");
 $('#outside').html('&nbsp;').load("{% url 'Factories:FactoryOutSide_div' object.id %}");
+$('#returned').html('&nbsp;').load("{% url 'Factories:FactoryReturned_div' object.id %}");
 
 } else {
-//alert("حاول مرة اخري / خطأ في البيانات");
-Swal.fire({
-  title: 'خطأ!',
-  text: 'حاول مرة اخري / خطأ في البيانات',
-  icon: 'error',
-  confirmButtonText: 'تم'
-});
+alert("حاول مرة اخري / خطأ في البيانات");
 }
 },
 
@@ -313,26 +287,13 @@ $("#paymnet")
 .load(
 "{% url 'Factories:FactoryPayment_div' object.id %}"
 );
-//alert("تم الحذف بنجاح");
-Swal.fire({
-  title: 'نجاح!',
-  text: 'تم الحذف بنجاح',
-  icon: 'success',
-  confirmButtonText: 'تم'
-});
+alert("تم الحذف بنجاح");
 $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}");
 $('#outside').html('&nbsp;').load("{% url 'Factories:FactoryOutSide_div' object.id %}");
+$('#returned').html('&nbsp;').load("{% url 'Factories:FactoryReturned_div' object.id %}");
 },
 
-failure: function () {
-    //alert("حاول مرة اخري / خطأ اثناء الحذف");
-    Swal.fire({
-      title: 'خطأ!',
-      text: 'حاول مرة اخري / خطأ اثناء الحذف',
-      icon: 'error',
-      confirmButtonText: 'تم'
-    });
-},
+failure: function () {},
 });
 }
 </script>

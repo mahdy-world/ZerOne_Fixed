@@ -19,10 +19,9 @@
   <body>
     <h1 style="margin-top: -50px">
       {% if system_info.logo %}
-       <img src="{{system_info.logo_base64}}" height="100px" width="100px">
+       <img src={{system_info.logo.url}} height="100px" width="100px">
        {% else %}
-{#       <img src="/static/assets/images/new.png" width="100px" height="100px">#}
-          <img src="file://{{ default_icon }}" height="100px" width="100px">
+       <img src="/static/assets/images/new.png" width="100px" height="100px">
       {% endif %}
     </h1>
 
@@ -30,7 +29,8 @@
         <h2 class="text-center">{{system_info.name}}</h2>
         <h5 style="margin-top: -15px"><span> {{date|date:'Y-m-d'}} </span> تاريخ التقرير: </h5>
         <h5 style="margin-top: -15px"><span> {{factory.name}} </span> كشف حساب المصنع: </h5>
-    </dl><hr>
+    </dl>
+    <hr>
 
     <table>
         <tr>
@@ -45,9 +45,21 @@
             </th>
             <th>اجمالي الوزن الداخل</th>
         </tr>
+         <tr>
+            <th>
+            {{ sum_weight_return|floatformat:3 }} كيلو جرام
+            </th>
+            <th>اجمالي الوزن المرتجع</th>
+        </tr>
+         <tr>
+            <th>
+            {{ sum_weight_return_after|floatformat:3 }} كيلو جرام
+            </th>
+            <th>اجمالي الوزن بعد المرتجع</th>
+        </tr>
         <tr>
             <th>
-            {{ sum_out_weight|sub:sum_in_weight|floatformat:3 }} كيلو جرام
+            {{ sum_out_weight|sub:sum_in_weight|sub:sum_weight_return|floatformat:3 }} كيلو جرام
             </th>
             <th>الوزن المتبقي</th>
         </tr>
@@ -81,19 +93,23 @@
             <th>اجمالي المسحوبات</th>
         </tr>
         <tr>
+            <th>{{ sum_returned_total|floatformat:2 }} جنيه</th>
+            <th>اجمالي المرتجع</th>
+        </tr>
+        <tr>
             <th>
-            {% if sum_in_total|sub:sum_out_total > 0 %}
-                {{ sum_in_total|sub:sum_out_total|floatformat:2 }} جنيه
-            {% elif sum_in_total|sub:sum_out_total < 0  %}
-                {{ sum_in_total|sub:sum_out_total|mul:-1|floatformat:2 }} جنيه
+            {% if sum_in_total|sub:sum_out_total|sub:sum_returned_total > 0 %}
+                {{ sum_in_total|sub:sum_out_total|sub:sum_returned_total|floatformat:2 }} جنيه
+            {% elif sum_in_total|sub:sum_out_total|sub:sum_returned_total < 0  %}
+                {{ sum_in_total|sub:sum_out_total|mul:-1|sub:sum_returned_total|floatformat:2 }} جنيه
             {% else %}
                 0.00 جنيه
             {% endif %}
             </th>
             <th>الباقي
-            {% if sum_in_total|sub:sum_out_total > 0 %}
+            {% if sum_in_total|sub:sum_out_total|sub:sum_returned_total > 0 %}
                 للمصنع
-            {% elif sum_in_total|sub:sum_out_total < 0  %}
+            {% elif sum_in_total|sub:sum_out_total|sub:sum_returned_total < 0  %}
                 علي المصنع
             {% endif %}
             </th>

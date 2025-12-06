@@ -1,7 +1,6 @@
 from django import template
 from django.db.models import Sum
 import pyqrcode
-import png
 from django.db.models import F
 
 register = template.Library()
