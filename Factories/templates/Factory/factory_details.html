@@ -9,7 +9,7 @@
     {% load crispy_forms_tags %}
     <div class="main-content">
       <div class="page-content">
-          <div class="container-fluid">
+          <div class="container-fuild">
 
                 <div class="row">
                     <div class="col-12"> {% if messages %}
@@ -185,6 +185,20 @@
                                         </a>
                                     </li>
                                     <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#Returned_factory" role="tab" aria-selected="true">
+                                            <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                            <span class="d-none d-sm-block"> <i class="fas fa-undo-alt"></i> 
+                                                مرتجع المصنع </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#Returned_factory_wool" role="tab" aria-selected="true">
+                                            <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
+                                            <span class="d-none d-sm-block"> <i class="fas fa-undo-alt"></i> 
+                                                مرتجع الغزل </span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
                                         <a class="nav-link" data-toggle="tab" href="#reports_factory" role="tab" aria-selected="true">
                                             <span class="d-block d-sm-none"><i class="far fa-envelope"></i></span>
                                             <span class="d-none d-sm-block"><i class="fas fa-print"></i> تقارير</span>
@@ -206,6 +220,14 @@
                                     <div class="tab-pane" id="Inside_factory" role="tabpanel">
                                         {% include 'Factory/factory_inside.html' %}
                                     </div>
+                                    <!--المرتجع-->
+                                    <div class="tab-pane" id="Returned_factory" role="tabpanel">
+                                        {% include 'Factory/factory_returned.html' %}
+                                    </div>
+                                    <!--مرتجع الغزل-->
+                                    <div class="tab-pane " id="Returned_factory_wool" role="tabpanel">
+                                        {% include 'Factory/factory_returned_wool.html' %}
+                                    </div>
                                     <!--تقارير-->
                                     <div class="tab-pane" id="reports_factory" role="tabpanel">
                                         <div class="row">
@@ -225,50 +247,45 @@
                                                                 {{form.to_date|as_crispy_field}}
                                                                 </div>
                                                             </div>
-{#                                                            <div class="col-md-4">#}
-{#                                                                <button type="submit" name="submit" value="1" class="btn btn-block btn-success"#}
-{#                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintPayment' object.id  %}'; document.getElementById('my_form').target = '_blank' "#}
-{#                                                                    >#}
-{#                                                                    <i class="fas fa-print"></i>#}
-{#                                                                      تقرير مسحوبات#}
-{#                                                                  </button>#}
-{#                                                            </div>#}
-{#                                                            <div class="col-md-4">#}
-{#                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"#}
-{#                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintOutside' object.id  %}'; document.getElementById('my_form').target = '_blank' "#}
-{#                                                                    >#}
-{#                                                                    <i class="fas fa-print"></i>#}
-{#                                                                      تقرير خارج#}
-{#                                                                  </button>#}
-{#                                                            </div>#}
-{#                                                            <div class="col-md-4">#}
-{#                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"#}
-{#                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintInside' object.id  %}'; document.getElementById('my_form').target = '_blank' "#}
-{#                                                                    >#}
-{#                                                                    <i class="fas fa-print"></i>#}
-{#                                                                      تقرير داخل#}
-{#                                                                  </button>#}
-{#                                                            </div>#}
-
-                                                            <div class="col-md-4">
-                                                                <button type="button" class="btn btn-block btn-success"
-                                                                    onclick="openReportModal('{% url 'Factories:PrintPayment' object.id %}')">
-                                                                    <i class="fas fa-print"></i> تقرير مسحوبات
-                                                                </button>
+                                                            <div class="col-md-3">
+                                                                <button type="submit" name="submit" value="1" class="btn btn-block btn-success"
+                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintPayment' object.id  %}'; document.getElementById('my_form').target = '_blank' "
+                                                                    >
+                                                                    <i class="fas fa-print"></i>
+                                                                      تقرير مسحوبات
+                                                                  </button>
                                                             </div>
-
-                                                            <div class="col-md-4">
-                                                                <button type="button" class="btn btn-block btn-success"
-                                                                    onclick="openReportModal('{% url 'Factories:PrintOutside' object.id %}')">
-                                                                    <i class="fas fa-print"></i> تقرير خارج
-                                                                </button>
+                                                            <div class="col-md-3">
+                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"
+                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintOutside' object.id  %}'; document.getElementById('my_form').target = '_blank' "
+                                                                    >
+                                                                    <i class="fas fa-print"></i>
+                                                                      تقرير خارج
+                                                                  </button>
                                                             </div>
-
-                                                            <div class="col-md-4">
-                                                                <button type="button" class="btn btn-block btn-success"
-                                                                    onclick="openReportModal('{% url 'Factories:PrintInside' object.id %}')">
-                                                                    <i class="fas fa-print"></i> تقرير داخل
-                                                                </button>
+                                                            <div class="col-md-3">
+                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"
+                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintInside' object.id  %}'; document.getElementById('my_form').target = '_blank' "
+                                                                    >
+                                                                    <i class="fas fa-print"></i>
+                                                                      تقرير داخل
+                                                                  </button>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"
+                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintReturned' object.id  %}'; document.getElementById('my_form').target = '_blank' "
+                                                                    >
+                                                                    <i class="fas fa-print"></i>
+                                                                      تقرير مرتجع المنتجات
+                                                                  </button>
+                                                            </div>
+                                                            <div class="col-md-3 mt-2">
+                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"
+                                                                    onclick="document.getElementById('my_form').action = '{% url 'Factories:PrintWoolReturned' object.id  %}'; document.getElementById('my_form').target = '_blank' "
+                                                                    >
+                                                                    <i class="fas fa-print"></i>
+                                                                      تقرير مرتجع الغزل
+                                                                  </button>     
                                                             </div>
                                                         </div>
                                                         </form>
@@ -349,19 +366,5 @@
           showItems();
         })
         });
-    </script>
-    <script>
-        function openReportModal(baseUrl) {
-            // نجمع بيانات الفورم كـ query string
-            var form = document.getElementById('my_form');
-            var params = new URLSearchParams(new FormData(form)).toString();
-
-            // نركّب الرابط النهائي
-            var url = baseUrl + "?" + params;
-
-            // نعرضه في المودال
-            $('#pdfFrame').attr('src', url);
-            $('#pdfModal').modal('show');
-        }
     </script>
 {% endblock main %}

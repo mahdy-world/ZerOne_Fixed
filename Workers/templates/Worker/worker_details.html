@@ -9,7 +9,7 @@
     {% load crispy_forms_tags %}
     <div class="main-content">
       <div class="page-content">
-          <div class="container-fluid">
+          <div class="container-fuild">
 
                 <div class="row">
                     <div class="col-12"> {% if messages %}
@@ -204,50 +204,32 @@
                                                                 {{form.to_date|as_crispy_field}}
                                                                 </div>
                                                             </div>
-{#                                                            <div class="col-md-6">#}
-{#                                                                <button type="submit" name="submit" value="1" class="btn btn-block btn-success"#}
-{#                                                                    onclick="document.getElementById('my_form').action = '{% url 'Workers:PrintWorkerPayment' object.id  %}'; document.getElementById('my_form').target = '_blank' "#}
-{#                                                                    >#}
-{#                                                                    <i class="fas fa-print"></i>#}
-{#                                                                      تقرير مسحوبات#}
-{#                                                                  </button>#}
-{#                                                            </div>#}
                                                             <div class="col-md-6">
-                                                                <button type="button" class="btn btn-block btn-success"
-                                                                    onclick="openReportModal('{% url 'Workers:PrintWorkerPayment' object.id %}')">
-                                                                    <i class="fas fa-print"></i>تقرير مسحوبات
-                                                                </button>
+                                                                <button type="submit" name="submit" value="1" class="btn btn-block btn-success"
+                                                                    onclick="document.getElementById('my_form').action = '{% url 'Workers:PrintWorkerPayment' object.id  %}'; document.getElementById('my_form').target = '_blank' "
+                                                                    >
+                                                                    <i class="fas fa-print"></i>
+                                                                      تقرير مسحوبات
+                                                                  </button>
                                                             </div>
                                                             {% if object.worker_type == 5  %}
-{#                                                            <div class="col-md-6">#}
-{#                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"#}
-{#                                                                    onclick="document.getElementById('my_form').action = '{% url 'Workers:PrintWorkerAttendance' object.id  %}'; document.getElementById('my_form').target = '_blank' "#}
-{#                                                                    >#}
-{#                                                                    <i class="fas fa-print"></i>#}
-{#                                                                      تقرير الحضور#}
-{#                                                                  </button>#}
-{#                                                            </div>#}
                                                             <div class="col-md-6">
-                                                                <button type="button" class="btn btn-block btn-success"
-                                                                    onclick="openReportModal('{% url 'Workers:PrintWorkerAttendance' object.id %}')">
-                                                                    <i class="fas fa-print"></i>تقرير الحضور
-                                                                </button>
+                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"
+                                                                    onclick="document.getElementById('my_form').action = '{% url 'Workers:PrintWorkerAttendance' object.id  %}'; document.getElementById('my_form').target = '_blank' "
+                                                                    >
+                                                                    <i class="fas fa-print"></i>
+                                                                      تقرير الحضور
+                                                                  </button>
                                                             </div>
                                                             {% endif %}
                                                             {% if object.worker_type == 6  %}
-{#                                                            <div class="col-md-6">#}
-{#                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"#}
-{#                                                                    onclick="document.getElementById('my_form').action = '{% url 'Workers:PrintWorkerproductions' object.id  %}'; document.getElementById('my_form').target = '_blank' "#}
-{#                                                                    >#}
-{#                                                                    <i class="fas fa-print"></i>#}
-{#                                                                      تقرير الإنتاج#}
-{#                                                                  </button>#}
-{#                                                            </div>#}
                                                             <div class="col-md-6">
-                                                                <button type="button" class="btn btn-block btn-success"
-                                                                    onclick="openReportModal('{% url 'Workers:PrintWorkerproductions' object.id %}')">
-                                                                    <i class="fas fa-print"></i>تقرير الإنتاج
-                                                                </button>
+                                                                <button type="submit" name="submit"  value="1" class="btn btn-block btn-success"
+                                                                    onclick="document.getElementById('my_form').action = '{% url 'Workers:PrintWorkerproductions' object.id  %}'; document.getElementById('my_form').target = '_blank' "
+                                                                    >
+                                                                    <i class="fas fa-print"></i>
+                                                                      تقرير الإنتاج
+                                                                  </button>
                                                             </div>
                                                             {% endif %}
                                                         </div>
@@ -329,19 +311,5 @@
           showItems();
         })
         });
-    </script>
-    <script>
-        function openReportModal(baseUrl) {
-            // نجمع بيانات الفورم كـ query string
-            var form = document.getElementById('my_form');
-            var params = new URLSearchParams(new FormData(form)).toString();
-
-            // نركّب الرابط النهائي
-            var url = baseUrl + "?" + params;
-
-            // نعرضه في المودال
-            $('#pdfFrame').attr('src', url);
-            $('#pdfModal').modal('show');
-        }
     </script>
 {% endblock main %}

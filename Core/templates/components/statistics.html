@@ -10,7 +10,7 @@
     <div class="main-content">
 
       <div class="page-content">
-          <div class="container-fluid">
+          <div class="container-fuild">
            
                 <div class="row">
                     <div class="col-12"> {% if messages %}
@@ -53,55 +53,55 @@
                             <form style="padding: 20px 20px 0 0" class="text-white" method="post" action="/system_statistics/">
                                 {% csrf_token %}
                                 <div class="row" style="text-align: right">
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="radio" id="today" name="st_time" value="today" {% if st_time == 'today' %} checked {% endif %}>
                                             <label for="today" style="margin-left: 40px">اليوم</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="radio" id="yesterday" name="st_time" value="yesterday" {% if st_time == 'yesterday' %} checked {% endif %}>
                                             <label for="yesterday" style="margin-left: 40px">منذ الأمس</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="radio" id="3days" name="st_time" value="3days" {% if st_time == '3days' %} checked {% endif %}>
                                             <label for="3days" style="margin-left: 40px">اخر 3 أيام</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="radio" id="1week" name="st_time" value="1week" {% if st_time == '1week' %} checked {% endif %}>
                                             <label for="1week" style="margin-left: 40px">اخر أسبوع</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="radio" id="1month" name="st_time" value="1month" {% if st_time == '1month' %} checked {% endif %}>
                                             <label for="1month" style="margin-left: 40px">اخر شهر</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="radio" id="3months" name="st_time" value="3months" {% if st_time == '3months' %} checked {% endif %}>
                                             <label for="3months" style="margin-left: 40px">اخر 3 أشهر</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="radio" id="6months" name="st_time" value="6months" {% if st_time == '6months' %} checked {% endif %}>
                                             <label for="6months" style="margin-left: 40px">اخر 6 أشهر</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="radio" id="1year" name="st_time" value="1year" {% if st_time == '1year' %} checked {% endif %}>
                                             <label for="1year" style="margin-left: 40px">اخر سنة</label>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <input type="radio" id="alltime" name="st_time" value="alltime" {% if st_time == 'alltime' %} checked {% endif %}>
                                             <label for="alltime">الكل</label>

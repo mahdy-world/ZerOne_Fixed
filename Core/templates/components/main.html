@@ -1,9 +1,7 @@
 {% if not modules.stop_date or modules.stop_date and today < modules.stop_date %}
 <div class="main-content">
-
     <div class="page-content">
-        <!--<div class="container">-->
-        <div class="container-fluid">
+        <div class="container">
 
             <div class="row">
                 <div class="col-12">
@@ -41,22 +39,22 @@
             
             <div class="row">
                 {% if modules.invoice_active %}
-                <div class="col-xl-4 col-lg-4 col-md-4">
+                <div class="col-xl-3 col-lg-6 col-md-6">
                     <a data-toggle="modal" data-target="#invoice1_modal">
                         <div class="container_new">
-                            <div class="card">
+                            <div class="card" >
                                 <div class="imgBx">
-                                    <img class="image" src="/static/assets/images/vector/printt.png">
+                                    <img class="image" src="/static/assets/images/vector/printt.png" >
                                 </div>
                                 <div class="contentBx">
-                                    <h2 style="font-size: large">فواتير المبيعات</h2>
+                                    <h2>فواتير </h2>
                                 </div>
                             </div>
                         </div>
                     </a>
                 </div>
 
-                <div class="col-xl-4 col-lg-4 col-md-4">
+                <div class="col-xl-3 col-lg-6 col-md-6">
                     <a data-toggle="modal" data-target="#invoice2_modal">
                         <div class="container_new">
                             <div class="card">
@@ -64,14 +62,14 @@
                                     <img class="image" src="/static/assets/images/vector/printt.png">
                                 </div>
                                 <div class="contentBx">
-                                    <h2 style="font-size: large">فواتير مرتجع المبيعات</h2>
+                                    <h2>فواتير مرتجع المبيعات</h2>
                                 </div>
                             </div>
                         </div>
                     </a>
                 </div>
 
-                <div class="col-xl-4 col-lg-4 col-md-4">
+                <div class="col-xl-3 col-lg-6 col-md-6">
                     <a data-toggle="modal" data-target="#invoice3_modal">
                         <div class="container_new">
                             <div class="card">
@@ -79,7 +77,7 @@
                                     <img class="image" src="/static/assets/images/vector/printt.png">
                                 </div>
                                 <div class="contentBx">
-                                    <h2 style="font-size: large">المبيعات القطاعي</h2>
+                                    <h2>المبيعات القطاعي</h2>
                                 </div>
                             </div>
                         </div>
@@ -88,7 +86,7 @@
                 {% endif %}
 
                 {% if modules.factory_active %}
-                <div class="col-xl-4 col-lg-4 col-md-4">
+                <div class="col-xl-3 col-lg-6 col-md-6 ">
                     <a href="" data-toggle="modal" data-target="#factory_modal">
                         <div class="container_new  "> 
                             <div class="card">
@@ -96,7 +94,7 @@
                                 <img class="image" src="/static/assets/images/vector/factory2.png">
                               </div>
                               <div class="contentBx">
-                                <h2 style="font-size: large">المصانع</h2>
+                                <h2>المصانع</h2>
                               </div>
                             </div>
                           </div>
@@ -105,7 +103,7 @@
                 {% endif %}
 
                 {% if modules.product_active %}
-                <div class="col-xl-4 col-lg-4 col-md-4">
+                <div class="col-xl-3 col-lg-6 col-md-6">
                     <a data-toggle="modal" data-target="#product_modal">
                         <div class="container_new">
                             <div class="card">
@@ -113,7 +111,7 @@
                                     <img class="image" src="/static/assets/images/vector/product2.png">
                                 </div>
                                 <div class="contentBx">
-                                    <h2 style="font-size: large">المنتجات</h2>
+                                    <h2>المنتجات</h2>
                                 </div>
                             </div>
                         </div>
@@ -122,7 +120,7 @@
                 {% endif %}
               
             {% if modules.worker_active %}
-            <div class="col-xl-4 col-lg-4 col-md-4">
+            <div class="col-xl-3 col-lg-6 col-md-6">
                 <a data-toggle="modal" data-target="#worker_modal">
                     <div class="container_new">
                         <div class="card">
@@ -130,7 +128,7 @@
                                 <img class="image" src="/static/assets/images/vector/worker2.png">
                             </div>
                             <div class="contentBx">
-                                <h2 style="font-size: large">العمال</h2>
+                                <h2>العمال</h2>
                             </div>
                         </div>
                     </div>
@@ -139,7 +137,7 @@
             {% endif %}
                 
             {% if modules.seller_active %}
-            <div class="col-xl-4 col-lg-4 col-md-4">
+            <div class="col-xl-3 col-lg-6 col-md-6">
                 <a data-toggle="modal" data-target="#seller_modal">
                     <div class="container_new">
                         <div class="card">
@@ -147,7 +145,7 @@
                                 <img class="image" src="/static/assets/images/vector/seller2.png">
                             </div>
                             <div class="contentBx">
-                                <h2 style="font-size: large">التجار</h2>
+                                <h2>التجار</h2>
                             </div>
                         </div>
                     </div>
@@ -156,7 +154,7 @@
             {% endif %}
 
             {% if modules.supplier_active %}
-            <div class="col-xl-4 col-lg-4 col-md-4">
+            <div class="col-xl-3 col-lg-6 col-md-6">
                 <a data-toggle="modal" data-target="#supplier1_modal">
                     <div class="container_new">
                         <div class="card">
@@ -164,14 +162,14 @@
                                 <img class="image" src="/static/assets/images/vector/supplier.png">
                             </div>
                             <div class="contentBx">
-                                <h2 style="font-size: large">الموردين</h2>
+                                <h2>الموردين</h2>
                             </div>
                         </div>
                     </div>
                 </a>
             </div>
 
-            <div class="col-xl-4 col-lg-4 col-md-4">
+            <div class="col-xl-3 col-lg-6 col-md-6">
                 <a data-toggle="modal" data-target="#supplier2_modal">
                     <div class="container_new">
                         <div class="card">
@@ -179,7 +177,7 @@
                                 <img class="image" src="/static/assets/images/vector/supplier.png">
                             </div>
                             <div class="contentBx">
-                                <h2 style="font-size: large">المستوردين</h2>
+                                <h2>المستوردين</h2>
                             </div>
                         </div>
                     </div>
@@ -188,15 +186,30 @@
             {% endif %}
 
             {% if modules.wool_active %}
-            <div class="col-xl-4 col-lg-4 col-md-4">
+            <div class="col-xl-3 col-lg-6 col-md-6">
                 <a data-toggle="modal" data-target="#wool_modal">
+                    <div class="container_new">
+                        <div class="card">
+                            <div class="imgBx">
+                                <img class="image" src="/static/assets/images/vector/Product wool.png">
+                            </div>
+                            <div class="contentBx">
+                                <h2>الخامات</h2>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-xl-3 col-lg-6 col-md-6">
+                <a data-toggle="modal" data-target="#wool_modal_supplier">
                     <div class="container_new">
                         <div class="card">
                             <div class="imgBx">
                                 <img class="image" src="/static/assets/images/vector/supplier.png">
                             </div>
                             <div class="contentBx">
-                                <h2 style="font-size: large">الخيط</h2>
+                                <h2>تجار الخام</h2>
                             </div>
                         </div>
                     </div>
@@ -205,7 +218,7 @@
             {% endif %}
 
             {% if modules.treasury_active %}
-            <div class="col-xl-4 col-lg-4 col-md-4">
+            <div class="col-xl-3 col-lg-6 col-md-6">
                 <a data-toggle="modal" data-target="#treasury_modal">
                     <div class="container_new">
                         <div class="card">
@@ -213,7 +226,7 @@
                                 <img class="image" src="/static/assets/images/vector/treasury1.png">
                             </div>
                             <div class="contentBx">
-                                <h2 style="font-size: large">الخزائن</h2>
+                                <h2>الخزائن</h2>
                             </div>
                         </div>
                     </div>
@@ -221,7 +234,7 @@
             </div>
             {% endif %}
 
-            <div class="col-xl-4 col-lg-4 col-md-4">
+            <div class="col-xl-3 col-lg-6 col-md-6">
                 <a data-toggle="modal" data-target="#search_modal">
                     <div class="container_new">
                         <div class="card">
@@ -229,7 +242,7 @@
                                 <img class="image" src="/static/assets/images/vector/search2.png">
                             </div>
                             <div class="contentBx">
-                                <h2 style="font-size: large">البحث</h2>
+                                <h2>البحث</h2>
                             </div>
                         </div>
                     </div>
@@ -237,7 +250,7 @@
             </div>
 
             {% if request.user.is_superuser %}
-            <div class="col-xl-4 col-lg-4 col-md-4">
+            <div class="col-xl-3 col-lg-6 col-md-6">
                 <a data-toggle="modal" data-target="#user_invoice_modal">
                     <div class="container_new">
                         <div class="card">
@@ -245,7 +258,7 @@
                                 <img class="image" src="/static/assets/images/vector/users2.png">
                             </div>
                             <div class="contentBx">
-                                <h2 style="font-size: large"> المستخدمين</h2>
+                                <h2> المستخدمين</h2>
                             </div>
                         </div>
                     </div>

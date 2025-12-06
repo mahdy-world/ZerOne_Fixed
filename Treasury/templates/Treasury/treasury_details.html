@@ -10,7 +10,7 @@
 
     <div class="main-content">
       <div class="page-content">
-          <div class="container-fluid">
+          <div class="container-fuild">
 
                 <div class="row">
                     <div class="col-12"> {% if messages %}
@@ -92,7 +92,7 @@
                                     </span>
                                     {{object.date|date:'Y-m-d'}}
                                 </div>
-
+                               
                                 <div class="col-lg-4">
                                     {% if request.user.is_superuser %}
                                     <div>
@@ -116,20 +116,14 @@
                                     </div>
                                     {% endif %}
                                 </div>
-
+                              
 
                                 <div class="col-lg-3">
                                     <span class="font-weight-bold  font-size-14" >
                                         <i class="fas fa-sort-down" ></i>
                                         اجمالي الايداع:
                                     </span>
-                                    <span class="badge badge-success font-size-14">
-                                        {% if total_deposit %}
-                                        {{total_deposit|floatformat:2|intcomma}}
-                                        {% else %}
-                                        0.00
-                                        {% endif %}
-                                        جنية</span>
+                                    <span class="badge badge-success font-size-14">{{total_deposit|floatformat:2|intcomma}} جنية</span>
                                 </div>
 
                                 <div class="col-lg-3">
@@ -137,13 +131,7 @@
                                         <i class="fas fa-sort-up" ></i>
                                             اجمالي المسحوبات:
                                     </span>
-                                    <span class="badge badge-danger font-size-14">
-                                        {% if total_withdrawals %}
-                                        {{total_withdrawals|floatformat:2|intcomma}}
-                                        {% else %}
-                                        0.00
-                                        {% endif %}
-                                        جنية</span>
+                                    <span class="badge badge-danger font-size-14">{{total_withdrawals|floatformat:2|intcomma}} جنية</span>
                                 </div>
 
                                 <div class="col-lg-3">
@@ -151,15 +139,9 @@
                                         <i class="fas fa-dollar-sign"></i>
                                             رصيد الخزنة:
                                     </span>
-                                    <span class="badge badge-primary font-size-14">
-                                        {% if object.balance %}
-                                        {{object.balance|floatformat:2|intcomma}}
-                                        {% else %}
-                                        0.00
-                                        {% endif %}
-                                        جنية</span>
+                                    <span class="badge badge-primary font-size-14">{{object.balance|floatformat:2|intcomma}} جنية</span>
                                 </div>
-
+                             
                             </div>
                             <!-- نهاية بيانات الخزينة -->
 
@@ -203,10 +185,10 @@
                                     </div>
                                     <!--سحب-->
                                     <div class="tab-pane" id="Inside_factory" role="tabpanel">
-
+                                        
                                     </div>
                                     {% endif %}
-
+                                    
                                 </div>
 
                             </div>

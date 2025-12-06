@@ -1,4 +1,5 @@
 import json
+
 from django.db.models import Sum
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,11 +10,9 @@ from .forms import *
 from django.contrib import messages
 from datetime import datetime
 from django.template.loader import render_to_string
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from Core.models import *
 from Products.templatetags.products_tags import sellers_debit as SellerDebit
-import os
-from django.conf import settings
 # Create your views here.
 
 
@@ -376,55 +375,41 @@ def InvoiceDetail(request, pk):
 
 def AddProductInvoice(request, pk):
     invoice = get_object_or_404(Invoice, id=pk)
+    product = InvoiceItem.objects.filter(invoice=invoice).order_by('id')
+    count_product = product.count()
 
-    if request.method == "POST":
-        form = InvoiceProductsForm(request.POST)
-        if form.is_valid():
-            qty = form.cleaned_data.get("quantity") or 0
-            unit = form.cleaned_data.get("unit") or 1
-            unit_price = form.cleaned_data.get("unit_price") or 0.0
-            item = form.cleaned_data.get("item")
+    form = InvoiceProductsForm(request.POST or None)
+    formm = InvoiceProductsForm()
 
-            # حساب المجموع للصنف وحفظه
-            total_price = float(qty) * float(unit) * float(unit_price)
-            obj = form.save(commit=False)
-            obj.invoice = invoice
-            obj.total_price = total_price
-            obj.save()
+    type_page = "list"
+    page = "active"
+    action_url = reverse_lazy('Invoices:AddProductInvoice', kwargs={'pk': invoice.id})
 
-            # إعادة حساب المجاميع (مضمون مطابق لحسابات الـ template الأصلي)
-            items = InvoiceItem.objects.filter(invoice=invoice)
-            total = items.aggregate(total=Sum('total_price'))['total'] or 0.0
-            quantity1 = items.filter(unit=1).aggregate(quantity=Sum('quantity'))['quantity'] or 0.0
-            quantity2 = items.filter(unit=12).aggregate(quantity=Sum('quantity'))['quantity'] or 0.0
-            total_quantity = float(quantity1) + float(quantity2) * 12.0
+    context = {
+        'invoice': invoice,
+        'type': type_page,
+        'page': page,
+        'form': formm,
+        'action_url': action_url,
+        'product': product,
+        'count_product': count_product
+    }
 
-            # حفظ الاجمالي بالفاتورة (اختياري لكن مطابق للمنطق السابق)
-            invoice.total = total
-            invoice.save(update_fields=['total'])
+    if form.is_valid():
+        quantity = form.cleaned_data.get("quantity") * form.cleaned_data.get("unit")
+        item = form.cleaned_data.get("item")
+        trans = item.quantity
 
-            count_product = items.count()
+        # if trans >= quantity:
+        obj = form.save(commit=False)
+        obj.invoice = invoice
+        obj.save()
+        messages.success(request, " تم اضافة منتج الي الفاتورة بنجاح ", extra_tags="success")
+        # else:
+        #     messages.success(request, " لاتوجد كمية كافية من المنتج داخل المخزن ", extra_tags="danger")
+        return redirect('Invoices:InvoiceDetail', pk=invoice.id)
 
-            data = {
-                "success": True,
-                "id": obj.id,
-                "item_id": item.id,
-                "item_name": str(item),
-                "unit_price": float(unit_price),
-                "quantity": float(qty),
-                "unit_value": unit,
-                "unit_label": obj.get_unit_display(),
-                "total_price": float(total_price),
-                "count_product": count_product,
-                "total_amount": float(total),
-                "total_quantity": float(total_quantity),
-            }
-            return JsonResponse(data)
-
-        # إعادة أخطاء الفورم كـ JSON
-        return JsonResponse({"success": False, "errors": form.errors}, status=400)
-
-    return JsonResponse({"success": False, "error": "Invalid request"}, status=400)
+    return render(request, 'Invoices/invoice_detail.html', context)
 
 
 class InvoiceProductsUpdate(LoginRequiredMixin, UpdateView):
@@ -438,10 +423,7 @@ class InvoiceProductsUpdate(LoginRequiredMixin, UpdateView):
         context['title'] = 'تعديل المنتج: ' + str(self.object.item)
         context['message'] = 'updatee'
         context['inv_update'] = 'update'
-        context['action_url'] = reverse_lazy(
-            'Invoices:InvoiceProductsUpdate',
-            kwargs={'pk': self.object.id, 'id': self.object.invoice.id}
-        )
+        context['action_url'] = reverse_lazy('Invoices:InvoiceProductsUpdate', kwargs={'pk': self.object.id, 'id': self.object.invoice.id})
         return context
 
     def get_form(self, form_class=None):
@@ -449,55 +431,24 @@ class InvoiceProductsUpdate(LoginRequiredMixin, UpdateView):
         form.fields['item'].queryset = Product.objects.filter(id=self.object.item.id)
         return form
 
-    def form_valid(self, form):
-        invoice = self.object.invoice
-        qty = form.cleaned_data.get("quantity") or 0
-        unit = form.cleaned_data.get("unit") or 1
-        unit_price = form.cleaned_data.get("unit_price") or 0.0
-        item = form.cleaned_data.get("item")
-
-        total_price = float(qty) * float(unit) * float(unit_price)
-
-        obj = form.save(commit=False)
-        obj.total_price = total_price
-        obj.save()
-
-        # إعادة حساب الإجماليات
-        items = InvoiceItem.objects.filter(invoice=invoice)
-        total = items.aggregate(total=Sum('total_price'))['total'] or 0.0
-        quantity1 = items.filter(unit=1).aggregate(quantity=Sum('quantity'))['quantity'] or 0.0
-        quantity2 = items.filter(unit=12).aggregate(quantity=Sum('quantity'))['quantity'] or 0.0
-        total_quantity = float(quantity1) + float(quantity2) * 12.0
-        count_product = items.count()
-
-        invoice.total = total
-        invoice.save(update_fields=['total'])
-
-        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            data = {
-                "success": True,
-                "id": obj.id,
-                "item_name": str(item),
-                "unit_price": float(unit_price),
-                "quantity": float(qty),
-                "unit_label": obj.get_unit_display(),
-                "total_price": float(total_price),
-                "count_product": count_product,
-                "total_amount": float(total),
-                "total_quantity": float(total_quantity),
-            }
-            return JsonResponse(data)
-
-        messages.success(self.request, "تم تعديل منتج " + str(item) + " بنجاح ", extra_tags="success")
-        return redirect(self.get_success_url())
-
-    def form_invalid(self, form):
-        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
-            return JsonResponse({"success": False, "errors": form.errors}, status=400)
-        return super().form_invalid(form)
-
-    def get_success_url(self):
+    def get_success_url(self, **kwargs):
         return reverse('Invoices:InvoiceDetail', kwargs={'pk': self.kwargs['id']})
+
+    def form_valid(self, form):
+        quantity = form.cleaned_data.get("quantity") * form.cleaned_data.get("unit")
+        unit_price = form.cleaned_data.get("unit_price")
+        item = form.cleaned_data.get("item")
+        trans = item.quantity
+        object_item = self.object.item
+
+        # if trans >= quantity:
+        prod = form.save(commit=False)
+        prod.total_price = float(quantity) * float(unit_price)
+        form.save()
+        messages.success(self.request, " تم تعديل منتج " + str(object_item) + " بنجاح ", extra_tags="success")
+        # else:
+        #     messages.success(self.request, " لاتوجد كمية كافية من المنتج داخل المخزن ", extra_tags="danger")
+        return redirect(self.get_success_url())
 
 
 def get_item_price(request):
@@ -525,39 +476,15 @@ class InvoiceProductsDelete(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'حذف المنتج: ' + str(self.object.item)
-        context['message'] = 'super_delete'   # 🟢 مفتاح يميز إنه حذف
-        context['delete_mode'] = True         # 🟢 فلاغ يوضح إنه مودال حذف
-        context['action_url'] = reverse_lazy(
-            'Invoices:InvoiceProductsDelete',
-            kwargs={'pk': self.object.id, 'id': self.object.invoice.id}
-        )
+        context['message'] = 'super_delete'
+        context['action_url'] = reverse_lazy('Invoices:InvoiceProductsDelete', kwargs={'pk': self.object.id, 'id': self.object.invoice.id})
         return context
 
     def form_valid(self, form):
-        invoice = self.object.invoice
-        item_id = self.object.item.id
-        item_name = self.object.item.name
-        self.object.delete()
-
-        items = InvoiceItem.objects.filter(invoice=invoice)
-        total = items.aggregate(total=Sum('total_price'))['total'] or 0.0
-        q1 = items.filter(unit=1).aggregate(quantity=Sum('quantity'))['quantity'] or 0.0
-        q2 = items.filter(unit=12).aggregate(quantity=Sum('quantity'))['quantity'] or 0.0
-        total_quantity = q1 + (q2 * 12)
-        count_product = items.count()
-
-        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
-            return JsonResponse({
-                "success": True,
-                "deleted": True,   # 🟢 علشان الجافاسكريبت يعرف دي عملية حذف
-                "id": self.kwargs['pk'],
-                "count_product": count_product,
-                "total_quantity": float(total_quantity),
-                "total_amount": float(total),
-                "item_id": item_id,
-                "item_name": item_name,
-            })
-
+        object_item = self.object.item
+        messages.success(self.request, " تم حذف المنتج " + str(object_item) + " من الفاتورة بنجاح ", extra_tags="success")
+        my_form = InvoiceItem.objects.get(id=self.kwargs['pk'])
+        my_form.delete()
         return redirect(self.get_success_url())
 
 
@@ -586,10 +513,6 @@ def PrintInvoice(request, id):
         quantity2 = 0.0
     quantity = quantity1 + (quantity2 * 12)
 
-    telephone_icon = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'telephone-call.png')
-    gps_icon = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'gps.png')
-    default_icon = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'new.png')
-
     context = {
         'date': date,
         'user': request.user.username,
@@ -598,19 +521,11 @@ def PrintInvoice(request, id):
         'shop_setting': shop_setting,
         'count_product': count_product,
         'quantity': quantity,
-        'telephone_icon': telephone_icon,
-        'gps_icon': gps_icon,
-        'default_icon': default_icon,
     }
     html_string = render_to_string('Invoices/print_main_invoice.html', context)
     html = weasyprint.HTML(string=html_string, base_url=request.build_absolute_uri())
-    # pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/main_invoice_pdf.css')], presentational_hints=True)
-    css_path = os.path.join(settings.BASE_DIR, 'static', 'assets', 'css', 'main_invoice_pdf.css')
-    pdf = html.write_pdf(stylesheets=[weasyprint.CSS(css_path)], presentational_hints=True)
+    pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/main_invoice_pdf.css')], presentational_hints=True)
     response = HttpResponse(pdf, content_type='application/pdf')
-    # modal
-    response['Content-Disposition'] = 'inline; filename="treasury_report.pdf"'
-    response['X-Frame-Options'] = 'SAMEORIGIN'
     return response
 
 

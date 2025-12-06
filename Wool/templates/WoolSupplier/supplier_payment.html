@@ -3,7 +3,7 @@
 {% load mathfilters %}
 {% block title %}
 <title>
-    دفعات المورد {{ supplier.name }}
+    دفعات التاجر {{ supplier.name }}
 </title>
 {% endblock title %}
 
@@ -86,22 +86,22 @@ table.dataTable thead .sorting_desc_disabled {
                         <div class="page-title-box d-flex align-items-center justify-content-between">
 
                             <h3 class="mb-0 ">
-                                دفعات المورد {{ supplier.name }}
+                                دفعات التاجر {{ supplier.name }}
                             </h3>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
                                     {% if supplier.deleted == 0 %}
-                                    <li class="breadcrumb-item"><a href="{% url 'Wool:WoolSupplierList' %}">قائمة موردين الخيط
+                                    <li class="breadcrumb-item"><a href="{% url 'Wool:WoolSupplierList' %}">قائمة تجار الخيط
                                     </a></li>
                                     {% else %}
-                                    <li class="breadcrumb-item"><a href="{% url 'Wool:WoolSupplierTrashList' %}">قائمة موردين الخيط المحذوفة
+                                    <li class="breadcrumb-item"><a href="{% url 'Wool:WoolSupplierTrashList' %}">قائمة تجار الخيط المحذوفة
                                     </a></li>
                                     {% endif %}
 
                                     <li class="breadcrumb-item active">
-                                        دفعات المورد {{ supplier.name }}
+                                        دفعات التاجر {{ supplier.name }}
                                     </li>
                                 </ol>
                             </div>
@@ -192,11 +192,11 @@ table.dataTable thead .sorting_desc_disabled {
                                                                         {% if request.user.is_superuser %}
                                                                         {% if not supplier.deleted %}
                                                                         <td>
-{#                                                                            {% if forloop.last %}#}
+                                                                            {% if forloop.last %}
                                                                             <a href="#" class="text-danger" data-toggle="modal" data-target="#DelModal" title="" data-original-title="Delete"><i class="mdi mdi-close font-size-18"
                                                                             onclick="document.getElementById('del_clck').href='{% url 'Wool:DelWoolSupplierPayment' x.id %}'"
                                                                             ></i></a>
-{#                                                                            {% endif %}#}
+                                                                            {% endif %}
                                                                         </td>
                                                                         {% endif %}
                                                                         {% endif %}
@@ -363,7 +363,7 @@ $(document).ready(function () {
                     },
                     messageBottom: function () {
                         {% if system_info.logo %}
-                            var img = '<img src="{{system_info.logo_base64}}" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
+                            var img = '<img src="{{system_info.logo.url}}" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
                         {% else %}
                             var img = '<img src="/static/assets/images/new.png" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
                         {% endif %}
@@ -399,10 +399,10 @@ $(document).ready(function () {
                         ' </h1>' +
                         '<h1> ' +
                             'دفعات ' +
-                            'مورد خيط' +
+                            'التاجر خيط' +
                         ' </h1>' +
                         '<h1> ' +
-                            'المورد: ' +
+                            'الالتاجر: ' +
                             '{{ supplier.name }}' +
                         ' </h1>' +
                         '<br>'

@@ -15,8 +15,7 @@
                                                 <form >
 
                                                 <tr>
-
-                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form_inside.date|as_crispy_field}}</th>
+                                                    <th class="col-lg-1 col-xl-2 col-md-2">{{form_inside.date|as_crispy_field}}</th>
                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form_inside.weight|as_crispy_field}}</th>
                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form_inside.color|as_crispy_field}}</th>
                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form_inside.wool_type|as_crispy_field}}</th>
@@ -136,30 +135,16 @@
                                                         <td><i class="fas fa-user-tie"></i> {{w.admin}} </td>
                                                        {% if request.user.is_superuser %}
                                                        <td>
-{#                                                       {% if w.id == last_inside_id %}#}
+                                                       
                                                        <!--
 {#                                                        <a href="{% url 'Factories:FactoryInSideUpdate' w.id %}" class="mr-3 text-warning" data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>#}-->
                                                         <a onclick="
-                                                                /*
                                                                 var result = confirm('هل أنت متأكد من الحذف؟');
                                                                 if (result) {
                                                                     InsideDelete('{{w.id}}')
                                                                 }
-                                                                */
-                                                                Swal.fire({
-                                                                  title: 'انتبه!',
-                                                                  text: 'هل أنت متأكد من الحذف؟',
-                                                                  icon: 'warning',
-                                                                  showCancelButton: true,
-                                                                  confirmButtonText: 'نعم، احذف',
-                                                                  cancelButtonText: 'الغاء'
-                                                                }).then((result) => {
-                                                                  if (result.isConfirmed) {
-                                                                    InsideDelete('{{w.id}}')
-                                                                  }
-                                                                });
                                                                 " style="cursor: pointer;" class="text-danger" ><i class="mdi mdi-close font-size-18"></i></a>
-{#                                                       {% endif %}#}
+                                                       
                                                        </td>
                                                        {% endif %}
 
@@ -245,7 +230,7 @@
                                                                     <h5 class=" mb-2 text-light">الوزن المتبقي</h5>
                                                                     <h5 class="mb-0 text-dark">
                                                                         {% if sum_outside or sum_weightt %}
-                                                                        {{sum_outside|sub:sum_weightt|floatformat:3}}
+                                                                        {{sum_outside|sub:sum_weightt|sub:sum_weight_return_inside|floatformat:3}}
                                                                         {% else %}
                                                                         0.000
                                                                         {% endif %}
@@ -263,6 +248,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                <!--repating the hour price card -->
                                                 <div class="col-lg-3">
                                                     <div class="card">
                                                         <div class="card-body bg-primary">
@@ -281,6 +268,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
                                             </div>
                                             <div class="row mt-3">
                                                 <div class="col-lg-3">
@@ -409,6 +397,12 @@
                                             });
                                             $('#in_specific_product').select2();
                                             $('#in_specific_wool').select2();
+                                            $('#color_inside').select2({
+                                                width: '100%'
+                                            });
+                                            $('#wool_type_inside').select2({
+                                                width: '100%'
+                                            });
                                         });
 
                                         $(document).ready(function() {
@@ -518,17 +512,13 @@
                                                $('#total_account').val((total_account_value).toFixed(2));
                                             });
 
+                                            
+
                                         });
 
                                         function InSideCreate(){
                                             if ($('#product_count').val() % 1 !== 0){
-                                                //alert('عدد الموديل يجب أن يكون عدد صحيح')
-                                                Swal.fire({
-                                                  title: 'انتبه!',
-                                                  text: 'عدد الموديل يجب أن يكون عدد صحيح وليس كسور',
-                                                  icon: 'warning',
-                                                  confirmButtonText: 'تم'
-                                                });
+                                                alert('عدد الموديل يجب أن يكون عدد صحيح')
                                             }
                                             else {
                                                 $.ajax({
@@ -564,23 +554,12 @@
                                                             //$('#hour_price').val('');
                                                             $('#total_account').val('');
                                                             $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}");
-                                                            //alert("تم الاضافة بنجاح");
-                                                            Swal.fire({
-                                                              title: 'نجاح!',
-                                                              text: 'تمت الاضافة بنجاح',
-                                                              icon: 'success',
-                                                              confirmButtonText: 'تم'
-                                                            });
+                                                            alert("تم الاضافة بنجاح");
                                                             $('#outside').html('&nbsp;').load("{% url 'Factories:FactoryOutSide_div' object.id %}");
                                                             $("#paymnet").html("&nbsp;").load("{% url 'Factories:FactoryPayment_div' object.id %}");
+                                                            $("#returned").html("&nbsp;").load("{% url 'Factories:FactoryReturned_div' object.id %}");
                                                         }else{
-                                                            //alert("حاول مرة اخري / خطأ في البيانات");
-                                                            Swal.fire({
-                                                              title: 'خطأ!',
-                                                              text: 'حاول مرة اخري / خطأ في البيانات',
-                                                              icon: 'error',
-                                                              confirmButtonText: 'تم'
-                                                            });
+                                                            alert("حاول مرة اخري / خطأ في البيانات");
                                                         }
 
                                                      },
@@ -605,25 +584,14 @@
                                                 success: function(response){
                                                     /* response message */
                                                     $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}");
-                                                    //alert("تم الحذف بنجاح");
-                                                    Swal.fire({
-                                                      title: 'نجاح!',
-                                                      text: 'تم الحذف بنجاح',
-                                                      icon: 'success',
-                                                      confirmButtonText: 'تم'
-                                                    });
+                                                    alert("تم الحذف بنجاح");
                                                     $('#outside').html('&nbsp;').load("{% url 'Factories:FactoryOutSide_div' object.id %}");
                                                     $("#paymnet").html("&nbsp;").load("{% url 'Factories:FactoryPayment_div' object.id %}");
+                                                    $("#returned").html("&nbsp;").load("{% url 'Factories:FactoryReturned_div' object.id %}");
                                                  },
 
                                                 failure: function() {
-                                                //alert("خطأ  في الاضافة ");
-                                                    Swal.fire({
-                                                      title: 'خطأ!',
-                                                      text: 'حاول مرة اخري / خطأ اثناء الحذف',
-                                                      icon: 'error',
-                                                      confirmButtonText: 'تم'
-                                                    });
+                                                alert("خطأ  في الاضافة ");
                                                  }
                                             });
                                         }
@@ -678,18 +646,6 @@
                                             date_val = val.value;
                                             $( '#inside' ).html( '&nbsp;' ).load( "{% url 'Factories:FactoryInSide_div' object.id %}?date_val=" + date_val );
                                         };
-                                    </script>
-                                    <script>
-                                      document.getElementById('new_hour_price').addEventListener('submit', function() {
-                                          localStorage['hour_price'] = 'hour_price';
-                                      });
-
-                                      $( document ).ready(function() {
-                                          if (localStorage['hour_price']){
-                                              $('a[href="#Inside_factory"]').tab('show');
-                                              localStorage.removeItem("hour_price");
-                                          }
-                                      });
                                     </script>
                             </div>
                         </div>

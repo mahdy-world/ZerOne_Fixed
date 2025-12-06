@@ -9,7 +9,7 @@
     <div class="main-content">
 
       <div class="page-content">
-          <div class="container-fluid">
+          <div class="container-fuild">
            
                 <div class="row">
                     <div class="col-12"> {% if messages %}
@@ -119,7 +119,7 @@
                 <div class="row">
                 {% for x in object_list  %}
 
-                <div class="col-md-6 col-xl-4">
+                <div class="col-md-6 col-xl-3">
         
                     <div class="card text-center">
                         <div class="card-body">
@@ -152,10 +152,9 @@
                                 </div>
 
                                 <div class="mr-3">
-{#                                   <a href="{% url 'Treasury:TreasuryReport' x.id %}" target="_blank" data-placement="top" title="" data-original-title="Message">#}
-                                   <a href="javascript:void(0)" data-toggle="modal" data-target="#pdfModal" data-url="{% url 'Treasury:TreasuryReport' x.id %}">
+                                   <a href="{% url 'Treasury:TreasuryReport' x.id %}" target="_blank" data-placement="top" title="" data-original-title="Message">
                                        <span class="badge badge-secondary"><i class='bx bx-list-ul' ></i>تقرير تفصيلي</span>
-                                   </a>
+                                  </a>
                                </div>
                             </div>
                         </div>

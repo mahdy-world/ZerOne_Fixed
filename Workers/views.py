@@ -1,20 +1,18 @@
 import datetime
+from decimal import Decimal
 from django.db.models.aggregates import Sum, Count
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import  LoginRequiredMixin
 from django.views.generic import *
+
 from Core.models import SystemInformation
 from .forms import *
 from django.contrib import messages
 import weasyprint
 from django.template.loader import render_to_string
 from datetime import datetime
-import base64
-import os
-from django.conf import settings
-# Create your views here.
 
 
 class WorkerList(LoginRequiredMixin, ListView):
@@ -549,9 +547,7 @@ def WorkerAttendanceCreate(request):
         if attendance_queryset:
             attendance_dates = attendance_queryset.values_list('date', flat=True)
             attendance_dates = [item.strftime("%Y-%m-%d") for item in attendance_dates]
-            print('sssssssssssssssssss')
-            print(attendance_dates)
-            print(date)
+           
         if date and day and hour_count:
             if not date in attendance_dates:
                 obj = WorkerAttendance()
@@ -696,17 +692,6 @@ def PrintWorkerAttendance(request,pk):
     system_info = SystemInformation.objects.all()
     if system_info.count() > 0:
         system_info = system_info.last()
-        # تحويل الصورة إلى base64
-        if system_info.logo:
-            logo_path = os.path.join(settings.MEDIA_ROOT, str(system_info.logo))
-            try:
-                with open(logo_path, 'rb') as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                    system_info.logo_base64 = f"data:image/{logo_path.split('.')[-1]};base64,{encoded_string}"
-            except:
-                system_info.logo_base64 = None
-        else:
-            system_info.logo_base64 = None
     else:
         system_info = None
             
@@ -738,8 +723,6 @@ def PrintWorkerAttendance(request,pk):
         real_days = 0
         rest_hours = 0
 
-    default_icon = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'new.png')
-
     context = {
         'queryset':queryset,
         'count_days':  queryset.count,
@@ -751,17 +734,11 @@ def PrintWorkerAttendance(request,pk):
         'worker':worker,
         'real_days':int(real_days),
         'rest_hours':int(rest_hours),
-        'default_icon':default_icon,
     }
     html_string = render_to_string('Worker_Reports/print_worker_attendance.html', context)
     html = weasyprint.HTML(string=html_string, base_url=request.build_absolute_uri())
-    # pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
-    css_path = os.path.join(settings.BASE_DIR, 'static', 'assets', 'css', 'invoice_pdf.css')
-    pdf = html.write_pdf(stylesheets=[weasyprint.CSS(css_path)], presentational_hints=True)
+    pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
     response = HttpResponse(pdf, content_type='application/pdf')
-    # modal
-    response['Content-Disposition'] = 'inline; filename="treasury_report.pdf"'
-    response['X-Frame-Options'] = 'SAMEORIGIN'
     return response
 
       
@@ -770,17 +747,6 @@ def PrintWorkerproductions(request,pk):
     system_info = SystemInformation.objects.all()
     if system_info.count() > 0:
         system_info = system_info.last()
-        # تحويل الصورة إلى base64
-        if system_info.logo:
-            logo_path = os.path.join(settings.MEDIA_ROOT, str(system_info.logo))
-            try:
-                with open(logo_path, 'rb') as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                    system_info.logo_base64 = f"data:image/{logo_path.split('.')[-1]};base64,{encoded_string}"
-            except:
-                system_info.logo_base64 = None
-        else:
-            system_info.logo_base64 = None
     else:
         system_info = None
             
@@ -789,8 +755,6 @@ def PrintWorkerproductions(request,pk):
         queryset = queryset.filter(date__gte = request.GET.get('from_date'))
     if request.GET.get('to_date'):
         queryset = queryset.filter(date__lte = request.GET.get('to_date'))
-
-    default_icon = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'new.png')
 
     context = {
         'queryset':queryset,
@@ -803,17 +767,11 @@ def PrintWorkerproductions(request,pk):
         'from_date': request.GET.get('from_date'),
         'to_date': request.GET.get('to_date'),
         'worker':worker,
-        'default_icon': default_icon,
     }
     html_string = render_to_string('Worker_Reports/print_worker_productions.html', context)
     html = weasyprint.HTML(string=html_string, base_url=request.build_absolute_uri())
-    # pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
-    css_path = os.path.join(settings.BASE_DIR, 'static', 'assets', 'css', 'invoice_pdf.css')
-    pdf = html.write_pdf(stylesheets=[weasyprint.CSS(css_path)], presentational_hints=True)
+    pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
     response = HttpResponse(pdf, content_type='application/pdf')
-    # modal
-    response['Content-Disposition'] = 'inline; filename="treasury_report.pdf"'
-    response['X-Frame-Options'] = 'SAMEORIGIN'
     return response
 
 
@@ -822,17 +780,6 @@ def PrintWorkerPayment(request, pk):
     system_info = SystemInformation.objects.all()
     if system_info.count() > 0:
         system_info = system_info.last()
-        # تحويل الصورة إلى base64
-        if system_info.logo:
-            logo_path = os.path.join(settings.MEDIA_ROOT, str(system_info.logo))
-            try:
-                with open(logo_path, 'rb') as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                    system_info.logo_base64 = f"data:image/{logo_path.split('.')[-1]};base64,{encoded_string}"
-            except:
-                system_info.logo_base64 = None
-        else:
-            system_info.logo_base64 = None
     else:
         system_info = None
 
@@ -841,8 +788,6 @@ def PrintWorkerPayment(request, pk):
         queryset = queryset.filter(date__gte=request.GET.get('from_date'))
     if request.GET.get('to_date'):
         queryset = queryset.filter(date__lte=request.GET.get('to_date'))
-
-    default_icon = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'new.png')
 
     context = {
         'queryset': queryset,
@@ -853,17 +798,11 @@ def PrintWorkerPayment(request, pk):
         'from_date': request.GET.get('from_date'),
         'to_date': request.GET.get('to_date'),
         'worker': worker,
-        'default_icon': default_icon,
     }
     html_string = render_to_string('Worker_Reports/print_worker_payment.html', context)
     html = weasyprint.HTML(string=html_string, base_url=request.build_absolute_uri())
-    # pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
-    css_path = os.path.join(settings.BASE_DIR, 'static', 'assets', 'css', 'invoice_pdf.css')
-    pdf = html.write_pdf(stylesheets=[weasyprint.CSS(css_path)], presentational_hints=True)
+    pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
     response = HttpResponse(pdf, content_type='application/pdf')
-    # modal
-    response['Content-Disposition'] = 'inline; filename="treasury_report.pdf"'
-    response['X-Frame-Options'] = 'SAMEORIGIN'
     return response
 
 
@@ -872,17 +811,6 @@ def PrintWorkerAll(request, pk):
     system_info = SystemInformation.objects.all()
     if system_info.count() > 0:
         system_info = system_info.last()
-        # تحويل الصورة إلى base64
-        if system_info.logo:
-            logo_path = os.path.join(settings.MEDIA_ROOT, str(system_info.logo))
-            try:
-                with open(logo_path, 'rb') as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-                    system_info.logo_base64 = f"data:image/{logo_path.split('.')[-1]};base64,{encoded_string}"
-            except:
-                system_info.logo_base64 = None
-        else:
-            system_info.logo_base64 = None
     else:
         system_info = None
 
@@ -934,8 +862,6 @@ def PrintWorkerAll(request, pk):
     if payment:
         payment_sum = payment.aggregate(price=Sum('price')).get('price')
 
-    default_icon = os.path.join(settings.BASE_DIR, 'static', 'assets', 'images', 'new.png')
-
     context = {
         'system_info': system_info,
         'date': datetime.now(),
@@ -946,15 +872,30 @@ def PrintWorkerAll(request, pk):
         'real_days': real_days,
         'rest_hours': rest_hours,
         'payment_sum': payment_sum,
-        'default_icon': default_icon,
     }
     html_string = render_to_string('Worker_Reports/print_worker_details.html', context)
     html = weasyprint.HTML(string=html_string, base_url=request.build_absolute_uri())
-    # pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
-    css_path = os.path.join(settings.BASE_DIR, 'static', 'assets', 'css', 'invoice_pdf.css')
-    pdf = html.write_pdf(stylesheets=[weasyprint.CSS(css_path)], presentational_hints=True)
+    pdf = html.write_pdf(stylesheets=[weasyprint.CSS('static/assets/css/invoice_pdf.css')], presentational_hints=True)
     response = HttpResponse(pdf, content_type='application/pdf')
-    # modal
-    response['Content-Disposition'] = 'inline; filename="treasury_report.pdf"'
-    response['X-Frame-Options'] = 'SAMEORIGIN'
     return response
+
+
+
+def WorkerPrice(request, pk):
+    new_price = request.POST.get('new_price') or 0
+    try:
+        new_price = Decimal(new_price)
+    except:
+        new_price = Decimal(0)
+
+    worker_quantity = WorkerProduction.objects.filter(worker__id=pk)
+    worker_object = Worker.objects.get(id=pk)
+    worker_object.day_cost = new_price
+    worker_object.save()
+    
+    for x in worker_quantity:
+        x.price = new_price
+        x.total = x.quantity * new_price  # assuming quantity is numeric field
+    WorkerProduction.objects.bulk_update(worker_quantity, ['price', 'total'])
+
+    return redirect('Workers:WorkerDetails', pk=pk)

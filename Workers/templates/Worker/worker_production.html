@@ -155,7 +155,7 @@
                                 <td>{{x.admin}}</td>
                                 {% if request.user.is_superuser %}
                                 <td>
-{#                                {% if x.id == last_production_id %}#}
+
                                 <!--
 {#                                <a#}
 {#                                    href="{% url 'Workers:WorkerProductionUpdate' x.id %}"#}
@@ -176,7 +176,7 @@
                                     class="text-danger"
                                     ><i class="mdi mdi-close font-size-18"></i
                                 ></a>
-{#                                {% endif %}#}
+
                                 </td>
                                 {% endif %}
                                 
@@ -199,7 +199,7 @@
                   <div style="margin-top: 10px">
                     <div class="row">
                      
-                      <div class="col-lg-6 flex-center">
+                      <div class="col-lg-4 flex-center">
                         <div class="card mini-stats-wid mb-0">
                           <div class="card-body bg-danger">
                             <div class="d-flex flex-wrap">
@@ -232,7 +232,7 @@
 
                       
 
-                      <div class="col-lg-6 flex-center">
+                      <div class="col-lg-4 flex-center">
                         <div class="card mini-stats-wid mb-0">
                           <div class="card-body bg-danger">
                             <div class="d-flex flex-wrap">
@@ -262,7 +262,24 @@
                           </div>
                         </div>
                       </div>
-                  
+                      <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body bg-primary">
+                                <h5 class="text-light text-center" style="margin-top: -15px">اعادة احتساب فئة السعر</h5>
+                                <form method="post" id="new_price" action="{% url 'Workers:WorkerPrice' worker_id %}">
+                                    {% csrf_token %}
+                                    <div class="row" style="margin-top: 15px; margin-bottom: -10px">
+                                        <div class="col-md-8">
+                                            <input type="number" class="form-control" name="new_price" placeholder="السعر" required min="0" step="0.01" >
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="submit" class="btn btn-light" value="تأكيد">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     </div>
                   </div>
                 </div>

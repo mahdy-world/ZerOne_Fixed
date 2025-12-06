@@ -62,7 +62,6 @@ table.dataTable thead .sorting_desc_disabled {
 
       <div class="page-content">
           <div class="container-fluid">
-
                 <div class="row">
                     <div class="col-12"> {% if messages %}
                         {% for message in messages %}
@@ -85,23 +84,23 @@ table.dataTable thead .sorting_desc_disabled {
                     <div class="col-12">
                         <div class="page-title-box d-flex align-items-center justify-content-between">
 
-                            <h3 class="mb-0 ">
-                                كميات المورد {{ supplier.name }}
-                            </h3>
+                            <h2 class="mb-0 font-weight-bold">
+                                كميات التاجر {{ supplier.name }}
+                            </h2>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="/">الرئيسية</a></li>
                                     {% if supplier.deleted == 0 %}
-                                    <li class="breadcrumb-item"><a href="{% url 'Wool:WoolSupplierList' %}">قائمة موردين الخيط
+                                    <li class="breadcrumb-item"><a href="{% url 'Wool:WoolSupplierList' %}">قائمة تجار الخيط
                                     </a></li>
                                     {% else %}
-                                    <li class="breadcrumb-item"><a href="{% url 'Wool:WoolSupplierTrashList' %}">قائمة موردين الخيط المحذوفة
+                                    <li class="breadcrumb-item"><a href="{% url 'Wool:WoolSupplierTrashList' %}">قائمة تجار الخيط المحذوفة
                                     </a></li>
                                     {% endif %}
 
                                     <li class="breadcrumb-item active">
-                                        كميات المورد {{ supplier.name }}
+                                        كميات التاجر {{ supplier.name }}
                                     </li>
                                 </ol>
                             </div>
@@ -129,7 +128,9 @@ table.dataTable thead .sorting_desc_disabled {
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">
                                                                         {{form.date|as_crispy_field}}
                                                                     </th>
-                                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form.wool_type|as_crispy_field}}</th>
+                                                                    <th class="col-lg-2 col-xl-2 col-md-2 sel">{{form.wool|as_crispy_field}}</th>
+                                                                    <th class="col-lg-2 col-xl-2 col-md-2 sel">{{form.wool_color|as_crispy_field}}</th>
+                                                                    <th class="col-lg-2 col-xl-2 col-md-2">{{form.wool_item_count|as_crispy_field}}</th>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form.wool_weight|as_crispy_field}} </th>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form.wool_price|as_crispy_field}} </th>
                                                                     <th class="col-lg-2 col-xl-2 col-md-2">{{form.total_account|as_crispy_field}} </th>
@@ -146,11 +147,34 @@ table.dataTable thead .sorting_desc_disabled {
 
                                                     <div class="card-body">
                                                         <br>
+                                                        <!-- filter -->
                                                         <div class="row">
-                                                            <div class="col-md-4">
+                                                            <div class="col-md-2">
                                                                 <div class="form-group sel" >
-                                                                    <label>فلترة بنوع الخيط: </label>
-                                                                    <select id="ModelFltr" class="form-control">
+                                                                    <label>فلترة اسم الخامة : </label>
+                                                                    <select id="ModelFltr_wool_name" class="form-control" style="width: 100%;">
+                                                                        <option value=" ">عرض الكل</option>
+                                                                        {% for obj in wool_name %}
+                                                                        <option value="{{obj.wool_name}}">{{obj.wool_name}}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <div class="form-group sel" >
+                                                                    <label>فلترة بلون خام : </label>
+                                                                    <select id="ModelFltr_color" class="form-control" style="width: 100%;">
+                                                                        <option value=" ">عرض الكل</option>
+                                                                        {% for color in wool_color_objects %}
+                                                                        <option value="{{color.color_name}}">{{color.color_name}}</option>
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <div class="form-group sel" >
+                                                                    <label>فلترة بنوع الخام: </label>
+                                                                    <select id="ModelFltr" class="form-control" style="width: 100%;">
                                                                         <option value=" ">عرض الكل</option>
                                                                         <option value="قطن">قطن</option>
                                                                         <option value="صوف">صوف</option>
@@ -164,13 +188,13 @@ table.dataTable thead .sorting_desc_disabled {
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-4">
+                                                            <div class="col-md-3">
                                                                 <div class="form-group sel" >
                                                                     <label>فلترة بالتاريخ من: </label>
                                                                     <input type="date" id="min" name="min" class="form-control">
                                                                 </div>
                                                             </div>
-                                                            <div class="col-md-4">
+                                                            <div class="col-md-3">
                                                                 <div class="form-group sel" >
                                                                     <label>فلترة بالتاريخ الي: </label>
                                                                     <input type="date" id="max" name="max" class="form-control">
@@ -178,12 +202,18 @@ table.dataTable thead .sorting_desc_disabled {
                                                             </div>
                                                         </div>
                                                         <br>
+                                                        <!-- wool_data -->
                                                         <div class="table-responsive">
                                                             <table class="table table-centered table-nowrap text-center display" id="Quantable" style="width: 100%">
-                                                                <thead class="thead-light">
+                                                                <thead class="thead-dark">
                                                                     <tr>
                                                                         <th>التاريخ</th>
-                                                                        <th>نوع الخيط</th>
+                                                                        <th>اسم الخامه</th>
+                                                                        <th>نوع الخامة</th>
+                                                                        <th>الشركة</th>
+                                                                        <th>رقم الخامة</th>
+                                                                        <th>لون الخامة</th>
+                                                                        <th>عدد الشكاير</th>
                                                                         <th>الوزن بالكيلو</th>
                                                                         <th>سعر الكيلو</th>
                                                                         <th>اجمالي الحساب</th>
@@ -200,12 +230,39 @@ table.dataTable thead .sorting_desc_disabled {
                                                                     {% if quantity %}
                                                                     {% for x in quantity  %}
                                                                     <tr style="text-align: center;">
-
                                                                         <td>
                                                                             {{x.date|date:'Y-m-d'}}
                                                                         </td>
+
                                                                         <td>
-                                                                            {{x.get_wool_type_display}}
+                                                                            {{x.wool.wool_name}}
+                                                                        </td>
+                                                                       
+                                                                        <td>
+                                                                            {{x.wool.get_wool_type_display}}
+                                                                        </td>
+                                                                       
+                                                                        <td>
+                                                                            {{x.wool.wool_company}}
+                                                                        </td>
+                                                                       
+                                                                        <td>
+                                                                            {{x.wool.wool_number}}
+                                                                        </td>
+                                                                       
+                                                                        <td>
+                                                                           <span class="badge badge-pill badge-danger"
+                                                                            {%  if x.wool_color.color_hex_code == '#FFFFFF' %}
+                                                                            style="background-color: {{x.wool_color.color_hex_code}}; color: black"
+                                                                            {% else %}
+                                                                            style="background-color: {{x.wool_color.color_hex_code}};"
+                                                                            {% endif %}
+                                                                             >
+                                                                            {{x.wool_color}}
+                                                                            </span>
+                                                                        </td>
+                                                                        <td>
+                                                                            {{x.wool_item_count|floatformat:2}}
                                                                         </td>
                                                                         <td>
                                                                             {{x.wool_weight|floatformat:3}}
@@ -219,17 +276,18 @@ table.dataTable thead .sorting_desc_disabled {
                                                                         {% if request.user.is_superuser %}
                                                                         {% if not supplier.deleted %}
                                                                         <td>
-{#                                                                            {% if forloop.last %}#}
+                                                                        
                                                                             <a href="#" class="text-danger" data-toggle="modal" data-target="#DelModal" title="" data-original-title="Delete"><i class="mdi mdi-close font-size-18"
                                                                             onclick="document.getElementById('del_clck').href='{% url 'Wool:DelWoolSupplierQuantity' x.id %}'"
                                                                             ></i></a>
-{#                                                                            {% endif %}#}
+                                                                        
                                                                         </td>
                                                                         {% endif %}
                                                                         {% endif %}
                                                                         <td>
                                                                             {{ x.admin }}
                                                                         </td>
+                                                                        
                                                                     </tr>
 
                                                                     {% endfor %}
@@ -239,6 +297,12 @@ table.dataTable thead .sorting_desc_disabled {
                                                                 </tbody>
                                                                 <tfoot>
                                                                     <tr>
+                                                                        
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th></th>
+                                                                        <th></th>
                                                                         <th></th>
                                                                         <th></th>
                                                                         <th></th>
@@ -293,6 +357,7 @@ table.dataTable thead .sorting_desc_disabled {
 
 
 {% block js %}
+<!-- datatable script -->
 <script>
 $.fn.dataTableExt.afnFiltering.push(
     function( oSettings, aData, iDataIndex ) {
@@ -347,36 +412,55 @@ $(document).ready(function () {
                     return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
                 };
 
+                // sum itmes method 
+                items_total = api
+                    .column(6)
+                    .data()
+                    .reduce(function (a, b){
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                
+                // sum items from current page method
+                items_total_page = api
+                    .column(6, {page:'current'})
+                    .data()
+                    .reduce(function (a, b){
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                
+                
                 total = api
-                    .column(4)
+                    .column(7)
                     .data()
                     .reduce(function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
 
                 pageTotal = api
-                    .column(4, { page: 'current' })
+                    .column(7, { page: 'current' })
                     .data()
                     .reduce(function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
 
                 total2 = api
-                    .column(2)
+                    .column(9)
                     .data()
                     .reduce(function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
 
                 pageTotal2 = api
-                    .column(2, { page: 'current' })
+                    .column(9, { page: 'current' })
                     .data()
                     .reduce(function (a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
 
-                $(api.column(4).footer()).html('' + pageTotal.toFixed(2) + ' ( من ' + total.toFixed(2) + ' )');
-                $(api.column(2).footer()).html('' + pageTotal2.toFixed(3) + ' ( من ' + total2.toFixed(3) + ' )');
+                // total number position on the footer
+                $(api.column(7).footer()).html('' + pageTotal.toFixed(2) + ' ( من ' + total.toFixed(2) + ' )');
+                $(api.column(9).footer()).html('' + pageTotal2.toFixed(3) + ' ( من ' + total2.toFixed(3) + ' )');
+                $(api.column(6).footer()).html('' + items_total_page.toFixed(2) + ' ( من ' + items_total.toFixed(2) + ' )');
             },
 
             "columnDefs": [ {
@@ -391,7 +475,7 @@ $(document).ready(function () {
                     extend: 'print',
                     text: 'طباعة الجدول',
                     exportOptions: {
-                        columns: [ 0, 1, 2, 3, 4 ],
+                        columns: [ 0, 1, 6, 7, 9],
                         modifier: {
                             page: 'current'
                         }
@@ -407,7 +491,7 @@ $(document).ready(function () {
                     },
                     messageBottom: function () {
                         {% if system_info.logo %}
-                            var img = '<img src="{{system_info.logo_base64}}" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
+                            var img = '<img src="{{system_info.logo.url}}" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
                         {% else %}
                             var img = '<img src="/static/assets/images/new.png" style="position:absolute; top:120px; left:0; width:200px; height:200px">';
                         {% endif %}
@@ -415,11 +499,26 @@ $(document).ready(function () {
                     },
                     messageTop: function () {
                         if ( $("#ModelFltr").val() == ' ' ) {
-                            var model = 'فلترة بنوع خيط معين: جميع الأنواع';
+                            var model = 'فلترة بنوع خام معين: جميع الأنواع';
                         }
                         else {
-                            var model = 'فلترة بنوع خيط معين: ' + $("#ModelFltr").val();
+                            var model = 'فلترة بنوع خام معين: ' + $("#ModelFltr").val();
                         }
+
+                        if ( $("#ModelFltr_color").val() == ' ' ) {
+                            var model = 'فلترة بلون معين: جميع الأنواع';
+                        }
+                        else {
+                            var model = 'فلترة بنوع خام معين: ' + $("#ModelFltr_color").val();
+                        }
+
+                        if ( $("#ModelFltr_wool_name").val() == ' ' ) {
+                            var model = 'فلترة اسم الخامة : جميع الأنواع';
+                        }
+                        else {
+                            var model = 'فلترة اسم الخامة: ' + $("#ModelFltr_wool_name").val();
+                        }
+
 
                         if ( $("#min").val() == '' ) {
                             var min = 'من تاريخ: ';
@@ -488,7 +587,8 @@ $(document).ready(function () {
              },
 
             initComplete: function () {
-                this.api().columns([1]).every(function () {
+                // filter using wool type
+                this.api().columns([2]).every(function () {
                     var column = this;
                     console.log(column);
                     var select = $("#ModelFltr");
@@ -505,7 +605,46 @@ $(document).ready(function () {
                             });
                     });
                 });
+
+                // filter using wool name
+                this.api().columns([1]).every(function () {
+                    var column = this;
+                    console.log(column);
+                    var select = $("#ModelFltr_wool_name");
+                    column.data().unique().sort().each(function (d, j) {
+                        select
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                column
+                                    .search(this.value)
+                                    .draw();
+                            });
+                    });
+                });
+
+                // filter using wool color
+                this.api().columns([5]).every(function () {
+                    var color_column = this;
+                    console.log(color_column);
+                    var color_select = $("#ModelFltr_color");
+                    color_column.data().unique().sort().each(function (d, j) {
+                        color_select
+                            .on('change', function () {
+                                var val = $.fn.dataTable.util.escapeRegex(
+                                    $(this).val()
+                                );
+
+                                color_column
+                                    .search(this.value)
+                                    .draw();
+                            });
+                    });
+                });
             },
+
 
         });
 
@@ -514,12 +653,24 @@ $(document).ready(function () {
 });
 </script>
 
+<!-- select2 script -->
 <script>
     $(document).ready(function() {
         $('#ModelFltr').select2();
+        $('#ModelFltr_color').select2();
+        $('#wool').select2({
+            width: '100%'
+        });
+        $('#wool_color').select2({
+            width: '100%'
+        });
+        $('#ModelFltr_wool_name').select2({
+            width: '100%'
+        });
     });
 </script>
 
+<!-- calculate total account -->
 <script>
     $( '#wool_weight' ).on('change keyup', function () {
         var wool_weight = parseFloat(this.value);
@@ -534,4 +685,5 @@ $(document).ready(function () {
     });
 
 </script>
+
 {% endblock js %}

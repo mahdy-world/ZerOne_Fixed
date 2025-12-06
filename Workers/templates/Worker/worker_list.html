@@ -8,7 +8,7 @@
     <div class="main-content">
 
       <div class="page-content">
-          <div class="container-fluid">
+          <div class="container-fuild">
            
                 <div class="row">
                     <div class="col-12"> {% if messages %}
@@ -117,7 +117,7 @@
                 </div>
                 <div class="row">
                 {% for x in object_list  %}
-                <div class="col-xl-4 col-md-4 col-sm-6">
+                <div class="col-xl-3 col-md-4 col-sm-6">
                     <div class="card text-center">
                         <div class="card-body">
                             <div class="">
@@ -143,8 +143,7 @@
 
                                     <li class="list-inline-item mr-1">
                                         <div>
-{#                                            <a href="{% url 'Workers:PrintWorkerAll' x.id %}" target="_blank">#}
-                                            <a href="javascript:void(0)" data-toggle="modal" data-target="#pdfModal" data-url="{% url 'Workers:PrintWorkerAll' x.id %}">
+                                            <a href="{% url 'Workers:PrintWorkerAll' x.id %}" target="_blank">
                                                <span class="badge badge-secondary" style="padding: 5px; font-size: 14px"> <i class="fas fa-print"></i>كشف حساب</span>
                                             </a>
                                         </div>
@@ -193,6 +192,8 @@
                     </div>
                 </div>
                 {% endfor %}
+
+
                 </div>
 
                 {% if is_paginated %}

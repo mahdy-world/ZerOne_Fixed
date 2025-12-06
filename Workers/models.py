@@ -1,3 +1,4 @@
+from decimal import Decimal
 import django
 from django.utils import timezone
 from django.db import models
@@ -25,6 +26,9 @@ class Worker(models.Model):
     
     
 HOUR_COUNT = (
+    (6, "2"),
+    (7, "3"),
+    (8, "4"),
     (1, "6"),
     (2, "8"),
     (3, "12"),
@@ -55,14 +59,17 @@ class WorkerPayment(models.Model):
         return self.worker.name
 
 class WorkerProduction(models.Model):
-    date = models.DateField(verbose_name="تاريخ الاستلام", default=django.utils.timezone.now())
+    date = models.DateField(verbose_name="تاريخ الاستلام", default=timezone.now)
     day = models.CharField(max_length=30, verbose_name="اليوم")
     worker = models.ForeignKey(Worker, on_delete=models.CASCADE, verbose_name="العامل")
-    quantity = models.FloatField(default=0, verbose_name="الكمية بالقطعة")
-    price = models.FloatField(default=0, verbose_name="فئة السعر")
-    total = models.FloatField(default=0, verbose_name="الإجمالي")
+    
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"), verbose_name="الكمية بالقطعة")
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"), verbose_name="فئة السعر")
+    total = models.DecimalField(max_digits=12, decimal_places=2, default=Decimal("0.00"), verbose_name="الإجمالي")
+    
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, verbose_name="المنتج", null=True, blank=True)
     admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="المسئول")
+
     
     def __str__(self):
         return self.worker.name

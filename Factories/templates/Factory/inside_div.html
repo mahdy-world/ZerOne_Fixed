@@ -39,30 +39,14 @@
                 <td><i class="fas fa-user-tie"></i> {{w.admin}} </td>
                {% if request.user.is_superuser %}
                <td>
-{#               {% if w.id == last_inside_id %}#}
                <!--
 {#                <a href="{% url 'Factories:FactoryInSideUpdate' w.id %}" class="mr-3 text-warning" data-toggle="modal" data-target="#action_modal" data-original-title="Edit"><i class="mdi mdi-pencil font-size-18"></i></a>#}-->
                 <a onclick="
-                        /*
                         var result = confirm('هل أنت متأكد من الحذف؟');
                         if (result) {
                             InsideDelete('{{w.id}}')
                         }
-                        */
-                        Swal.fire({
-                          title: 'انتبه!',
-                          text: 'هل أنت متأكد من الحذف؟',
-                          icon: 'warning',
-                          showCancelButton: true,
-                          confirmButtonText: 'نعم، احذف',
-                          cancelButtonText: 'الغاء'
-                        }).then((result) => {
-                          if (result.isConfirmed) {
-                            InsideDelete('{{w.id}}')
-                          }
-                        });
                         " style="cursor: pointer;" class="text-danger" ><i class="mdi mdi-close font-size-18"></i></a>
-{#               {% endif %}#}
                </td>
                {% endif %} 
                
@@ -84,7 +68,7 @@
 
 <div style="margin-top:10px">
     <div class="row">
-        <div class="col-lg-3">
+        <div class="col-lg-4">
             <div class="card mini-stats-wid mb-0">
                 <div class="card-body bg-danger">
                     
@@ -111,7 +95,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-4">
             <div class="card mini-stats-wid mb-0">
                 <div class="card-body bg-danger">
                     
@@ -138,7 +122,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-4">
             <div class="card mini-stats-wid mb-0">
                 <div class="card-body bg-danger">
 
@@ -162,24 +146,6 @@
                         </div>
                     </div>
 
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="card">
-                <div class="card-body bg-primary">
-                    <h5 class="text-light text-center" style="margin-top: -15px">اعادة احتساب الساعه</h5>
-                    <form method="post" id="new_hour_price" action="{% url 'Factories:UpdateFactoryHourPrice' factory.id %}">
-                        {% csrf_token %}
-                        <div class="row" style="margin-top: 15px; margin-bottom: -10px">
-                            <div class="col-md-8">
-                                <input type="number" class="form-control" name="new_hour_price_input" placeholder="سعر الساعه" required min="0">
-                            </div>
-                            <div class="col-md-4">
-                                <input type="submit" class="btn btn-light" value="تأكيد">
-                            </div>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
@@ -304,18 +270,6 @@
 </div>
 
 <script>
-  document.getElementById('new_hour_price').addEventListener('submit', function() {
-      localStorage['hour_price'] = 'hour_price';
-  });
-
-  $( document ).ready(function() {
-      if (localStorage['hour_price']){
-          $('a[href="#Inside_factory"]').tab('show');
-          localStorage.removeItem("hour_price");
-      }
-  });
-</script>
-<script>
     $(document).ready(function() {
       var itemsPerPage = 10;
       var currentPage = 1;
@@ -367,4 +321,4 @@
 
       showItems();
     });
-</script>
+  </script>

@@ -11,7 +11,7 @@
 {% load mathfilters %}
 <div class="main-content">
       <div class="page-content">
-          <div class="container-fluid">
+          <div class="container-fuild">
 
                 <div class="row">
                     <div class="col-12"> {% if messages %}
@@ -258,11 +258,10 @@
                                                                 </td>
                                                                 {% if request.user.is_superuser %}
                                                                <td>
-{#                                                               {% if x.id == last_pay_id %}#}
-                                                               {% if x.op %}
+                                                               
                                                                 <a href="{% url 'Products:SellerPaymentDelete' x.id %}" onclick="return confirm('هل أنت متأكد من حذف القيمة؟');" class="text-danger" ><i class="mdi mdi-close font-size-22"></i></a>
-                                                               {% endif %}
-{#                                                               {% endif %}#}
+                                                               
+                                                               
                                                                </td>
                                                                {% endif %}
 
@@ -358,7 +357,7 @@
                                                                 </td>
                                                                 <td>
                                                                     <h5 class="font-size-16 ">
-                                                                        <a href="{% url 'Invoices:InvoiceDetail' x.id %}">{{x.date|date:'Y-m-d'}}</a>
+                                                                        <a href="{% url 'Invoices:InvoiceDetail' x.id %}" target="_blank">{{x.date|date:'Y-m-d'}}</a>
                                                                     </h5>
 
                                                                 </td>
@@ -468,7 +467,7 @@
                                                                 </td>
                                                                 <td>
                                                                     <h5 class="font-size-16 ">
-                                                                        <a href="{% url 'Invoices:InvoiceDetail' x.id %}">{{x.date|date:'Y-m-d'}}</a>
+                                                                        <a href="{% url 'Invoices:InvoiceDetail' x.id %}" target="_blank">{{x.date|date:'Y-m-d'}}</a>
                                                                     </h5>
 
                                                                 </td>
